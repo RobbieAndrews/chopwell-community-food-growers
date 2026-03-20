@@ -1,10 +1,286 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
+import {
+	Book,
+	ExternalLink,
+	FileText,
+	Leaf,
+	Users,
+	Video,
+	Wrench,
+} from '@lucide/astro';
+
+const linkCategories = [
+	{
+		id: 'growing-guides',
+		title: 'Growing Guides',
+		icon: 'leaf',
+		cardClass: 'from-green-100 to-green-200 ring-green-300',
+		links: [
+			{
+				name: 'RHS Growing Guides',
+				url: 'https://www.rhs.org.uk/advice',
+				description: 'Comprehensive plant care and growing advice.',
+			},
+			{
+				name: 'Allotment Garden',
+				url: 'https://www.allotment-garden.org',
+				description: 'Tips and practical advice for allotment holders.',
+			},
+			{
+				name: 'Garden Organic',
+				url: 'https://www.gardenorganic.org.uk',
+				description: 'Organic growing methods and resources.',
+			},
+			{
+				name: 'BBC Gardeners World',
+				url: 'https://www.gardenersworld.com',
+				description: 'Seasonal guides and plant advice.',
+			},
+		],
+	},
+	{
+		id: 'food-preservation',
+		title: 'Food Preservation',
+		icon: 'book',
+		cardClass: 'from-amber-100 to-amber-200 ring-amber-300',
+		links: [
+			{
+				name: 'National Center for Home Food Preservation',
+				url: 'https://nchfp.uga.edu',
+				description: 'Safe preservation methods and recipes.',
+			},
+			{
+				name: 'River Cottage Preserves',
+				url: 'https://www.rivercottage.net',
+				description: 'Traditional preservation techniques and inspiration.',
+			},
+			{
+				name: 'Preservation Society UK',
+				url: '#',
+				description: 'Resources for jamming, pickling, and more.',
+			},
+			{
+				name: 'Food Safety Guidelines',
+				url: '#',
+				description: 'Important safety information for preserving.',
+			},
+		],
+	},
+	{
+		id: 'tools-equipment',
+		title: 'Tools & Equipment',
+		icon: 'wrench',
+		cardClass: 'from-sky-100 to-blue-200 ring-blue-300',
+		links: [
+			{
+				name: 'Tool Maintenance Guide',
+				url: '#',
+				description: 'Keep your tools in top condition.',
+			},
+			{
+				name: 'Recommended Suppliers',
+				url: '#',
+				description: 'Local and online tool suppliers.',
+			},
+			{
+				name: 'DIY Garden Projects',
+				url: '#',
+				description: 'Build your own structures and equipment.',
+			},
+			{
+				name: 'Tool Sharing Scheme',
+				url: '#',
+				description: 'Borrow tools from our community library.',
+			},
+		],
+	},
+	{
+		id: 'community-networks',
+		title: 'Community Networks',
+		icon: 'users',
+		cardClass: 'from-violet-100 to-fuchsia-100 ring-violet-300',
+		links: [
+			{
+				name: 'National Allotment Society',
+				url: 'https://www.nsalg.org.uk',
+				description: 'National organisation supporting allotments.',
+			},
+			{
+				name: 'Local Gardening Groups',
+				url: '#',
+				description: 'Connect with other growers in the area.',
+			},
+			{
+				name: 'Seed Swap Network',
+				url: '#',
+				description: 'Exchange seeds with growers across the UK.',
+			},
+			{
+				name: 'Community Supported Agriculture',
+				url: '#',
+				description: 'Find CSA schemes and community food projects.',
+			},
+		],
+	},
+	{
+		id: 'learning-resources',
+		title: 'Learning Resources',
+		icon: 'video',
+		cardClass: 'from-rose-100 to-pink-100 ring-pink-300',
+		links: [
+			{
+				name: 'Charles Dowding YouTube',
+				url: 'https://www.youtube.com/charlesdowding',
+				description: 'No-dig gardening videos and practical guidance.',
+			},
+			{
+				name: 'Huw Richards Videos',
+				url: 'https://www.youtube.com/huwrichards',
+				description: 'Growing from seed tutorials and allotment advice.',
+			},
+			{
+				name: 'Online Courses',
+				url: '#',
+				description: 'Free and paid gardening courses.',
+			},
+			{
+				name: 'Gardening Podcasts',
+				url: '#',
+				description: 'Listen and learn while you work.',
+			},
+		],
+	},
+	{
+		id: 'regulations-guidance',
+		title: 'Regulations & Guidance',
+		icon: 'file-text',
+		cardClass: 'from-stone-100 to-stone-200 ring-stone-300',
+		links: [
+			{
+				name: 'Plot Rules & Guidelines',
+				url: '#',
+				description: 'Community rules and responsibilities.',
+			},
+			{
+				name: 'Water Usage Regulations',
+				url: '#',
+				description: 'Guidance for water conservation and usage.',
+			},
+			{
+				name: 'Pesticide Regulations',
+				url: '#',
+				description: 'What can and cannot be used on site.',
+			},
+			{
+				name: 'Structures & Planning',
+				url: '#',
+				description: 'Permissions for sheds, greenhouses, and other structures.',
+			},
+		],
+	},
+] as const;
+
+const iconMap = {
+	book: Book,
+	leaf: Leaf,
+	wrench: Wrench,
+	users: Users,
+	video: Video,
+	'file-text': FileText,
+};
 ---
 
 <SiteLayout title="Useful Links">
-	<h1 class="text-4xl font-bold tracking-tight text-stone-900">Useful Links</h1>
-	<p class="mt-4 max-w-2xl text-lg leading-8 text-stone-700">
-		This page is ready for partner organisations, local resources, and recommended reading.
-	</p>
+	<div class="space-y-8">
+		<section class="rounded-4xl bg-linear-to-br from-stone-50 via-lime-50/70 to-emerald-100/60 px-5 py-8 sm:px-8 sm:py-12">
+			<div class="max-w-3xl">
+				<h1 class="text-4xl font-bold tracking-tight text-stone-900 sm:text-5xl">
+					Useful Links
+				</h1>
+				<p class="mt-4 max-w-2xl text-lg leading-8 text-stone-700">
+					A curated collection of websites, guides, videos, and practical resources to
+					support your growing journey.
+				</p>
+			</div>
+		</section>
+
+		<section class="space-y-6">
+			{
+				linkCategories.map((category) => {
+					const Icon = iconMap[category.icon];
+
+					return (
+						<article
+							id={category.id}
+							class="rounded-4xl border border-stone-200 bg-white p-6 shadow-sm sm:p-8"
+						>
+							<div class="flex items-center gap-4">
+								<div
+									class:list={[
+										'flex h-12 w-12 items-center justify-center rounded-full bg-linear-to-br ring-1',
+										category.cardClass,
+									]}
+								>
+									<Icon class="h-6 w-6 text-green-800" />
+								</div>
+								<h2 class="text-2xl font-bold tracking-tight text-stone-900">
+									{category.title}
+								</h2>
+							</div>
+
+							<div class="mt-6 grid gap-4 md:grid-cols-2">
+								{
+									category.links.map((link) => {
+										const isExternal = link.url.startsWith('http');
+
+										return (
+											<a
+												href={link.url}
+												target={isExternal ? '_blank' : undefined}
+												rel={isExternal ? 'noopener noreferrer' : undefined}
+												class="group flex items-start gap-3 rounded-3xl bg-stone-50 p-4 transition hover:bg-stone-100"
+											>
+												<ExternalLink class="mt-0.5 h-5 w-5 shrink-0 text-green-800 transition group-hover:scale-110" />
+												<div class="min-w-0 flex-1">
+													<h3 class="font-semibold text-stone-900 transition group-hover:text-green-800">
+														{link.name}
+													</h3>
+													<p class="mt-1 text-sm leading-6 text-stone-600">
+														{link.description}
+													</p>
+												</div>
+											</a>
+										);
+									})
+								}
+							</div>
+						</article>
+					);
+				})
+			}
+		</section>
+
+		<section
+			id="suggest-resource"
+			class="rounded-4xl bg-linear-to-r from-amber-50 to-green-50 px-6 py-8 text-center ring-1 ring-green-700 sm:px-8 sm:py-10"
+		>
+			<div class="mx-auto max-w-3xl">
+				<h2 class="text-2xl font-bold tracking-tight text-stone-900">
+					Know a Great Resource?
+				</h2>
+				<p class="mt-3 leading-8 text-stone-700">
+					Help us build a stronger collection of growing resources by sharing useful
+					websites, videos, books, or tools that others in the community might benefit
+					from.
+				</p>
+				<a
+					href="/contact"
+					class="mt-6 inline-flex items-center justify-center rounded-2xl bg-green-800 px-8 py-3 font-semibold text-white transition hover:bg-green-900"
+				>
+					Suggest a Resource
+				</a>
+			</div>
+		</section>
+	</div>
 </SiteLayout>
