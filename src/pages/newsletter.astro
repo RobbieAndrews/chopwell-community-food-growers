@@ -1,10 +1,165 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
+import { Archive, Download, Mail } from '@lucide/astro';
+
+const newsletters = [
+	{
+		title: 'Spring Edition 2026',
+		date: 'March 2026',
+		preview:
+			'Spring is here. Read about new plot allocations, upcoming workshops, and seasonal growing tips.',
+		topics: [
+			'Plot Allocations',
+			'Spring Planting Guide',
+			'Member Spotlight',
+			'Upcoming Events',
+		],
+		pdfUrl: '#',
+		readUrl: '#',
+	},
+	{
+		title: 'Winter Harvest 2025',
+		date: 'December 2025',
+		preview:
+			'Celebrating a year of growth with community achievements, winter growing tips, and holiday recipes.',
+		topics: ['Year in Review', 'Winter Vegetables', 'Holiday Recipes', 'AGM Announcement'],
+		pdfUrl: '#',
+		readUrl: '#',
+	},
+	{
+		title: 'Autumn Newsletter 2025',
+		date: 'September 2025',
+		preview:
+			'Harvest time brings preserving ideas, seed saving advice, and autumn planting schedules.',
+		topics: ['Harvest Festival', 'Seed Saving Workshop', 'Composting Tips', 'Autumn Events'],
+		pdfUrl: '#',
+		readUrl: '#',
+	},
+] as const;
+
+const issueHighlights = [
+	'Welcome message from the coordinator',
+	'New member profiles and success stories',
+	'Spring planting calendar and tips',
+	'Workshop schedule for the quarter',
+	'Recipe of the month: spring greens salad',
+	'Community news and achievements',
+] as const;
 ---
 
 <SiteLayout title="Newsletter">
-	<h1 class="text-4xl font-bold tracking-tight text-stone-900">Newsletter</h1>
-	<p class="mt-4 max-w-2xl text-lg leading-8 text-stone-700">
-		This page is ready for newsletter sign-up details, archive links, or the latest updates.
-	</p>
+	<div class="space-y-8">
+		<section class="rounded-4xl bg-linear-to-br from-stone-50 via-lime-50/70 to-emerald-100/60 px-5 py-8 sm:px-8 sm:py-12">
+			<div class="max-w-3xl">
+				<h1 class="text-4xl font-bold tracking-tight text-stone-900 sm:text-5xl">
+					Newsletter
+				</h1>
+				<p class="mt-4 max-w-2xl text-lg leading-8 text-stone-700">
+					Stay connected with our quarterly community newsletter for updates, tips,
+					recipes, and seasonal news.
+				</p>
+			</div>
+		</section>
+
+		<section class="rounded-4xl bg-linear-to-r from-green-800 to-lime-700 px-6 py-8 text-white shadow-lg sm:px-8 sm:py-10">
+			<div class="max-w-2xl">
+				<div class="flex items-center gap-3">
+					<Mail class="h-8 w-8" />
+					<h2 class="text-3xl font-bold tracking-tight">Subscribe to Our Newsletter</h2>
+				</div>
+				<p class="mt-4 text-lg leading-8 text-green-50">
+					Get the latest news, growing tips, recipes, and event updates delivered to
+					your inbox every quarter.
+				</p>
+				<form class="mt-6 flex flex-col gap-3 sm:flex-row">
+					<input
+						type="email"
+						placeholder="Enter your email address"
+						class="min-w-0 flex-1 rounded-2xl px-4 py-3 text-stone-900 outline-none"
+					/>
+					<button
+						type="submit"
+						class="rounded-2xl bg-white px-8 py-3 font-semibold whitespace-nowrap text-green-800 transition hover:bg-green-50"
+					>
+						Subscribe Now
+					</button>
+				</form>
+				<p class="mt-3 text-xs text-green-50">
+					We respect your privacy. Unsubscribe at any time.
+				</p>
+			</div>
+		</section>
+
+		<section class="rounded-4xl border border-stone-200 bg-white p-6 shadow-sm sm:p-8">
+			<div class="flex items-center gap-3">
+				<Archive class="h-7 w-7 text-green-800" />
+				<h2 class="text-2xl font-bold tracking-tight text-stone-900">
+					Newsletter Archive
+				</h2>
+			</div>
+
+			<div class="mt-6 space-y-6">
+				{
+					newsletters.map((newsletter) => (
+						<article class="rounded-4xl border-2 border-stone-200 p-6 transition hover:shadow-lg">
+							<div class="flex flex-col gap-4 md:flex-row md:justify-between">
+								<div class="flex-1">
+									<div class="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
+										<h3 class="text-2xl font-bold tracking-tight text-stone-900">
+											{newsletter.title}
+										</h3>
+										<p class="text-sm text-stone-500">{newsletter.date}</p>
+									</div>
+
+									<p class="mt-3 text-stone-700">{newsletter.preview}</p>
+
+									<ul class="mt-4 flex flex-wrap gap-2">
+										{
+											newsletter.topics.map((topic) => (
+												<li class="rounded-full bg-green-100 px-3 py-1 text-sm font-semibold text-green-800">
+													{topic}
+												</li>
+											))
+										}
+									</ul>
+								</div>
+
+								<div class="flex flex-col gap-2">
+									<a
+										href={newsletter.pdfUrl}
+										class="inline-flex items-center justify-center gap-2 rounded-2xl bg-green-800 px-6 py-3 font-semibold whitespace-nowrap text-white transition hover:bg-green-900"
+									>
+										<Download class="h-4 w-4" />
+										<span>Download PDF</span>
+									</a>
+									<a
+										href={newsletter.readUrl}
+										class="inline-flex items-center justify-center rounded-2xl border-2 border-green-800 px-6 py-3 font-semibold whitespace-nowrap text-green-800 transition hover:bg-green-50"
+									>
+										Read Online
+									</a>
+								</div>
+							</div>
+						</article>
+					))
+				}
+			</div>
+		</section>
+
+		<section class="rounded-4xl border border-green-700 bg-green-50 p-6 sm:p-8">
+			<h2 class="text-2xl font-bold tracking-tight text-stone-900">
+				Contribute to the Newsletter
+			</h2>
+			<p class="mt-3 max-w-3xl leading-8 text-stone-700">
+				We welcome contributions from community members. Share growing success stories,
+				favourite recipes, practical tips, or photos for future editions.
+			</p>
+			<a
+				href="/contact"
+				class="mt-6 inline-flex items-center justify-center rounded-2xl bg-green-800 px-8 py-3 font-semibold text-white transition hover:bg-green-900"
+			>
+				Submit Content
+			</a>
+		</section>
+	</div>
 </SiteLayout>
