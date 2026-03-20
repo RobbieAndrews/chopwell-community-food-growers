@@ -1,10 +1,273 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
+import {
+	Mail,
+	MapPin,
+	Phone,
+	Send,
+} from '@lucide/astro';
+
+const contactDetails = [
+	{
+		title: 'Email',
+		icon: 'mail',
+		content: 'info@chopwellgrowers.org',
+		href: 'mailto:info@chopwellgrowers.org',
+		extra: '',
+	},
+	{
+		title: 'Phone',
+		icon: 'phone',
+		content: '01234 567 890',
+		href: 'tel:01234567890',
+		extra: 'Mon-Fri, 9am-5pm',
+	},
+	{
+		title: 'Location',
+		icon: 'map-pin',
+		content: 'Community Allotment Site\nGreen Lane\nChopwell\nNE17 7XX',
+		href: '',
+		extra: '',
+	},
+] as const;
+
+const socialLinks = [
+	{ label: 'Facebook', href: '#', shortLabel: 'Fb' },
+	{ label: 'Instagram', href: '#', shortLabel: 'Ig' },
+	{ label: 'Twitter', href: '#', shortLabel: 'X' },
+] as const;
+
+const accessHours = [
+	{ day: 'Monday - Friday', hours: 'Dawn - Dusk' },
+	{ day: 'Saturday', hours: '8am - 6pm' },
+	{ day: 'Sunday', hours: '9am - 5pm' },
+] as const;
+
+const travelOptions = [
+	{
+		title: 'By Car',
+		description:
+			'Free parking is available on Green Lane. Please be considerate of local residents.',
+	},
+	{
+		title: 'By Bus',
+		description: 'Routes 47 and 48 stop at Chopwell Centre, around a 5-minute walk away.',
+	},
+	{
+		title: 'By Bike',
+		description: 'Bike racks are available at the entrance and the site is cycle-accessible.',
+	},
+] as const;
+
+const faqLinks = [
+	{
+		title: 'How do I join?',
+		description: 'Learn about membership and getting started.',
+		href: '/get-involved',
+	},
+	{
+		title: 'Are plots available?',
+		description: 'Check current plot availability and the waiting list.',
+		href: '/projects/community-allotment',
+	},
+	{
+		title: 'What are the costs?',
+		description: 'Read more about membership fees and plot rental information.',
+		href: '/get-involved',
+	},
+	{
+		title: 'Can I visit first?',
+		description: 'Arrange a site visit and meet current members.',
+		href: '/contact',
+	},
+] as const;
+
+const iconMap = {
+	mail: Mail,
+	phone: Phone,
+	'map-pin': MapPin,
+};
 ---
 
 <SiteLayout title="Contact">
-	<h1 class="text-4xl font-bold tracking-tight text-stone-900">Contact</h1>
-	<p class="mt-4 max-w-2xl text-lg leading-8 text-stone-700">
-		Use this page for contact information, enquiry details, and social links.
-	</p>
+	<div class="space-y-8">
+		<section class="rounded-4xl bg-linear-to-br from-stone-50 via-lime-50/70 to-emerald-100/60 px-5 py-8 sm:px-8 sm:py-12">
+			<div class="max-w-3xl">
+				<h1 class="text-4xl font-bold tracking-tight text-stone-900 sm:text-5xl">
+					Contact Us
+				</h1>
+				<p class="mt-4 max-w-2xl text-lg leading-8 text-stone-700">
+					Get in touch with Chopwell Community Food Growers and let us know how we can
+					help.
+				</p>
+			</div>
+		</section>
+
+		<section class="grid gap-8 md:grid-cols-2">
+			<div class="rounded-4xl border border-stone-200 bg-white p-6 shadow-sm sm:p-8">
+				<h2 class="text-2xl font-bold tracking-tight text-stone-900">Send us a Message</h2>
+				<form class="mt-6 space-y-4">
+					<div>
+						<label for="name" class="block text-sm font-semibold text-stone-900">
+							Your Name
+						</label>
+						<input
+							id="name"
+							name="name"
+							type="text"
+							placeholder="John Smith"
+							class="mt-2 w-full rounded-2xl border-2 border-stone-200 px-4 py-3 text-stone-900 outline-none transition focus:border-green-800"
+						/>
+					</div>
+
+					<div>
+						<label for="email" class="block text-sm font-semibold text-stone-900">
+							Email Address
+						</label>
+						<input
+							id="email"
+							name="email"
+							type="email"
+							placeholder="john@example.com"
+							class="mt-2 w-full rounded-2xl border-2 border-stone-200 px-4 py-3 text-stone-900 outline-none transition focus:border-green-800"
+						/>
+					</div>
+
+					<div>
+						<label for="subject" class="block text-sm font-semibold text-stone-900">
+							Subject
+						</label>
+						<select
+							id="subject"
+							name="subject"
+							class="mt-2 w-full rounded-2xl border-2 border-stone-200 px-4 py-3 text-stone-900 outline-none transition focus:border-green-800"
+						>
+							<option value="">Select a subject</option>
+							<option value="membership">Membership Enquiry</option>
+							<option value="volunteer">Volunteer Opportunities</option>
+							<option value="plot">Plot Availability</option>
+							<option value="event">Event Information</option>
+							<option value="general">General Question</option>
+							<option value="other">Other</option>
+						</select>
+					</div>
+
+					<div>
+						<label for="message" class="block text-sm font-semibold text-stone-900">
+							Message
+						</label>
+						<textarea
+							id="message"
+							name="message"
+							rows="6"
+							placeholder="Tell us how we can help..."
+							class="mt-2 w-full resize-none rounded-2xl border-2 border-stone-200 px-4 py-3 text-stone-900 outline-none transition focus:border-green-800"
+						></textarea>
+					</div>
+
+					<button
+						type="submit"
+						class="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-green-800 px-4 py-3 font-semibold text-white transition hover:bg-green-900"
+					>
+						<Send class="h-5 w-5" />
+						<span>Send Message</span>
+					</button>
+				</form>
+			</div>
+
+			<div class="space-y-6">
+				<section class="rounded-4xl border border-stone-200 bg-white p-6 shadow-sm sm:p-8">
+					<h2 class="text-2xl font-bold tracking-tight text-stone-900">Get in Touch</h2>
+					<div class="mt-6 space-y-5">
+						{
+							contactDetails.map((item) => {
+								const Icon = iconMap[item.icon];
+
+								return (
+									<div class="flex items-start gap-4">
+										<div class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-green-100 text-green-800">
+											<Icon class="h-6 w-6" />
+										</div>
+										<div>
+											<h3 class="font-semibold text-stone-900">{item.title}</h3>
+											{
+												item.href ? (
+													<a
+														href={item.href}
+														class="mt-1 inline-block text-green-800 transition hover:underline"
+													>
+														{item.content}
+													</a>
+												) : (
+													<p class="mt-1 whitespace-pre-line text-stone-700">{item.content}</p>
+												)
+											}
+											{
+												item.extra ? (
+													<p class="mt-1 text-sm text-stone-600">{item.extra}</p>
+												) : null
+											}
+										</div>
+									</div>
+								);
+							})
+						}
+					</div>
+				</section>
+
+				<section class="rounded-4xl bg-linear-to-br from-green-100 to-lime-100 p-6 ring-1 ring-green-300 sm:p-8">
+					<h2 class="text-xl font-bold tracking-tight text-stone-900">Follow Us</h2>
+					<p class="mt-3 leading-7 text-stone-700">
+						Stay connected on social media for updates, photos, and seasonal tips.
+					</p>
+					<div class="mt-5 flex gap-3">
+						{
+							socialLinks.map((link) => (
+								<a
+									href={link.href}
+									aria-label={link.label}
+									class="flex h-12 w-12 items-center justify-center rounded-full bg-white text-sm font-semibold text-green-800 transition hover:bg-green-50"
+								>
+									{link.shortLabel}
+								</a>
+							))
+						}
+					</div>
+				</section>
+
+				<section class="rounded-4xl border border-stone-200 bg-white p-6 shadow-sm sm:p-8">
+					<h2 class="text-xl font-bold tracking-tight text-stone-900">Site Access Hours</h2>
+					<div class="mt-5 space-y-3 text-stone-700">
+						{
+							accessHours.map((entry) => (
+								<div class="flex items-center justify-between gap-4">
+									<span class="font-semibold">{entry.day}</span>
+									<span>{entry.hours}</span>
+								</div>
+							))
+						}
+					</div>
+				</section>
+			</div>
+		</section>
+
+		<section class="rounded-4xl border border-amber-200 bg-amber-50 p-6 sm:p-8">
+			<h2 class="text-2xl font-bold tracking-tight text-stone-900">
+				Frequently Asked Questions
+			</h2>
+			<div class="mt-5 grid gap-4 md:grid-cols-2">
+				{
+					faqLinks.map((item) => (
+						<a
+							href={item.href}
+							class="rounded-3xl bg-white p-4 text-left transition hover:shadow-md"
+						>
+							<h3 class="font-semibold text-green-800">{item.title}</h3>
+							<p class="mt-1 text-sm leading-6 text-stone-600">{item.description}</p>
+						</a>
+					))
+				}
+			</div>
+		</section>
+	</div>
 </SiteLayout>
