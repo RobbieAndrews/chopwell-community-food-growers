@@ -1,41 +1,13 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
-import {
-	ArrowRight,
-	House,
-	Leaf,
-	Utensils,
-} from '@lucide/astro';
+import { ArrowRight, House, Leaf, Utensils } from '@lucide/astro';
+import { projects } from '../data/projects';
 
-const projects = [
-	{
-		id: 'allotment',
-		title: 'Community Allotment',
-		description:
-			'Our main growing space brings people together to plant, learn, and share the harvest across the seasons.',
-		imageUrl:
-			'https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?auto=format&fit=crop&w=1200&q=80',
-		icon: Leaf,
-	},
-	{
-		id: 'backyard',
-		title: 'Backyard Project',
-		description:
-			'Helping residents turn patios, yards, and tucked-away corners into productive growing spaces.',
-		imageUrl:
-			'https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&w=1200&q=80',
-		icon: House,
-	},
-	{
-		id: 'preserving',
-		title: 'Preserving & Recipes',
-		description:
-			'Traditional preserving skills, shared recipes, and practical workshops for making the most of every crop.',
-		imageUrl:
-			'https://images.unsplash.com/photo-1471193945509-9ad0617afabf?auto=format&fit=crop&w=1200&q=80',
-		icon: Utensils,
-	},
-];
+const iconMap = {
+	leaf: Leaf,
+	house: House,
+	utensils: Utensils,
+};
 ---
 
 <SiteLayout title="Projects">
@@ -55,11 +27,11 @@ const projects = [
 		<div class="grid gap-5 md:grid-cols-3">
 			{
 				projects.map((project) => {
-					const Icon = project.icon;
+					const Icon = iconMap[project.icon];
 
 					return (
 						<a
-							href={`#${project.id}`}
+							href={`/projects/${project.slug}`}
 							class="group overflow-hidden rounded-4xl border border-stone-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl"
 						>
 							<div class="relative aspect-4/3 overflow-hidden">
@@ -76,15 +48,15 @@ const projects = [
 									<div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-green-100 text-green-900">
 										<Icon class="h-6 w-6" />
 									</div>
-									<div class="min-w-0 flex-1">
-										<h2 class="text-2xl font-bold tracking-tight text-stone-900">
-											{project.title}
-										</h2>
-										<p class="mt-3 text-base leading-7 text-stone-700">
-											{project.description}
-										</p>
-									</div>
+                                    <h2 class="text-2xl font-bold tracking-tight text-stone-900">
+                                        {project.title}
+                                    </h2>
 								</div>
+                                <div class="min-w-0 flex-1">
+                                    <p class="mt-3 text-base leading-7 text-stone-700">
+                                        {project.description}
+                                    </p>
+                                </div>
 
 								<div class="mt-6 flex items-center gap-2 font-semibold text-green-900">
 									<span>Explore project</span>
