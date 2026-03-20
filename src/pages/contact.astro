@@ -43,22 +43,6 @@ const accessHours = [
 	{ day: 'Sunday', hours: '9am - 5pm' },
 ] as const;
 
-const travelOptions = [
-	{
-		title: 'By Car',
-		description:
-			'Free parking is available on Green Lane. Please be considerate of local residents.',
-	},
-	{
-		title: 'By Bus',
-		description: 'Routes 47 and 48 stop at Chopwell Centre, around a 5-minute walk away.',
-	},
-	{
-		title: 'By Bike',
-		description: 'Bike racks are available at the entrance and the site is cycle-accessible.',
-	},
-] as const;
-
 const faqLinks = [
 	{
 		title: 'How do I join?',
@@ -185,7 +169,7 @@ const iconMap = {
 
 								return (
 									<div class="flex items-start gap-4">
-										<div class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-green-100 text-green-800">
+										<div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-green-100 text-green-800">
 											<Icon class="h-6 w-6" />
 										</div>
 										<div>
