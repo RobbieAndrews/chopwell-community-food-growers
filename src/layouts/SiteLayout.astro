@@ -1,0 +1,156 @@
+---
+import "../styles/global.css";
+import { Sprout } from "@lucide/astro";
+
+interface Props {
+    title: string;
+}
+
+const { title } = Astro.props;
+const siteTitle = "Chopwell Community Food Growers";
+const pathname = Astro.url.pathname;
+const navLinks = [
+    { href: "/projects", label: "Projects" },
+    { href: "/calendar", label: "Calendar" },
+    { href: "/newsletter", label: "Newsletter" },
+    { href: "/get-involved", label: "Get Involved" },
+    { href: "/contact", label: "Contact" },
+    { href: "/useful-links", label: "Useful Links" },
+];
+---
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel="icon" href="/favicon.ico" />
+        <meta name="viewport" content="width=device-width" />
+        <meta name="generator" content={Astro.generator} />
+        <title>{title} | {siteTitle}</title>
+    </head>
+    <body>
+        <div class="min-h-screen">
+            <header
+                class="border-b border-stone-300/80 bg-white/80 backdrop-blur"
+            >
+                <div class="mx-auto max-w-6xl px-4 py-4 sm:px-6 sm:py-5">
+                    <div class="md:hidden">
+                        <details class="group">
+                            <summary
+                                class="flex w-full cursor-pointer list-none items-center gap-3 text-stone-800"
+                            >
+                                <span class="sr-only"
+                                    >Toggle navigation menu</span
+                                >
+                                <span
+                                    class="flex rounded-full  bg-stone-50 p-3 transition hover:bg-stone-100"
+                                >
+                                    <span class="flex flex-col gap-1.5">
+                                        <span
+                                            class="block h-0.5 w-5 rounded-full bg-current transition group-open:translate-y-2 group-open:rotate-45"
+                                        ></span>
+                                        <span
+                                            class="block h-0.5 w-5 rounded-full bg-current transition group-open:opacity-0"
+                                        ></span>
+                                        <span
+                                            class="block h-0.5 w-5 rounded-full bg-current transition group-open:-translate-y-2 group-open:-rotate-45"
+                                        ></span>
+                                    </span>
+                                </span>
+                                <span
+                                    class="flex items-center gap-2 text-base font-semibold tracking-tight text-green-800"
+                                >
+                                    <Sprout />
+                                    <span>{siteTitle}</span>
+                                </span>
+                            </summary>
+                            <nav aria-label="Primary navigation" class="pt-4">
+                                <ul class="flex flex-col gap-2">
+                                    {
+                                        navLinks.map(({ href, label }) => {
+                                            const isActive = pathname === href;
+
+                                            return (
+                                                <li class="rounded-lg hover:bg-stone-100">
+                                                    <a
+                                                        href={href}
+                                                        aria-current={
+                                                            isActive
+                                                                ? "page"
+                                                                : undefined
+                                                        }
+                                                        class:list={[
+                                                            "block rounded-full px-4 py-2 text-sm font-medium text-stone-800 transition",
+                                                            isActive
+                                                                ? "font-bold"
+                                                                : "",
+                                                        ]}
+                                                    >
+                                                        {label}
+                                                    </a>
+                                                </li>
+                                            );
+                                        })
+                                    }
+                                </ul>
+                            </nav>
+                        </details>
+                    </div>
+
+                    <div
+                        class="hidden items-center justify-between gap-4 md:flex"
+                    >
+                        <a
+                            href="/"
+                            class="flex items-center gap-2 text-lg font-semibold tracking-tight text-green-800 transition"
+                        >
+                            <div>
+                                <Sprout />
+                            </div>
+                            {siteTitle}
+                        </a>
+
+                        <nav aria-label="Primary navigation">
+                            <ul class="flex flex-wrap gap-x-2 gap-y-2">
+                                {
+                                    navLinks.map(({ href, label }) => {
+                                        const isActive = pathname === href;
+
+                                        return (
+                                            <li class="rounded-lg hover:bg-stone-100">
+                                                <a
+                                                    href={href}
+                                                    aria-current={
+                                                        isActive
+                                                            ? "page"
+                                                            : undefined
+                                                    }
+                                                    class:list={[
+                                                        "block rounded-full px-4 py-2 text-sm font-medium text-stone-800 transition",
+                                                        isActive
+                                                            ? "font-bold"
+                                                            : "",
+                                                    ]}
+                                                >
+                                                    {label}
+                                                </a>
+                                            </li>
+                                        );
+                                    })
+                                }
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </header>
+
+            <main class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+                <div
+                    class="rounded-4xl border border-stone-200/80 bg-white/85 p-8 shadow-sm shadow-stone-300/40"
+                >
+                    <slot />
+                </div>
+            </main>
+        </div>
+    </body>
+</html>
