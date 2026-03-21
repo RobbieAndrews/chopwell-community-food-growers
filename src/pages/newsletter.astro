@@ -1,50 +1,7 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
-import { Archive, Download, Mail } from '@lucide/astro';
-
-const newsletters = [
-	{
-		title: 'Spring Edition 2026',
-		date: 'March 2026',
-		preview:
-			'Spring is here. Read about new plot allocations, upcoming workshops, and seasonal growing tips.',
-		topics: [
-			'Plot Allocations',
-			'Spring Planting Guide',
-			'Member Spotlight',
-			'Upcoming Events',
-		],
-		pdfUrl: '#',
-		readUrl: '#',
-	},
-	{
-		title: 'Winter Harvest 2025',
-		date: 'December 2025',
-		preview:
-			'Celebrating a year of growth with community achievements, winter growing tips, and holiday recipes.',
-		topics: ['Year in Review', 'Winter Vegetables', 'Holiday Recipes', 'AGM Announcement'],
-		pdfUrl: '#',
-		readUrl: '#',
-	},
-	{
-		title: 'Autumn Newsletter 2025',
-		date: 'September 2025',
-		preview:
-			'Harvest time brings preserving ideas, seed saving advice, and autumn planting schedules.',
-		topics: ['Harvest Festival', 'Seed Saving Workshop', 'Composting Tips', 'Autumn Events'],
-		pdfUrl: '#',
-		readUrl: '#',
-	},
-] as const;
-
-const issueHighlights = [
-	'Welcome message from the coordinator',
-	'New member profiles and success stories',
-	'Spring planting calendar and tips',
-	'Workshop schedule for the quarter',
-	'Recipe of the month: spring greens salad',
-	'Community news and achievements',
-] as const;
+import { Archive, Mail } from '@lucide/astro';
+import { newsletters } from '../data/newsletters';
 ---
 
 <SiteLayout title="Newsletter">
@@ -75,7 +32,7 @@ const issueHighlights = [
 					<input
 						type="email"
 						placeholder="Enter your email address"
-						class="min-w-0 flex-1 rounded-2xl px-4 py-3 text-stone-900 outline-none"
+						class="min-w-0 flex-1 rounded-2xl bg-white px-4 py-3 text-stone-900 placeholder-stone-500 outline-none ring-1 ring-white/60"
 					/>
 					<button
 						type="submit"
@@ -102,11 +59,16 @@ const issueHighlights = [
 				{
 					newsletters.map((newsletter) => (
 						<article class="rounded-4xl border-2 border-stone-200 p-6 transition hover:shadow-lg">
-							<div class="flex flex-col gap-4 md:flex-row md:justify-between">
+							<div class="flex flex-col gap-4">
 								<div class="flex-1">
 									<div class="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
 										<h3 class="text-2xl font-bold tracking-tight text-stone-900">
-											{newsletter.title}
+											<a
+												href={`/newsletter/${newsletter.slug}`}
+												class="transition hover:text-green-800"
+											>
+												{newsletter.title}
+											</a>
 										</h3>
 										<p class="text-sm text-stone-500">{newsletter.date}</p>
 									</div>
@@ -122,22 +84,6 @@ const issueHighlights = [
 											))
 										}
 									</ul>
-								</div>
-
-								<div class="flex flex-col gap-2">
-									<a
-										href={newsletter.pdfUrl}
-										class="inline-flex items-center justify-center gap-2 rounded-2xl bg-green-800 px-6 py-3 font-semibold whitespace-nowrap text-white transition hover:bg-green-900"
-									>
-										<Download class="h-4 w-4" />
-										<span>Download PDF</span>
-									</a>
-									<a
-										href={newsletter.readUrl}
-										class="inline-flex items-center justify-center rounded-2xl border-2 border-green-800 px-6 py-3 font-semibold whitespace-nowrap text-green-800 transition hover:bg-green-50"
-									>
-										Read Online
-									</a>
 								</div>
 							</div>
 						</article>
