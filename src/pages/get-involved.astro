@@ -1,90 +1,29 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
-import {
-	BookOpen,
-	Calendar,
-	Heart,
-	Sprout,
-	Users,
-	Wrench,
-} from '@lucide/astro';
+import { PortableText } from 'astro-portabletext';
+import type { TypedObject } from 'astro-portabletext/types';
+import { sanityClient } from 'sanity:client';
+import { projectIconMap, type ProjectIcon } from '../lib/projectIcons';
 
-const opportunities = [
-	{
-		title: 'Plot Holder',
-		icon: 'sprout',
-		commitment: 'Ongoing',
-		description: 'Grow your own produce on one of our community allotment plots.',
-		requirements: [
-			'Basic commitment to maintain a plot',
-			'Attendance at quarterly meetings',
-			'Annual membership fee',
-		],
-		cardClass: 'from-green-100 to-green-200 ring-green-300',
-	},
-	{
-		title: 'Workshop Leader',
-		icon: 'book-open',
-		commitment: '2-4 hours per month',
-		description:
-			'Share your expertise by leading workshops on growing, cooking, or preserving.',
-		requirements: [
-			'Knowledge in a specific area',
-			'Good communication skills',
-			'Preparation time for sessions',
-		],
-		cardClass: 'from-sky-100 to-blue-200 ring-blue-300',
-	},
-	{
-		title: 'Event Organiser',
-		icon: 'calendar',
-		commitment: '4-6 hours per month',
-		description:
-			'Help plan and coordinate community events, socials, and working parties.',
-		requirements: [
-			'Organisational skills',
-			'Flexibility with scheduling',
-			'Team player attitude',
-		],
-		cardClass: 'from-violet-100 to-fuchsia-100 ring-violet-300',
-	},
-	{
-		title: 'Maintenance Volunteer',
-		icon: 'wrench',
-		commitment: 'Flexible',
-		description: 'Help maintain shared spaces, tools, and infrastructure.',
-		requirements: [
-			'Basic DIY skills are helpful',
-			'Physical ability for outdoor work',
-			'Reliable attendance',
-		],
-		cardClass: 'from-amber-100 to-orange-200 ring-orange-300',
-	},
-	{
-		title: 'Mentor',
-		icon: 'users',
-		commitment: '1-2 hours per week',
-		description: 'Guide new members and beginners through their growing journey.',
-		requirements: [
-			'Growing experience',
-			'Patient and supportive approach',
-			'Regular availability',
-		],
-		cardClass: 'from-yellow-100 to-lime-100 ring-yellow-300',
-	},
-	{
-		title: 'Committee Member',
-		icon: 'heart',
-		commitment: '3-5 hours per month',
-		description: 'Join the steering committee and help guide the organisation.',
-		requirements: [
-			'Commitment to meetings',
-			'Decision-making responsibility',
-			'Strategic thinking',
-		],
-		cardClass: 'from-rose-100 to-pink-100 ring-pink-300',
-	},
-] as const;
+interface VolunteerOpportunity {
+	title: string;
+	icon: ProjectIcon;
+	timeCommitment: string;
+	description: TypedObject[];
+}
+
+const VOLUNTEER_OPPORTUNITIES_QUERY = `*[
+	_type == "volunteerOpportunity"
+]|order(title asc){
+	title,
+	icon,
+	timeCommitment,
+	description
+}`;
+
+const opportunities = await sanityClient.fetch<VolunteerOpportunity[]>(
+	VOLUNTEER_OPPORTUNITIES_QUERY
+);
 
 const steps = [
 	{
@@ -128,14 +67,6 @@ const stories = [
 	},
 ] as const;
 
-const iconMap = {
-	sprout: Sprout,
-	'book-open': BookOpen,
-	calendar: Calendar,
-	wrench: Wrench,
-	users: Users,
-	heart: Heart,
-};
 ---
 
 <SiteLayout title="Get Involved">
@@ -178,61 +109,50 @@ const iconMap = {
 
 		<section>
 			<h2 class="text-2xl font-bold tracking-tight text-stone-900">Volunteer Opportunities</h2>
-			<div class="mt-6 grid gap-5 md:grid-cols-2">
-				{
-					opportunities.map((opportunity) => {
-						const Icon = iconMap[opportunity.icon];
+			{
+				opportunities.length ? (
+					<div class="mt-6 grid gap-5 md:grid-cols-2">
+						{
+							opportunities.map((opportunity) => {
+								const Icon = projectIconMap[opportunity.icon] ?? projectIconMap.users;
 
-						return (
-							<article
-								class:list={[
-									'rounded-4xl bg-linear-to-br p-6 ring-1 shadow-sm transition duration-300 hover:shadow-lg',
-									opportunity.cardClass,
-								]}
-							>
-								<div class="flex items-start gap-4">
-									<div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white text-green-800">
-										<Icon class="h-6 w-6" />
-									</div>
-									<div class="min-w-0 flex-1">
-										<h3 class="text-2xl font-bold tracking-tight text-stone-900">
-											{opportunity.title}
-										</h3>
-										<p class="mt-1 text-sm font-semibold text-stone-600">
-											Time commitment: {opportunity.commitment}
-										</p>
-									</div>
-								</div>
+								return (
+									<article class="rounded-4xl bg-linear-to-br from-stone-50 to-lime-50 p-6 ring-1 ring-stone-200 shadow-sm transition duration-300 hover:shadow-lg">
+										<div class="flex items-start gap-4">
+											<div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white text-green-800">
+												<Icon class="h-6 w-6" />
+											</div>
+											<div class="min-w-0 flex-1">
+												<h3 class="text-2xl font-bold tracking-tight text-stone-900">
+													{opportunity.title}
+												</h3>
+												<p class="mt-1 text-sm font-semibold text-stone-600">
+													Time commitment: {opportunity.timeCommitment}
+												</p>
+											</div>
+										</div>
 
-								<p class="mt-5 text-base leading-7 text-stone-700">
-									{opportunity.description}
-								</p>
+										<div class="portable-content mt-5 max-w-none">
+											<PortableText value={opportunity.description} />
+										</div>
 
-								<div class="mt-5">
-									<p class="text-sm font-semibold text-stone-900">What you'll need</p>
-									<ul class="mt-3 space-y-2 text-sm leading-6 text-stone-700">
-										{
-											opportunity.requirements.map((requirement) => (
-												<li class="flex items-start gap-2">
-													<span class="mt-0.5 text-green-800">-</span>
-													<span>{requirement}</span>
-												</li>
-											))
-										}
-									</ul>
-								</div>
-
-								<a
-									href="/contact"
-									class="mt-6 inline-flex w-full items-center justify-center rounded-2xl bg-green-800 px-4 py-3 text-center font-semibold text-white transition hover:bg-green-900"
-								>
-									Express Interest
-								</a>
-							</article>
-						);
-					})
-				}
-			</div>
+										<a
+											href="/contact"
+											class="mt-6 inline-flex w-full items-center justify-center rounded-2xl bg-green-800 px-4 py-3 text-center font-semibold text-white transition hover:bg-green-900"
+										>
+											Express Interest
+										</a>
+									</article>
+								);
+							})
+						}
+					</div>
+				) : (
+					<div class="mt-6 rounded-4xl border border-dashed border-stone-300 bg-stone-50 p-8 text-center text-stone-700">
+						Add some `Volunteer Opportunity` documents in Sanity Studio and they will appear here.
+					</div>
+				)
+			}
 		</section>
 
 		<section class="rounded-4xl border border-stone-200 bg-white p-6 shadow-sm sm:p-8">

@@ -17,3 +17,65 @@ body {
 	color: #25321b;
 	font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
+
+.portable-content {
+	color: #44403c;
+	font-size: 1rem;
+	line-height: 1.75;
+}
+
+.portable-content > * {
+	margin: 0;
+}
+
+.portable-content > * + * {
+	margin-top: 1rem;
+}
+
+.portable-content p:empty {
+	display: none;
+}
+
+.portable-content h1,
+.portable-content h2,
+.portable-content h3,
+.portable-content h4 {
+	color: #1c1917;
+	font-weight: 700;
+	line-height: 1.25;
+}
+
+.portable-content h1 {
+	font-size: 1.875rem;
+}
+
+.portable-content h2 {
+	font-size: 1.5rem;
+}
+
+.portable-content h3 {
+	font-size: 1.25rem;
+}
+
+.portable-content ul,
+.portable-content ol {
+	padding-left: 1.5rem;
+}
+
+.portable-content ul {
+	list-style: disc;
+}
+
+.portable-content ol {
+	list-style: decimal;
+}
+
+.portable-content li + li {
+	margin-top: 0.35rem;
+}
+
+.portable-content a {
+	color: #166534;
+	text-decoration: underline;
+	text-underline-offset: 0.18em;
+}
