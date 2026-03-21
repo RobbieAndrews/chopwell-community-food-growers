@@ -1,28 +1,59 @@
 ---
 import SiteLayout from '../../layouts/SiteLayout.astro';
-import { ArrowLeft, House, Leaf, Utensils } from '@lucide/astro';
-import { projects, type Project } from '../../data/projects';
+import { ArrowLeft } from '@lucide/astro';
+import { PortableText } from 'astro-portabletext';
+import type { TypedObject } from 'astro-portabletext/types';
+import { sanityClient } from 'sanity:client';
+import { projectIconMap, type ProjectIcon } from '../../lib/projectIcons';
+import { urlForImage, type SanityImageWithAlt } from '../../lib/sanity';
 
-export function getStaticPaths() {
-	return projects.map((project) => ({
-		params: { slug: project.slug },
-		props: { project },
-	}));
+interface ProjectPage {
+	_id: string;
+	title: string;
+	slug: { current: string };
+	headline: string;
+	icon: ProjectIcon;
+	mainImage?: SanityImageWithAlt;
+	body?: TypedObject[];
 }
 
-interface Props {
-	project: Project;
+export async function getStaticPaths(): Promise<{ params: { slug: string } }[]> {
+	const PROJECT_SLUGS_QUERY = `*[
+		_type == "project"
+		&& defined(slug.current)
+	]{
+		"params": { "slug": slug.current }
+	}`;
+
+	return await sanityClient.fetch(PROJECT_SLUGS_QUERY);
 }
 
-const { project } = Astro.props;
+const PROJECT_QUERY = `*[
+	_type == "project"
+	&& slug.current == $slug
+][0]{
+	_id,
+	title,
+	slug,
+	headline,
+	icon,
+	mainImage,
+	body
+}`;
 
-const iconMap = {
-	leaf: Leaf,
-	house: House,
-	utensils: Utensils,
-};
+const project = await sanityClient.fetch<ProjectPage | null>(PROJECT_QUERY, {
+	slug: Astro.params.slug,
+});
 
-const Icon = iconMap[project.icon];
+if (!project) {
+	return Astro.redirect('/projects');
+}
+
+const Icon = projectIconMap[project.icon] ?? projectIconMap.leaf;
+const projectImageUrl = project.mainImage
+	? urlForImage(project.mainImage)?.width(1400).height(900).fit('crop').url()
+	: null;
+const projectImageAlt = project.mainImage?.alt || project.title;
 ---
 
 <SiteLayout title={project.title}>
@@ -48,27 +79,25 @@ const Icon = iconMap[project.icon];
 					</div>
 
 					<p class="mt-6 max-w-2xl text-lg leading-8 text-stone-700">
-						{project.intro}
+						{project.headline}
 					</p>
-
-					<ul class="mt-6 flex flex-wrap gap-2">
-						{
-							project.highlights.map((highlight) => (
-								<li class="rounded-full bg-lime-100 px-3 py-1 text-sm font-medium text-green-900">
-									{highlight}
-								</li>
-							))
-						}
-					</ul>
 				</div>
 
 				<div class="min-h-full">
-					<img
-						src={project.imageUrl}
-						alt={project.title}
-						loading="lazy"
-						class="h-full min-h-72 w-full object-cover"
-					/>
+					{
+						projectImageUrl ? (
+							<img
+								src={projectImageUrl}
+								alt={projectImageAlt}
+								loading="lazy"
+								class="h-full min-h-72 w-full object-cover"
+							/>
+						) : (
+							<div class="flex h-full min-h-72 items-center justify-center bg-linear-to-br from-lime-100 via-stone-50 to-emerald-100 text-green-900">
+								<Icon class="h-16 w-16" />
+							</div>
+						)
+					}
 				</div>
 			</div>
 		</section>
@@ -76,13 +105,18 @@ const Icon = iconMap[project.icon];
 		<section>
 			<div class="rounded-4xl border border-stone-200 bg-white p-6 shadow-sm sm:p-8">
 				<h2 class="text-2xl font-bold tracking-tight text-stone-900">About this project</h2>
-				<div class="mt-5 space-y-4 text-base leading-8 text-stone-700">
-					{
-						project.details.map((paragraph) => (
-							<p>{paragraph}</p>
-						))
-					}
-				</div>
+				{
+					Array.isArray(project.body) && project.body.length ? (
+						<div class="prose prose-stone mt-5 max-w-none">
+							<PortableText value={project.body} />
+						</div>
+					) : (
+						<p class="mt-5 text-base leading-8 text-stone-700">
+							Project content can be added in Sanity whenever you are ready. For now this page
+							is using the project name, short description, icon, slug, and main image.
+						</p>
+					)
+				}
 			</div>
 		</section>
 	</div>

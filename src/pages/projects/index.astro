@@ -1,0 +1,115 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { ArrowRight } from '@lucide/astro';
+import { sanityClient } from 'sanity:client';
+import { projectIconMap, type ProjectIcon } from '../../lib/projectIcons';
+import { urlForImage, type SanityImageWithAlt } from '../../lib/sanity';
+
+interface ProjectCard {
+	_id: string;
+	title: string;
+	slug: { current: string };
+	headline: string;
+	icon: ProjectIcon;
+	mainImage?: SanityImageWithAlt;
+}
+
+const PROJECTS_QUERY = `*[
+	_type == "project"
+	&& defined(slug.current)
+]|order(title asc){
+	_id,
+	title,
+	slug,
+	headline,
+	icon,
+	mainImage
+}`;
+
+const projectDocuments = await sanityClient.fetch<ProjectCard[]>(PROJECTS_QUERY);
+
+const projects = projectDocuments.map((project) => ({
+	...project,
+	imageUrl: project.mainImage
+		? urlForImage(project.mainImage)?.width(900).height(680).fit('crop').url()
+		: null,
+	imageAlt: project.mainImage?.alt || project.title,
+}));
+---
+
+<SiteLayout title="Projects">
+	<section class="rounded-4xl bg-linear-to-br from-stone-50 via-lime-50/70 to-emerald-100/60 px-5 py-8 sm:px-8 sm:py-12">
+		<div class="max-w-3xl">
+			<h1 class="text-4xl font-bold tracking-tight text-stone-900 sm:text-5xl">
+				Community Projects
+			</h1>
+			<p class="mt-4 max-w-2xl text-lg leading-8 text-stone-700">
+				Explore the growing spaces, shared skills, and practical projects helping Chopwell
+				build a stronger local food community.
+			</p>
+		</div>
+	</section>
+
+	<section class="mt-8">
+		{
+			projects.length ? (
+				<div class="grid gap-5 md:grid-cols-3">
+			{
+				projects.map((project) => {
+					const Icon = projectIconMap[project.icon] ?? projectIconMap.leaf;
+
+					return (
+						<a
+							href={`/projects/${project.slug.current}`}
+							class="group overflow-hidden rounded-4xl border border-stone-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl"
+						>
+							<div class="relative aspect-4/3 overflow-hidden">
+								{
+									project.imageUrl ? (
+										<img
+											src={project.imageUrl}
+											alt={project.imageAlt}
+											loading="lazy"
+											class="h-full w-full object-cover"
+										/>
+									) : (
+										<div class="flex h-full w-full items-center justify-center bg-linear-to-br from-lime-100 via-stone-50 to-emerald-100 text-green-900">
+											<Icon class="h-12 w-12" />
+										</div>
+									)
+								}
+							</div>
+
+							<div class="p-5 sm:p-6">
+								<div class="flex items-start gap-4">
+									<div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-green-100 text-green-900">
+										<Icon class="h-6 w-6" />
+									</div>
+                                    <h2 class="text-2xl font-bold tracking-tight text-stone-900">
+                                        {project.title}
+                                    </h2>
+								</div>
+                                <div class="min-w-0 flex-1">
+                                    <p class="mt-3 text-base leading-7 text-stone-700">
+                                        {project.headline}
+                                    </p>
+                                </div>
+
+								<div class="mt-6 flex items-center gap-2 font-semibold text-green-900">
+									<span>Explore project</span>
+									<ArrowRight class="h-4 w-4 transition group-hover:translate-x-1" />
+								</div>
+							</div>
+						</a>
+					);
+				})
+			}
+				</div>
+			) : (
+				<div class="rounded-4xl border border-dashed border-stone-300 bg-stone-50 p-8 text-center text-stone-700">
+					There are currently no ongoing projects, check back soon.
+				</div>
+			)
+		}
+	</section>
+</SiteLayout>
