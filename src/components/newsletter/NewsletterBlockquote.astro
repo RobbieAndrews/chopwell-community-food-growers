@@ -1,0 +1,9 @@
+---
+import type {BlockProps} from 'astro-portabletext/types';
+
+const { children } = Astro.props as BlockProps;
+---
+
+<blockquote class="my-8 rounded-r-3xl border-l-4 border-green-700 bg-lime-50 px-6 py-5 text-xl leading-8 font-medium italic text-stone-800">
+	<slot />
+</blockquote>

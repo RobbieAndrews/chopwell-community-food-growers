@@ -1,0 +1,9 @@
+---
+import type {ListItemProps} from 'astro-portabletext/types';
+
+const { children } = Astro.props as ListItemProps;
+---
+
+<li class="pl-1">
+	<slot />
+</li>

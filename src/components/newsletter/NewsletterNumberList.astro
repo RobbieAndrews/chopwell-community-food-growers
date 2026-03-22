@@ -1,0 +1,9 @@
+---
+import type {ListProps} from 'astro-portabletext/types';
+
+const { children } = Astro.props as ListProps;
+---
+
+<ol class="my-6 ml-6 list-decimal space-y-3 text-lg leading-8 text-stone-700 marker:font-semibold marker:text-green-800">
+	<slot />
+</ol>

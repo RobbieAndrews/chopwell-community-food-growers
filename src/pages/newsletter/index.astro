@@ -1,7 +1,35 @@
 ---
-import SiteLayout from '../layouts/SiteLayout.astro';
+import SiteLayout from '../../layouts/SiteLayout.astro';
 import { Archive, Mail } from '@lucide/astro';
-import { newsletters } from '../data/newsletters';
+import { sanityClient } from 'sanity:client';
+
+interface NewsletterArchiveCard {
+	_id: string;
+	title: string;
+	slug: { current: string };
+	publishedAt: string;
+	excerpt: string;
+	topics?: string[];
+}
+
+const NEWSLETTER_ARCHIVE_QUERY = `*[
+	_type == "newsletterIssue"
+	&& defined(slug.current)
+]|order(publishedAt desc){
+	_id,
+	title,
+	slug,
+	publishedAt,
+	excerpt,
+	topics
+}`;
+
+const newsletters = await sanityClient.fetch<NewsletterArchiveCard[]>(NEWSLETTER_ARCHIVE_QUERY);
+const dateFormatter = new Intl.DateTimeFormat('en-GB', {
+	day: 'numeric',
+	month: 'long',
+	year: 'numeric',
+});
 ---
 
 <SiteLayout title="Newsletter">
@@ -57,37 +85,49 @@ import { newsletters } from '../data/newsletters';
 
 			<div class="mt-6 space-y-6">
 				{
-					newsletters.map((newsletter) => (
-						<article class="rounded-4xl border-2 border-stone-200 p-6 transition hover:shadow-lg">
-							<div class="flex flex-col gap-4">
-								<div class="flex-1">
-									<div class="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
-										<h3 class="text-2xl font-bold tracking-tight text-stone-900">
-											<a
-												href={`/newsletter/${newsletter.slug}`}
-												class="transition hover:text-green-800"
-											>
-												{newsletter.title}
-											</a>
-										</h3>
-										<p class="text-sm text-stone-500">{newsletter.date}</p>
-									</div>
+					newsletters.length ? (
+						newsletters.map((newsletter) => (
+							<article class="rounded-4xl border-2 border-stone-200 p-6 transition hover:shadow-lg">
+								<div class="flex flex-col gap-4">
+									<div class="flex-1">
+										<div class="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
+											<h3 class="text-2xl font-bold tracking-tight text-stone-900">
+												<a
+													href={`/newsletter/${newsletter.slug.current}`}
+													class="transition hover:text-green-800"
+												>
+													{newsletter.title}
+												</a>
+											</h3>
+											<p class="text-sm text-stone-500">
+												{dateFormatter.format(new Date(newsletter.publishedAt))}
+											</p>
+										</div>
 
-									<p class="mt-3 text-stone-700">{newsletter.preview}</p>
+										<p class="mt-3 text-stone-700">{newsletter.excerpt}</p>
 
-									<ul class="mt-4 flex flex-wrap gap-2">
 										{
-											newsletter.topics.map((topic) => (
-												<li class="rounded-full bg-green-100 px-3 py-1 text-sm font-semibold text-green-800">
-													{topic}
-												</li>
-											))
+											newsletter.topics?.length ? (
+												<ul class="mt-4 flex flex-wrap gap-2">
+													{
+														newsletter.topics.map((topic) => (
+															<li class="rounded-full bg-green-100 px-3 py-1 text-sm font-semibold text-green-800">
+																{topic}
+															</li>
+														))
+													}
+												</ul>
+											) : null
 										}
-									</ul>
+									</div>
 								</div>
-							</div>
-						</article>
-					))
+							</article>
+						))
+					) : (
+						<div class="rounded-4xl border border-dashed border-stone-300 bg-stone-50 p-8 text-center text-stone-700">
+							No newsletter issues have been published yet. Add one in Sanity and it will appear here.
+						</div>
+					)
 				}
 			</div>
 		</section>

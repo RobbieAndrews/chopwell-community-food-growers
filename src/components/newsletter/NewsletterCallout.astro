@@ -1,0 +1,24 @@
+---
+import type {Props} from 'astro-portabletext/types';
+
+interface NewsletterCalloutNode {
+	_type: 'newsletterCallout';
+	quote: string;
+	attribution?: string;
+}
+
+type ComponentProps = Props<NewsletterCalloutNode>;
+
+const { node } = Astro.props as ComponentProps;
+---
+
+<aside class="not-prose my-8 rounded-3xl border border-green-200 bg-green-50 px-5 py-6 text-green-950 shadow-sm sm:px-6">
+	<p class="text-xl font-semibold leading-8 tracking-tight">"{node.quote}"</p>
+	{
+		node.attribution ? (
+			<p class="mt-4 text-sm font-medium uppercase tracking-[0.16em] text-green-800">
+				{node.attribution}
+			</p>
+		) : null
+	}
+</aside>
