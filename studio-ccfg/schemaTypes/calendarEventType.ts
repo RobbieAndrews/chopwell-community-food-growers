@@ -54,12 +54,6 @@ export const calendarEventType = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
-      name: 'location',
-      title: 'Location',
-      type: 'string',
-      validation: (rule) => rule.required(),
-    }),
-    defineField({
       name: 'description',
       title: 'Description',
       type: 'text',

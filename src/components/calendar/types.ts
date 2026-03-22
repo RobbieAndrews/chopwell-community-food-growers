@@ -4,7 +4,6 @@ export interface CalendarEvent {
     date: string;
     startTime: string;
     endTime: string;
-    location: string;
     category: "Workshop" | "Volunteer" | "Community" | "Maintenance";
     description: string;
 }

@@ -124,9 +124,6 @@ function DayDetailsPanel({
                             <h4 className="mt-3 text-lg font-semibold tracking-tight text-stone-900">
                                 {event.title}
                             </h4>
-                            <p className="mt-2 text-sm font-medium text-stone-600">
-                                {event.location}
-                            </p>
                             <p className="mt-3 text-sm leading-6 text-stone-700">
                                 {event.description}
                             </p>
