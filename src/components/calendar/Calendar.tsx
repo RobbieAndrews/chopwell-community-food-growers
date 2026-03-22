@@ -473,16 +473,12 @@ export default function Calendar({ events, initialMonth }: CalendarProps) {
                 <div className="flex flex-col gap-4 border-b border-stone-200 pb-5 sm:flex-row sm:items-end sm:justify-between">
                     <div>
                         <p className="text-sm font-semibold uppercase tracking-[0.24em] text-green-700">
-                            Month list
+                            Community Events
                         </p>
                         <h3 className="mt-2 text-2xl font-semibold tracking-tight text-stone-900 sm:text-3xl">
-                            Events in {getMonthLabel(visibleMonth)}
+                            {getMonthLabel(visibleMonth)}
                         </h3>
                     </div>
-                    <p className="max-w-2xl text-sm leading-6 text-stone-600 sm:text-base">
-                        A simple chronological list for the currently visible month, so people can
-                        scan everything scheduled without relying only on the grid.
-                    </p>
                 </div>
 
                 <div className="mt-6 space-y-4">
@@ -529,7 +525,7 @@ export default function Calendar({ events, initialMonth }: CalendarProps) {
                         ))
                     ) : (
                         <div className="rounded-3xl border border-dashed border-stone-300 bg-stone-50 p-5 text-sm leading-6 text-stone-600">
-                            There are no placeholder events in {getMonthLabel(visibleMonth)} yet.
+                            There are no events in {getMonthLabel(visibleMonth)} yet.
                         </div>
                     )}
                 </div>

@@ -1,9 +1,28 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
 import Calendar from '../components/calendar/Calendar';
-import { calendarEvents } from '../data/calendarEvents';
+import { sanityClient } from 'sanity:client';
+import type { CalendarEvent } from '../components/calendar/types';
+
+const CALENDAR_EVENTS_QUERY = `*[
+	_type == "calendarEvent"
+	&& defined(date)
+	&& defined(startTime)
+	&& defined(endTime)
+]|order(date asc, startTime asc){
+	"title": title,
+	"id": _id,
+	date,
+	startTime,
+	endTime,
+	location,
+	category,
+	description
+}`;
+
+const calendarEvents = await sanityClient.fetch<CalendarEvent[]>(CALENDAR_EVENTS_QUERY);
 ---
 
 <SiteLayout title="Calendar">
-		<Calendar client:load events={calendarEvents} initialMonth="2026-03-01" />
+	<Calendar client:load events={calendarEvents} />
 </SiteLayout>
