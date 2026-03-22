@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { CalendarDays, Clock3 } from "lucide-react";
 
 import {
     addMonths,
@@ -40,44 +41,6 @@ const categoryDotStyles: Record<CalendarEvent["category"], string> = {
     Community: "bg-sky-500",
     Maintenance: "bg-stone-500",
 };
-
-function CalendarMetaIcon() {
-    return (
-        <svg
-            aria-hidden="true"
-            viewBox="0 0 24 24"
-            className="h-4 w-4 text-green-700"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-        >
-            <rect x="3" y="5" width="18" height="16" rx="2" />
-            <path d="M16 3v4" />
-            <path d="M8 3v4" />
-            <path d="M3 10h18" />
-        </svg>
-    );
-}
-
-function ClockMetaIcon() {
-    return (
-        <svg
-            aria-hidden="true"
-            viewBox="0 0 24 24"
-            className="h-4 w-4 text-green-700"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-        >
-            <circle cx="12" cy="12" r="9" />
-            <path d="M12 7v5l3 2" />
-        </svg>
-    );
-}
 
 interface CalendarViewState {
     selectedDate: Date;
@@ -350,7 +313,7 @@ export default function Calendar({ events, initialMonth }: CalendarProps) {
                                 &#8249;
                             </span>
                         </button>
-                        <h2 className="min-w-[10rem] text-center text-xl font-semibold tracking-tight text-stone-900 sm:min-w-[11rem] sm:text-2xl">
+                        <h2 className="min-w-40 text-center text-xl font-semibold tracking-tight text-stone-900 sm:min-w-44 sm:text-2xl">
                             {getMonthLabel(visibleMonth)}
                         </h2>
                         <button
@@ -550,15 +513,15 @@ export default function Calendar({ events, initialMonth }: CalendarProps) {
                                         </p>
                                     </div>
                                     <AddToCalendarButton event={event} className="lg:shrink-0" />
-                                </div>
+                                    </div>
 
                                 <div className="mt-5 grid gap-3 text-sm text-stone-600 sm:grid-cols-2 xl:grid-cols-[minmax(0,16rem)_minmax(0,1fr)]">
                                     <p className="flex items-center gap-2">
-                                        <CalendarMetaIcon />
+                                        <CalendarDays className="h-4 w-4 text-green-700" aria-hidden="true" />
                                         {getShortDateLabel(parseDateKey(event.date))}
                                     </p>
                                     <p className="flex items-center gap-2">
-                                        <ClockMetaIcon />
+                                        <Clock3 className="h-4 w-4 text-green-700" aria-hidden="true" />
                                         {getTimeRangeLabel(event.startTime, event.endTime)}
                                     </p>
                                 </div>
@@ -586,7 +549,7 @@ export default function Calendar({ events, initialMonth }: CalendarProps) {
                         role="dialog"
                         aria-modal="true"
                         aria-label={`Events for ${selectedDateLabel}`}
-                        className="fixed inset-x-0 bottom-0 z-50 max-h-[78vh] overflow-y-auto rounded-t-[2rem] border border-stone-200 bg-white p-5 shadow-2xl shadow-stone-950/20"
+                        className="fixed inset-x-0 bottom-0 z-50 max-h-[78vh] overflow-y-auto rounded-t-4xl border border-stone-200 bg-white p-5 shadow-2xl shadow-stone-950/20"
                     >
                         <DayDetailsPanel
                             dateLabel={selectedDateLabel}

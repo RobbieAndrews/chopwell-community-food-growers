@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { CalendarPlus } from "lucide-react";
 
 import { buildGoogleCalendarUrl, downloadIcsFile } from "./calendarExport";
 import type { CalendarEvent } from "./types";
@@ -6,28 +7,6 @@ import type { CalendarEvent } from "./types";
 interface AddToCalendarButtonProps {
     event: CalendarEvent;
     className?: string;
-}
-
-function CalendarPlusIcon() {
-    return (
-        <svg
-            aria-hidden="true"
-            viewBox="0 0 24 24"
-            className="h-4 w-4"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-        >
-            <rect x="3" y="5" width="18" height="16" rx="2" />
-            <path d="M16 3v4" />
-            <path d="M8 3v4" />
-            <path d="M3 10h18" />
-            <path d="M12 14v4" />
-            <path d="M10 16h4" />
-        </svg>
-    );
 }
 
 const baseButtonClassName =
@@ -110,7 +89,7 @@ export default function AddToCalendarButton({
                 onClick={() => setIsOpen((currentState) => !currentState)}
                 className={baseButtonClassName}
             >
-                <CalendarPlusIcon />
+                <CalendarPlus className="h-4 w-4" aria-hidden="true" />
                 <span>Add to calendar</span>
             </button>
 
@@ -119,19 +98,19 @@ export default function AddToCalendarButton({
                     role="dialog"
                     aria-modal="false"
                     aria-label={`Add ${event.title} to a calendar`}
-                    className="absolute right-0 top-full z-40 mt-3 w-56 rounded-[1.5rem] border border-stone-200 bg-white p-2 shadow-xl shadow-stone-300/30"
+                    className="absolute right-0 top-full z-40 mt-3 w-56 rounded-3xl border border-stone-200 bg-white p-2 shadow-xl shadow-stone-300/30"
                 >
                     <button
                         type="button"
                         onClick={openGoogleCalendar}
-                        className="flex w-full rounded-[1rem] px-4 py-3 text-left text-sm font-medium text-stone-800 transition hover:bg-stone-50"
+                        className="flex w-full rounded-2xl px-4 py-3 text-left text-sm font-medium text-stone-800 transition hover:bg-stone-50"
                     >
                         Google Calendar
                     </button>
                     <button
                         type="button"
                         onClick={handleIcsDownload}
-                        className="mt-1 flex w-full rounded-[1rem] px-4 py-3 text-left text-sm font-medium text-stone-800 transition hover:bg-stone-50"
+                        className="mt-1 flex w-full rounded-2xl px-4 py-3 text-left text-sm font-medium text-stone-800 transition hover:bg-stone-50"
                     >
                         Download .ics
                     </button>
@@ -150,7 +129,7 @@ export default function AddToCalendarButton({
                         role="dialog"
                         aria-modal="true"
                         aria-label={`Add ${event.title} to a calendar`}
-                        className="fixed inset-x-0 bottom-0 z-50 rounded-t-[2rem] border border-stone-200 bg-white p-5 shadow-2xl shadow-stone-950/20"
+                        className="fixed inset-x-0 bottom-0 z-50 rounded-t-4xl border border-stone-200 bg-white p-5 shadow-2xl shadow-stone-950/20"
                     >
                         <div className="mx-auto mb-4 h-1.5 w-12 rounded-full bg-stone-300" />
                         <div className="flex items-start justify-between gap-4">
@@ -175,14 +154,14 @@ export default function AddToCalendarButton({
                             <button
                                 type="button"
                                 onClick={openGoogleCalendar}
-                                className="flex w-full rounded-[1rem] border border-stone-200 bg-stone-50 px-4 py-3 text-left text-sm font-medium text-stone-800 transition hover:bg-stone-100"
+                                className="flex w-full rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-left text-sm font-medium text-stone-800 transition hover:bg-stone-100"
                             >
                                 Google Calendar
                             </button>
                             <button
                                 type="button"
                                 onClick={handleIcsDownload}
-                                className="flex w-full rounded-[1rem] border border-stone-200 bg-stone-50 px-4 py-3 text-left text-sm font-medium text-stone-800 transition hover:bg-stone-100"
+                                className="flex w-full rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-left text-sm font-medium text-stone-800 transition hover:bg-stone-100"
                             >
                                 Download .ics
                             </button>
