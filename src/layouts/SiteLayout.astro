@@ -4,9 +4,13 @@ import { Sprout } from "@lucide/astro";
 
 interface Props {
     title: string;
+    mainClass?: string;
 }
 
-const { title } = Astro.props;
+const {
+    title,
+    mainClass = "mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14",
+} = Astro.props;
 const siteTitle = "Chopwell Community Food Growers";
 const pathname = Astro.url.pathname;
 const navLinks = [
@@ -144,7 +148,7 @@ const navLinks = [
                 </div>
             </header>
 
-            <main class="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
+            <main class={mainClass}>
                 <slot />
             </main>
         </div>
