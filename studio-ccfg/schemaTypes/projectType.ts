@@ -1,4 +1,5 @@
 import {defineField, defineType} from 'sanity'
+import {articleContentMembers} from './articleContent'
 import {getProjectIconTitle, projectIconOptions, ProjectIconInput} from './projectIcons'
 
 export const projectType = defineType({
@@ -65,7 +66,7 @@ export const projectType = defineType({
       title: 'Project content',
       description: 'Optional richer content for the individual project page.',
       type: 'array',
-      of: [{type: 'block'}],
+      of: articleContentMembers,
     }),
   ],
   preview: {

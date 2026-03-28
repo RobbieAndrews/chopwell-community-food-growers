@@ -1,9 +1,11 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
+import PageIntro from '../components/PageIntro.astro';
 import { PortableText } from 'astro-portabletext';
 import type { TypedObject } from 'astro-portabletext/types';
 import { sanityClient } from 'sanity:client';
 import { projectIconMap, type ProjectIcon } from '../lib/projectIcons';
+import { HeartHandshake, Leaf, Users } from '@lucide/astro';
 
 interface VolunteerOpportunity {
 	title: string;
@@ -66,97 +68,72 @@ const stories = [
 		cardClass: 'bg-sky-50 ring-sky-200',
 	},
 ] as const;
-
 ---
 
 <SiteLayout title="Get Involved">
 	<div class="space-y-8">
-		<section class="rounded-4xl bg-linear-to-br from-stone-50 via-lime-50/70 to-emerald-100/60 px-5 py-8 sm:px-8 sm:py-12">
-			<div class="max-w-3xl">
-				<h1 class="text-4xl font-bold tracking-tight text-stone-900 sm:text-5xl">
-					Get Involved
-				</h1>
-				<p class="mt-4 max-w-2xl text-lg leading-8 text-stone-700">
-					Discover the many ways you can contribute to our growing community, whether
-					you want to volunteer regularly or just lend a hand when you can.
-				</p>
+		<PageIntro
+			title="Get Involved"
+			description="Discover the many ways you can contribute to our growing community, whether you want to volunteer regularly or just lend a hand when you can."
+			pills={[
+				{ label: '50+ active volunteers', icon: Users, iconClass: 'text-green-700' },
+				{ label: '12 different roles', icon: Leaf, iconClass: 'text-sky-700' },
+				{ label: 'Friendly and flexible', icon: HeartHandshake, iconClass: 'text-amber-600' },
+			]}
+		/>
+
+		<section class="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen bg-white/70 py-12">
+			<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+				<h2 class="text-3xl font-bold tracking-tight text-gray-900">Volunteer Opportunities</h2>
+				{
+					opportunities.length ? (
+						<div class="mt-6 grid gap-5 md:grid-cols-2">
+							{
+								opportunities.map((opportunity) => {
+									const Icon = projectIconMap[opportunity.icon] ?? projectIconMap.users;
+
+									return (
+										<article class="rounded-4xl bg-white p-6 shadow-xl ring-1 ring-gray-100 transition duration-300 hover:-translate-y-1 hover:shadow-2xl">
+											<div class="flex items-start gap-4">
+												<div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-green-100 text-green-800">
+													<Icon class="h-6 w-6" />
+												</div>
+												<div class="min-w-0 flex-1">
+													<h3 class="text-2xl font-bold tracking-tight text-gray-900">
+														{opportunity.title}
+													</h3>
+													<p class="mt-1 text-sm font-semibold text-gray-500">
+														Time commitment: {opportunity.timeCommitment}
+													</p>
+												</div>
+											</div>
+
+											<div class="portable-content mt-5 max-w-none">
+												<PortableText value={opportunity.description} />
+											</div>
+
+											<a
+												href="/contact"
+												class="mt-6 inline-flex w-full items-center justify-center rounded-full bg-[#2d5016] px-4 py-3 text-center font-semibold text-white transition hover:bg-[#244111]"
+											>
+												Express Interest
+											</a>
+										</article>
+									);
+								})
+							}
+						</div>
+					) : (
+						<div class="mt-6 rounded-4xl border border-dashed border-gray-300 bg-white/80 p-8 text-center text-gray-600">
+							Add some `Volunteer Opportunity` documents in Sanity Studio and they will appear here.
+						</div>
+					)
+				}
 			</div>
 		</section>
 
-		<section class="rounded-4xl bg-linear-to-r from-green-800 to-lime-700 px-6 py-8 text-white shadow-lg sm:px-8 sm:py-10">
-			<h2 class="text-3xl font-bold tracking-tight">Join Our Community</h2>
-			<p class="mt-4 max-w-3xl text-lg leading-8 text-green-50">
-				Whether you have five minutes or five hours to spare, there is a meaningful way
-				to contribute. Every member brings different skills, knowledge, and energy to the
-				group. No experience is necessary, only curiosity and a willingness to learn.
-			</p>
-
-			<div class="mt-8 grid gap-4 sm:grid-cols-3">
-				<div class="rounded-3xl bg-white/10 px-5 py-5 text-center backdrop-blur-sm">
-					<p class="text-3xl font-bold">50+</p>
-					<p class="mt-1 text-sm text-green-50">Active volunteers</p>
-				</div>
-				<div class="rounded-3xl bg-white/10 px-5 py-5 text-center backdrop-blur-sm">
-					<p class="text-3xl font-bold">12</p>
-					<p class="mt-1 text-sm text-green-50">Different roles</p>
-				</div>
-				<div class="rounded-3xl bg-white/10 px-5 py-5 text-center backdrop-blur-sm">
-					<p class="text-3xl font-bold">100%</p>
-					<p class="mt-1 text-sm text-green-50">Community led</p>
-				</div>
-			</div>
-		</section>
-
-		<section>
-			<h2 class="text-2xl font-bold tracking-tight text-stone-900">Volunteer Opportunities</h2>
-			{
-				opportunities.length ? (
-					<div class="mt-6 grid gap-5 md:grid-cols-2">
-						{
-							opportunities.map((opportunity) => {
-								const Icon = projectIconMap[opportunity.icon] ?? projectIconMap.users;
-
-								return (
-									<article class="rounded-4xl bg-linear-to-br from-stone-50 to-lime-50 p-6 ring-1 ring-stone-200 shadow-sm transition duration-300 hover:shadow-lg">
-										<div class="flex items-start gap-4">
-											<div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white text-green-800">
-												<Icon class="h-6 w-6" />
-											</div>
-											<div class="min-w-0 flex-1">
-												<h3 class="text-2xl font-bold tracking-tight text-stone-900">
-													{opportunity.title}
-												</h3>
-												<p class="mt-1 text-sm font-semibold text-stone-600">
-													Time commitment: {opportunity.timeCommitment}
-												</p>
-											</div>
-										</div>
-
-										<div class="portable-content mt-5 max-w-none">
-											<PortableText value={opportunity.description} />
-										</div>
-
-										<a
-											href="/contact"
-											class="mt-6 inline-flex w-full items-center justify-center rounded-2xl bg-green-800 px-4 py-3 text-center font-semibold text-white transition hover:bg-green-900"
-										>
-											Express Interest
-										</a>
-									</article>
-								);
-							})
-						}
-					</div>
-				) : (
-					<div class="mt-6 rounded-4xl border border-dashed border-stone-300 bg-stone-50 p-8 text-center text-stone-700">
-						Add some `Volunteer Opportunity` documents in Sanity Studio and they will appear here.
-					</div>
-				)
-			}
-		</section>
-
-		<section class="rounded-4xl border border-stone-200 bg-white p-6 shadow-sm sm:p-8">
-			<h2 class="text-2xl font-bold tracking-tight text-stone-900">How to Get Started</h2>
+		<section class="rounded-4xl bg-white p-6 shadow-xl ring-1 ring-gray-100 sm:p-8">
+			<h2 class="text-2xl font-bold tracking-tight text-gray-900">How to Get Started</h2>
 			<div class="mt-6 grid gap-6 md:grid-cols-4">
 				{
 					steps.map((step) => (
@@ -164,42 +141,23 @@ const stories = [
 							<div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100 text-2xl font-bold text-green-800">
 								{step.number}
 							</div>
-							<h3 class="mt-4 text-lg font-bold text-stone-900">{step.title}</h3>
-							<p class="mt-2 text-sm leading-6 text-stone-600">{step.description}</p>
+							<h3 class="mt-4 text-lg font-bold text-gray-900">{step.title}</h3>
+							<p class="mt-2 text-sm leading-6 text-gray-600">{step.description}</p>
 						</div>
 					))
 				}
 			</div>
 		</section>
 
-		<section class="rounded-4xl border border-stone-200 bg-white p-6 shadow-sm sm:p-8">
-			<h2 class="text-2xl font-bold tracking-tight text-stone-900">Volunteer Stories</h2>
-			<div class="mt-6 grid gap-5 md:grid-cols-2">
-				{
-					stories.map((story) => (
-						<article class:list={['rounded-3xl p-6 ring-1', story.cardClass]}>
-							<p class="text-base leading-8 text-stone-700 italic">"{story.quote}"</p>
-							<p class="mt-5 font-semibold text-stone-900">
-								{story.name}, {story.role}
-							</p>
-							<p class="mt-1 text-sm text-stone-600">{story.memberSince}</p>
-						</article>
-					))
-				}
-			</div>
-		</section>
-
-		<section class="rounded-4xl bg-linear-to-r from-amber-50 to-green-50 px-6 py-8 text-center ring-1 ring-green-700 sm:px-8 sm:py-10">
-			<h2 class="text-2xl font-bold tracking-tight text-stone-900">
-				Ready to Make a Difference?
-			</h2>
-			<p class="mx-auto mt-3 max-w-2xl leading-8 text-stone-700">
+		<section class="rounded-4xl bg-[#2d5016] px-6 py-8 text-center text-white shadow-2xl sm:px-8 sm:py-10">
+			<h2 class="text-2xl font-bold tracking-tight">Ready to Make a Difference?</h2>
+			<p class="mx-auto mt-3 max-w-2xl leading-8 text-green-50">
 				Get in touch to chat about how you could contribute to the group. We would love to
 				hear from you and help you find the right way to get involved.
 			</p>
 			<a
 				href="/contact"
-				class="mt-6 inline-flex items-center justify-center rounded-2xl bg-green-800 px-8 py-3 font-semibold text-white transition hover:bg-green-900"
+				class="mt-6 inline-flex items-center justify-center rounded-full bg-white px-8 py-3 font-semibold text-[#2d5016] transition hover:bg-green-50"
 			>
 				Contact Us
 			</a>

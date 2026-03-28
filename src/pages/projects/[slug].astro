@@ -2,8 +2,12 @@
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import { ArrowLeft } from '@lucide/astro';
 import { PortableText } from 'astro-portabletext';
-import type { TypedObject } from 'astro-portabletext/types';
 import { sanityClient } from 'sanity:client';
+import ContentFeatureCard from '../../components/ContentFeatureCard.astro';
+import {
+	articlePortableTextComponents,
+	type ArticlePortableTextBlock,
+} from '../../lib/articlePortableText';
 import { projectIconMap, type ProjectIcon } from '../../lib/projectIcons';
 import { urlForImage, type SanityImageWithAlt } from '../../lib/sanity';
 
@@ -14,7 +18,7 @@ interface ProjectPage {
 	headline: string;
 	icon: ProjectIcon;
 	mainImage?: SanityImageWithAlt;
-	body?: TypedObject[];
+	body?: ArticlePortableTextBlock[];
 }
 
 export async function getStaticPaths(): Promise<{ params: { slug: string } }[]> {
@@ -60,64 +64,55 @@ const projectImageAlt = project.mainImage?.alt || project.title;
 	<div class="space-y-8">
 		<a
 			href="/projects"
-			class="inline-flex items-center gap-2 rounded-full bg-stone-100 px-4 py-2 text-sm font-semibold text-stone-700 transition hover:bg-stone-200"
+			class="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-md ring-1 ring-gray-100 transition hover:bg-green-50 hover:text-[#2d5016]"
 		>
 			<ArrowLeft class="h-4 w-4" />
 			<span>Back to projects</span>
 		</a>
 
-		<section class="overflow-hidden rounded-4xl border border-stone-200 bg-white shadow-sm">
-			<div class="grid gap-0 lg:grid-cols-[1.1fr_0.9fr]">
-				<div class="flex flex-col justify-center px-6 py-8 sm:px-8 sm:py-10 lg:px-10">
-					<div class="flex items-center gap-4">
-						<div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-green-100 text-green-900">
-							<Icon class="h-7 w-7" />
-						</div>
-						<h1 class="text-4xl font-bold tracking-tight text-stone-900 sm:text-5xl">
-							{project.title}
-						</h1>
+		<ContentFeatureCard articleTitle="About this project">
+			<Fragment slot="intro">
+				<div class="flex items-center gap-4">
+					<div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-green-100 text-green-900">
+						<Icon class="h-7 w-7" />
 					</div>
-
-					<p class="mt-6 max-w-2xl text-lg leading-8 text-stone-700">
-						{project.headline}
-					</p>
+					<h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
+						{project.title}
+					</h1>
 				</div>
 
-				<div class="min-h-full">
-					{
-						projectImageUrl ? (
-							<img
-								src={projectImageUrl}
-								alt={projectImageAlt}
-								loading="lazy"
-								class="h-full min-h-72 w-full object-cover"
-							/>
-						) : (
-							<div class="flex h-full min-h-72 items-center justify-center bg-linear-to-br from-lime-100 via-stone-50 to-emerald-100 text-green-900">
-								<Icon class="h-16 w-16" />
-							</div>
-						)
-					}
-				</div>
-			</div>
-		</section>
+				<p class="mt-6 max-w-2xl text-lg leading-8 text-gray-600">{project.headline}</p>
+			</Fragment>
 
-		<section>
-			<div class="rounded-4xl border border-stone-200 bg-white p-6 shadow-sm sm:p-8">
-				<h2 class="text-2xl font-bold tracking-tight text-stone-900">About this project</h2>
+			<Fragment slot="media">
 				{
-					Array.isArray(project.body) && project.body.length ? (
-						<div class="prose prose-stone mt-5 max-w-none">
-							<PortableText value={project.body} />
-						</div>
+					projectImageUrl ? (
+						<img
+							src={projectImageUrl}
+							alt={projectImageAlt}
+							loading="lazy"
+							class="h-full min-h-72 w-full object-cover"
+						/>
 					) : (
-						<p class="mt-5 text-base leading-8 text-stone-700">
-							Project content can be added in Sanity whenever you are ready. For now this page
-							is using the project name, short description, icon, slug, and main image.
-						</p>
+						<div class="flex h-full min-h-72 items-center justify-center bg-linear-to-br from-lime-100 via-stone-50 to-emerald-100 text-green-900">
+							<Icon class="h-16 w-16" />
+						</div>
 					)
 				}
-			</div>
-		</section>
+			</Fragment>
+
+			{
+				Array.isArray(project.body) && project.body.length ? (
+					<div class="mt-5 max-w-4xl">
+						<PortableText value={project.body} components={articlePortableTextComponents} />
+					</div>
+				) : (
+					<p class="mt-5 text-base leading-8 text-gray-600">
+						Project content can be added in Sanity whenever you are ready. For now this page is
+						using the project name, short description, icon, slug, and main image.
+					</p>
+				)
+			}
+		</ContentFeatureCard>
 	</div>
 </SiteLayout>

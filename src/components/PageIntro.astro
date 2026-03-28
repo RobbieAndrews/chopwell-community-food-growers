@@ -1,0 +1,53 @@
+---
+interface IntroPill {
+	label: string;
+	icon: any;
+	iconClass?: string;
+}
+
+interface Props {
+	title: string;
+	description: string;
+	pills?: IntroPill[];
+	sectionClass?: string;
+	containerClass?: string;
+}
+
+const {
+	title,
+	description,
+	pills = [],
+	sectionClass = 'px-2 py-4 sm:px-0 sm:py-6',
+	containerClass = 'max-w-3xl mx-auto flex flex-col items-center',
+} = Astro.props as Props;
+---
+
+<section class={sectionClass}>
+	<div class={containerClass}>
+		<h1 class="max-w-2xl text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl text-center">
+			{title}
+		</h1>
+		<p class="mt-5 max-w-2xl text-lg leading-8 text-gray-600 text-center">
+			{description}
+		</p>
+
+		{
+			pills.length ? (
+				<div class="mt-8 flex flex-wrap gap-3">
+					{
+						pills.map((pill) => {
+							const Icon = pill.icon;
+
+							return (
+								<div class="inline-flex items-center gap-2 rounded-full bg-white/90 px-4 py-3 text-sm font-semibold text-gray-700 shadow-sm ring-1 ring-gray-200 backdrop-blur">
+									<Icon class:list={['h-4 w-4', pill.iconClass ?? 'text-green-700']} />
+									<span>{pill.label}</span>
+								</div>
+							);
+						})
+					}
+				</div>
+			) : null
+		}
+	</div>
+</section>

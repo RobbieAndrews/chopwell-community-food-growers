@@ -77,23 +77,23 @@ const galleryItems = [
 ---
 
 <SiteLayout title="Home" mainClass="px-0 py-0">
-	<div class="bg-white">
-		<section class="relative overflow-hidden bg-[#2d5016] text-white">
+	<div class="bg-[#f5f8ef]">
+		<section class="relative overflow-hidden bg-[#f5f8ef] text-gray-900">
 			<div class="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-32">
 				<div class="grid items-center gap-12 lg:grid-cols-2">
 					<div class="space-y-8">
-						<div class="inline-flex items-center gap-2 rounded-full bg-white/20 px-4 py-2 text-sm backdrop-blur-sm">
-							<Leaf class="h-4 w-4" />
+						<div class="inline-flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm ring-1 ring-gray-200 backdrop-blur-sm">
+							<Leaf class="h-4 w-4 text-green-700" />
 							<span>Growing Together Since 2020</span>
 						</div>
 
 						<div class="space-y-6">
 							<h1 class="text-5xl font-bold leading-tight lg:text-6xl">
 								Cultivating Community Through
-								<span class="block text-green-200">Sustainable Growing</span>
+								<span class="block text-[#2d5016]">Sustainable Growing</span>
 							</h1>
 
-							<p class="max-w-xl text-xl leading-relaxed text-green-50">
+							<p class="max-w-xl text-xl leading-relaxed text-gray-600">
 								Join Chopwell&apos;s vibrant community of food growers. Share knowledge,
 								harvest fresh produce, and build lasting connections.
 							</p>
@@ -109,7 +109,7 @@ const galleryItems = [
 							</a>
 							<a
 								href="/projects"
-								class="inline-flex items-center justify-center rounded-full border-2 border-white/50 px-8 py-4 font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/10"
+								class="inline-flex items-center justify-center rounded-full border-2 border-[#2d5016]/20 px-8 py-4 font-semibold text-[#2d5016] backdrop-blur-sm transition-all hover:bg-white/60"
 							>
 								Learn More
 							</a>
@@ -127,7 +127,7 @@ const galleryItems = [
 										]}
 									>
 										<div class="text-3xl font-bold">{item.value}</div>
-										<div class="text-sm text-green-200">{item.label}</div>
+										<div class="text-sm text-gray-500">{item.label}</div>
 									</div>
 								))
 							}
@@ -145,7 +145,7 @@ const galleryItems = [
 								loading="eager"
 								decoding="async"
 							/>
-							<div class="absolute inset-0 bg-linear-to-t from-black/20 to-transparent"></div>
+							<div class="absolute inset-0 bg-linear-to-t from-black/10 to-transparent"></div>
 						</div>
 
 						<div class="absolute -bottom-6 left-4 right-4 rounded-xl bg-white p-6 shadow-2xl sm:-left-6 sm:right-auto sm:max-w-xs">
@@ -164,35 +164,37 @@ const galleryItems = [
 			</div>
 		</section>
 
-		<section class="relative z-10 mx-auto -mt-16 max-w-7xl px-4 sm:px-6 lg:px-8">
-			<div class="grid gap-6 md:grid-cols-3 lg:gap-8">
-				{
-					featureCards.map((card) => {
-						const Icon = card.icon;
+		<section class="relative left-1/2 right-1/2 z-10 -ml-[50vw] -mr-[50vw] w-screen bg-white/70 py-12">
+			<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+				<div class="grid gap-6 md:grid-cols-3 lg:gap-8">
+					{
+						featureCards.map((card) => {
+							const Icon = card.icon;
 
-						return (
-							<div class="rounded-2xl border border-gray-100 bg-white p-8 shadow-xl transition-all hover:-translate-y-1 hover:shadow-2xl">
-								<div
-									class:list={[
-										'mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-linear-to-br shadow-lg',
-										card.iconClass,
-									]}
-								>
-									<Icon class="h-7 w-7 text-white" />
+							return (
+								<div class="rounded-2xl border border-gray-100 bg-white p-8 shadow-xl transition-all hover:-translate-y-1 hover:shadow-2xl">
+									<div
+										class:list={[
+											'mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-linear-to-br shadow-lg',
+											card.iconClass,
+										]}
+									>
+										<Icon class="h-7 w-7 text-white" />
+									</div>
+									<h2 class="mb-3 text-2xl font-bold text-gray-900">{card.title}</h2>
+									<p class="mb-6 leading-relaxed text-gray-600">{card.description}</p>
+									<a
+										href={card.href}
+										class="group inline-flex items-center gap-1 font-semibold text-[#2d5016] transition-all hover:gap-2"
+									>
+										<span>{card.linkLabel}</span>
+										<ArrowRight class="h-4 w-4 transition-transform group-hover:translate-x-1" />
+									</a>
 								</div>
-								<h2 class="mb-3 text-2xl font-bold text-gray-900">{card.title}</h2>
-								<p class="mb-6 leading-relaxed text-gray-600">{card.description}</p>
-								<a
-									href={card.href}
-									class="group inline-flex items-center gap-1 font-semibold text-[#2d5016] transition-all hover:gap-2"
-								>
-									<span>{card.linkLabel}</span>
-									<ArrowRight class="h-4 w-4 transition-transform group-hover:translate-x-1" />
-								</a>
-							</div>
-						);
-					})
-				}
+							);
+						})
+					}
+				</div>
 			</div>
 		</section>
 

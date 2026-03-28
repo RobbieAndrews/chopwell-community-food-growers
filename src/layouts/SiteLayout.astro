@@ -9,11 +9,12 @@ interface Props {
 
 const {
     title,
-    mainClass = "mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14",
+    mainClass = "mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8",
 } = Astro.props;
 const siteTitle = "Chopwell Community Food Growers";
 const pathname = Astro.url.pathname;
 const navLinks = [
+    { href: "/", label: "Home" },
     { href: "/projects", label: "Projects" },
     { href: "/calendar", label: "Calendar" },
     { href: "/newsletter", label: "Newsletter" },
@@ -21,6 +22,7 @@ const navLinks = [
     { href: "/contact", label: "Contact" },
     { href: "/useful-links", label: "Useful Links" },
 ];
+const desktopNavLinks = navLinks.filter(({ href }) => href !== "/");
 ---
 
 <html lang="en">
@@ -35,19 +37,19 @@ const navLinks = [
     <body>
         <div class="min-h-screen">
             <header
-                class="border-b border-stone-300/80 bg-white/80 backdrop-blur"
+                class="sticky top-0 z-40 border-b border-green-900/10 bg-white"
             >
-                <div class="mx-auto max-w-6xl px-4 py-4 sm:px-6 sm:py-5">
+                <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 sm:py-5 lg:px-8">
                     <div class="md:hidden">
-                        <details class="group">
+                        <details data-mobile-menu class="group mobile-menu">
                             <summary
-                                class="flex w-full cursor-pointer list-none items-center gap-3 text-stone-800"
+                                class="mobile-menu__summary relative z-70 flex w-full cursor-pointer list-none items-center gap-3 bg-white text-gray-900"
                             >
                                 <span class="sr-only"
                                     >Toggle navigation menu</span
                                 >
                                 <span
-                                    class="flex rounded-full  bg-stone-50 p-3 transition hover:bg-stone-100"
+                                    class="flex rounded-full bg-green-50 p-3 text-[#2d5016] transition hover:bg-green-100"
                                 >
                                     <span class="flex flex-col gap-1.5">
                                         <span
@@ -68,36 +70,42 @@ const navLinks = [
                                     <span>{siteTitle}</span>
                                 </span>
                             </summary>
-                            <nav aria-label="Primary navigation" class="pt-4">
-                                <ul class="flex flex-col gap-2">
-                                    {
-                                        navLinks.map(({ href, label }) => {
-                                            const isActive = pathname === href;
+                            <div class="mobile-menu__overlay">
+                                <nav
+                                    aria-label="Primary navigation"
+                                    class="mobile-menu__panel absolute left-0 top-0 flex h-dvh min-h-screen w-screen flex-col bg-white text-gray-900 shadow-2xl"
+                                >
+                                    <ul class="mobile-menu__list flex flex-1 flex-col gap-2 bg-white px-4 pb-5 pt-24">
+                                        {
+                                            navLinks.map(({ href, label }) => {
+                                                const isActive = pathname === href;
 
-                                            return (
-                                                <li class="rounded-lg hover:bg-stone-100">
-                                                    <a
-                                                        href={href}
-                                                        aria-current={
-                                                            isActive
-                                                                ? "page"
-                                                                : undefined
-                                                        }
-                                                        class:list={[
-                                                            "block rounded-full px-4 py-2 text-sm font-medium text-stone-800 transition",
-                                                            isActive
-                                                                ? "font-bold"
-                                                                : "",
-                                                        ]}
-                                                    >
-                                                        {label}
-                                                    </a>
-                                                </li>
-                                            );
-                                        })
-                                    }
-                                </ul>
-                            </nav>
+                                                return (
+                                                    <li class="rounded-lg">
+                                                        <a
+                                                            href={href}
+                                                            aria-current={
+                                                                isActive
+                                                                    ? "page"
+                                                                    : undefined
+                                                            }
+                                                            class:list={[
+                                                                "block rounded-xl px-4 py-3 text-sm font-medium text-gray-700 transition hover:bg-green-50 hover:text-[#2d5016]",
+                                                                isActive
+                                                                    ? "bg-[#2d5016] text-white"
+                                                                    : "",
+                                                            ]}
+                                                            data-close-menu
+                                                        >
+                                                            {label}
+                                                        </a>
+                                                    </li>
+                                                );
+                                            })
+                                        }
+                                    </ul>
+                                </nav>
+                            </div>
                         </details>
                     </div>
 
@@ -106,10 +114,10 @@ const navLinks = [
                     >
                         <a
                             href="/"
-                            class="flex items-center gap-2 text-lg font-semibold tracking-tight text-green-800 transition"
+                            class="flex items-center gap-3 text-lg font-semibold tracking-tight text-[#2d5016] transition"
                         >
-                            <div>
-                                <Sprout />
+                            <div class="flex h-11 w-11 items-center justify-center rounded-full bg-green-50 shadow-sm">
+                                <Sprout class="h-5 w-5" />
                             </div>
                             {siteTitle}
                         </a>
@@ -117,11 +125,11 @@ const navLinks = [
                         <nav aria-label="Primary navigation">
                             <ul class="flex flex-wrap gap-x-2 gap-y-2">
                                 {
-                                    navLinks.map(({ href, label }) => {
+                                    desktopNavLinks.map(({ href, label }) => {
                                         const isActive = pathname === href;
 
                                         return (
-                                            <li class="rounded-lg hover:bg-stone-100">
+                                            <li class="rounded-lg">
                                                 <a
                                                     href={href}
                                                     aria-current={
@@ -130,9 +138,9 @@ const navLinks = [
                                                             : undefined
                                                     }
                                                     class:list={[
-                                                        "block rounded-full px-4 py-2 text-sm font-medium text-stone-800 transition",
+                                                        "block rounded-full px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-green-50 hover:text-[#2d5016]",
                                                         isActive
-                                                            ? "font-bold"
+                                                            ? "font-semibold text-[#2d5016]"
                                                             : "",
                                                     ]}
                                                 >
@@ -154,3 +162,67 @@ const navLinks = [
         </div>
     </body>
 </html>
+
+<script>
+    const mobileMenus = document.querySelectorAll("[data-mobile-menu]");
+
+    const syncMobileMenuState = () => {
+        const hasOpenMenu = Array.from(mobileMenus).some((menu) =>
+            menu.hasAttribute("open")
+        );
+
+        document.body.classList.toggle("mobile-menu-open", hasOpenMenu);
+    };
+
+    mobileMenus.forEach((menu) => {
+        menu.addEventListener("toggle", syncMobileMenuState);
+
+        menu.querySelectorAll("[data-close-menu]").forEach((element) => {
+            element.addEventListener("click", () => {
+                menu.removeAttribute("open");
+                syncMobileMenuState();
+            });
+        });
+    });
+
+    syncMobileMenuState();
+</script>
+
+<style>
+    .mobile-menu__summary::-webkit-details-marker {
+        display: none;
+    }
+
+    .mobile-menu__overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 45;
+        pointer-events: none;
+        opacity: 0;
+        background: #ffffff;
+        transition: opacity 200ms ease;
+    }
+
+    .mobile-menu__panel {
+        transform: translateX(-100%);
+        transition: transform 240ms ease;
+        overflow-y: auto;
+    }
+
+    .mobile-menu__list {
+        min-height: 100%;
+    }
+
+    .mobile-menu[open] > .mobile-menu__overlay {
+        pointer-events: auto;
+        opacity: 1;
+    }
+
+    .mobile-menu[open] .mobile-menu__panel {
+        transform: translateX(0);
+    }
+
+    :global(body.mobile-menu-open) {
+        overflow: hidden;
+    }
+</style>

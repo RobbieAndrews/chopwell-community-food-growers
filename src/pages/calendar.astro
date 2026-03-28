@@ -1,6 +1,6 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
-import Calendar from '../components/calendar/Calendar';
+import CalendarWidget from '../components/calendar/CalendarWidget';
 import { sanityClient } from 'sanity:client';
 import type { CalendarEvent } from '../components/calendar/types';
 
@@ -23,5 +23,5 @@ const calendarEvents = await sanityClient.fetch<CalendarEvent[]>(CALENDAR_EVENTS
 ---
 
 <SiteLayout title="Calendar">
-	<Calendar client:load events={calendarEvents} />
+    <CalendarWidget client:load events={calendarEvents} />
 </SiteLayout>
