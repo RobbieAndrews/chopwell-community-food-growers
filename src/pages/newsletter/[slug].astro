@@ -88,7 +88,7 @@ const publishedDate = new Intl.DateTimeFormat('en-GB', {
 
 ---
 
-<SiteLayout title={newsletter.title}>
+<SiteLayout title={newsletter.title} contentSize="narrow">
 	<div class="space-y-8">
 		<a
 			href="/newsletter"
@@ -129,14 +129,14 @@ const publishedDate = new Intl.DateTimeFormat('en-GB', {
 						<img
 							src={newsletterImageUrl}
 							srcset={newsletterImageSrcSet || undefined}
-							sizes="(min-width: 1024px) 45vw, 100vw"
+							sizes="100vw"
 							alt={newsletterImageAlt}
 							loading="eager"
 							fetchpriority="high"
 							decoding="async"
 							width="1280"
 							height="822"
-							class="aspect-[1280/822] h-full min-h-72 w-full object-cover"
+							class="aspect-1280/822 h-full min-h-72 w-full object-cover max-h-96"
 						/>
 					) : (
 						<div class="flex h-full min-h-72 items-center justify-center bg-linear-to-br from-lime-100 via-stone-50 to-emerald-100 text-green-900">

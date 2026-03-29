@@ -7,12 +7,14 @@ interface Props {
     title: string;
     mainClass?: string;
     wrapContent?: boolean;
+    contentSize?: 'narrow' | 'default' | 'wide' | 'full';
 }
 
 const {
     title,
     mainClass = "py-10 sm:py-14",
     wrapContent = true,
+    contentSize = "default",
 } = Astro.props;
 const siteTitle = "Chopwell Community Food Growers";
 const pathname = Astro.url.pathname;
@@ -162,7 +164,7 @@ const desktopNavLinks = navLinks.filter(({ href }) => href !== "/");
             <main class={mainClass}>
                 {
                     wrapContent ? (
-                        <Container>
+                        <Container size={contentSize}>
                             <slot />
                         </Container>
                     ) : (

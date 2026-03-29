@@ -76,7 +76,7 @@ const projectImageSrcSet = project.mainImage
 const projectImageAlt = project.mainImage?.alt || project.title;
 ---
 
-<SiteLayout title={project.title}>
+<SiteLayout title={project.title} contentSize="narrow">
 	<div class="space-y-8">
 		<a
 			href="/projects"
@@ -113,7 +113,7 @@ const projectImageAlt = project.mainImage?.alt || project.title;
 							decoding="async"
 							width="1280"
 							height="822"
-							class="aspect-[1280/822] h-full min-h-72 w-full object-cover"
+							class="aspect-1280/822 h-full min-h-72 w-full object-cover max-h-96"
 						/>
 					) : (
 						<div class="flex h-full min-h-72 items-center justify-center bg-linear-to-br from-lime-100 via-stone-50 to-emerald-100 text-green-900">
