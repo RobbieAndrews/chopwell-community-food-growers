@@ -1,197 +1,75 @@
 ---
-import SiteLayout from '../layouts/SiteLayout.astro';
+import { ExternalLink, Leaf, LibraryBig, Users } from '@lucide/astro';
+import { sanityClient } from 'sanity:client';
 import FullBleedSection from '../components/FullBleedSection.astro';
 import PageIntro from '../components/PageIntro.astro';
-import {
-	Book,
-	ExternalLink,
-	FileText,
-	Leaf,
-	LibraryBig,
-	Users,
-	Video,
-	Wrench,
-} from '@lucide/astro';
+import SiteLayout from '../layouts/SiteLayout.astro';
+import { projectIconMap, type ProjectIcon } from '../lib/projectIcons';
 
-const linkCategories = [
-	{
-		id: 'growing-guides',
-		title: 'Growing Guides',
-		icon: 'leaf',
-		cardClass: 'from-green-100 to-green-200 ring-green-300',
-		links: [
-			{
-				name: 'RHS Growing Guides',
-				url: 'https://www.rhs.org.uk/advice',
-				description: 'Comprehensive plant care and growing advice.',
-			},
-			{
-				name: 'Allotment Garden',
-				url: 'https://www.allotment-garden.org',
-				description: 'Tips and practical advice for allotment holders.',
-			},
-			{
-				name: 'Garden Organic',
-				url: 'https://www.gardenorganic.org.uk',
-				description: 'Organic growing methods and resources.',
-			},
-			{
-				name: 'BBC Gardeners World',
-				url: 'https://www.gardenersworld.com',
-				description: 'Seasonal guides and plant advice.',
-			},
-		],
-	},
-	{
-		id: 'food-preservation',
-		title: 'Food Preservation',
-		icon: 'book',
-		cardClass: 'from-amber-100 to-amber-200 ring-amber-300',
-		links: [
-			{
-				name: 'National Center for Home Food Preservation',
-				url: 'https://nchfp.uga.edu',
-				description: 'Safe preservation methods and recipes.',
-			},
-			{
-				name: 'River Cottage Preserves',
-				url: 'https://www.rivercottage.net',
-				description: 'Traditional preservation techniques and inspiration.',
-			},
-			{
-				name: 'Preservation Society UK',
-				url: '#',
-				description: 'Resources for jamming, pickling, and more.',
-			},
-			{
-				name: 'Food Safety Guidelines',
-				url: '#',
-				description: 'Important safety information for preserving.',
-			},
-		],
-	},
-	{
-		id: 'tools-equipment',
-		title: 'Tools & Equipment',
-		icon: 'wrench',
-		cardClass: 'from-sky-100 to-blue-200 ring-blue-300',
-		links: [
-			{
-				name: 'Tool Maintenance Guide',
-				url: '#',
-				description: 'Keep your tools in top condition.',
-			},
-			{
-				name: 'Recommended Suppliers',
-				url: '#',
-				description: 'Local and online tool suppliers.',
-			},
-			{
-				name: 'DIY Garden Projects',
-				url: '#',
-				description: 'Build your own structures and equipment.',
-			},
-			{
-				name: 'Tool Sharing Scheme',
-				url: '#',
-				description: 'Borrow tools from our community library.',
-			},
-		],
-	},
-	{
-		id: 'community-networks',
-		title: 'Community Networks',
-		icon: 'users',
-		cardClass: 'from-violet-100 to-fuchsia-100 ring-violet-300',
-		links: [
-			{
-				name: 'National Allotment Society',
-				url: 'https://www.nsalg.org.uk',
-				description: 'National organisation supporting allotments.',
-			},
-			{
-				name: 'Local Gardening Groups',
-				url: '#',
-				description: 'Connect with other growers in the area.',
-			},
-			{
-				name: 'Seed Swap Network',
-				url: '#',
-				description: 'Exchange seeds with growers across the UK.',
-			},
-			{
-				name: 'Community Supported Agriculture',
-				url: '#',
-				description: 'Find CSA schemes and community food projects.',
-			},
-		],
-	},
-	{
-		id: 'learning-resources',
-		title: 'Learning Resources',
-		icon: 'video',
-		cardClass: 'from-rose-100 to-pink-100 ring-pink-300',
-		links: [
-			{
-				name: 'Charles Dowding YouTube',
-				url: 'https://www.youtube.com/charlesdowding',
-				description: 'No-dig gardening videos and practical guidance.',
-			},
-			{
-				name: 'Huw Richards Videos',
-				url: 'https://www.youtube.com/huwrichards',
-				description: 'Growing from seed tutorials and allotment advice.',
-			},
-			{
-				name: 'Online Courses',
-				url: '#',
-				description: 'Free and paid gardening courses.',
-			},
-			{
-				name: 'Gardening Podcasts',
-				url: '#',
-				description: 'Listen and learn while you work.',
-			},
-		],
-	},
-	{
-		id: 'regulations-guidance',
-		title: 'Regulations & Guidance',
-		icon: 'file-text',
-		cardClass: 'from-gray-100 to-gray-200 ring-gray-300',
-		links: [
-			{
-				name: 'Plot Rules & Guidelines',
-				url: '#',
-				description: 'Community rules and responsibilities.',
-			},
-			{
-				name: 'Water Usage Regulations',
-				url: '#',
-				description: 'Guidance for water conservation and usage.',
-			},
-			{
-				name: 'Pesticide Regulations',
-				url: '#',
-				description: 'What can and cannot be used on site.',
-			},
-			{
-				name: 'Structures & Planning',
-				url: '#',
-				description: 'Permissions for sheds, greenhouses, and other structures.',
-			},
-		],
-	},
-] as const;
+interface UsefulLinkItem {
+	_key?: string;
+	title: string;
+	url: string;
+	description: string;
+}
 
-const iconMap = {
-	book: Book,
-	leaf: Leaf,
-	wrench: Wrench,
-	users: Users,
-	video: Video,
-	'file-text': FileText,
+interface UsefulLinkSection {
+	_id: string;
+	_key?: string;
+	title: string;
+	icon: ProjectIcon;
+	color: UsefulLinkSectionColor;
+	links: UsefulLinkItem[];
+	order?: number;
+}
+
+type UsefulLinkSectionColor = 'green' | 'amber' | 'sky' | 'violet' | 'rose' | 'gray';
+
+const USEFUL_LINK_SECTIONS_QUERY = `*[
+	_type == "usefulLinkSection"
+]|order(order asc, title asc){
+	_id,
+	title,
+	icon,
+	color,
+	order,
+	links[]{
+		_key,
+		title,
+		url,
+		description
+	}
+}`;
+
+const sectionDocuments = await sanityClient.fetch<UsefulLinkSection[]>(USEFUL_LINK_SECTIONS_QUERY);
+
+const sectionColorClassMap: Record<UsefulLinkSectionColor, string> = {
+	green: 'from-green-100 to-green-200 ring-green-300',
+	amber: 'from-amber-100 to-amber-200 ring-amber-300',
+	sky: 'from-sky-100 to-blue-200 ring-blue-300',
+	violet: 'from-violet-100 to-fuchsia-100 ring-violet-300',
+	rose: 'from-rose-100 to-pink-100 ring-pink-300',
+	gray: 'from-gray-100 to-gray-200 ring-gray-300',
 };
+
+const sections = sectionDocuments.filter(
+	(section): section is UsefulLinkSection =>
+		Boolean(
+			section?.title &&
+				section?.icon &&
+				section?.color &&
+				Array.isArray(section?.links) &&
+				section.links.length
+		)
+);
+
+function getSectionId(title: string) {
+	return title
+		.toLowerCase()
+		.trim()
+		.replace(/[^a-z0-9]+/g, '-')
+		.replace(/^-+|-+$/g, '');
+}
 ---
 
 <SiteLayout title="Useful Links">
@@ -201,7 +79,7 @@ const iconMap = {
 			description="A curated collection of websites, guides, videos, and practical resources to support your growing journey."
 			pills={[
 				{
-					label: `${linkCategories.length} resource collections`,
+					label: `${sections.length} resource collection${sections.length === 1 ? '' : 's'}`,
 					icon: LibraryBig,
 					iconClass: 'text-green-700',
 				},
@@ -218,60 +96,78 @@ const iconMap = {
 			]}
 		/>
 
-		<FullBleedSection class="py-12" bleedClass="bleed-white-70">
-				<div class="space-y-6">
+		{
+			sections.length ? (
+				<div class="space-y-0">
 					{
-						linkCategories.map((category) => {
-							const Icon = iconMap[category.icon];
+						sections.map((section, index) => {
+							const Icon = projectIconMap[section.icon] ?? projectIconMap.leaf;
+							const isSiteBackgroundSection = index % 2 === 1;
+							const cardClass = sectionColorClassMap[section.color] ?? sectionColorClassMap.green;
 
 							return (
-								<article id={category.id} class="rounded-4xl bg-white p-6 shadow-xl ring-1 ring-gray-100 sm:p-8">
-									<div class="flex items-center gap-4">
-										<div
-											class:list={[
-												'flex h-12 w-12 items-center justify-center rounded-full bg-linear-to-br ring-1',
-												category.cardClass,
-											]}
-										>
-											<Icon class="h-6 w-6 text-green-800" />
+								<FullBleedSection
+									class="bleed-mobile-only py-8"
+									bleedClass={isSiteBackgroundSection ? '' : 'bleed-white-70'}
+								>
+									<article
+										id={getSectionId(section.title)}
+										class="px-1 py-2 sm:rounded-4xl sm:bg-white sm:p-8 sm:shadow-xl sm:ring-1 sm:ring-gray-100"
+									>
+										<div class="flex items-center gap-4">
+											<div
+												class:list={[
+													'flex h-12 w-12 items-center justify-center rounded-full bg-linear-to-br ring-1',
+													cardClass,
+												]}
+											>
+												<Icon class="h-6 w-6 text-green-800" />
+											</div>
+											<h2 class="text-2xl font-bold tracking-tight text-gray-900">
+												{section.title}
+											</h2>
 										</div>
-										<h2 class="text-2xl font-bold tracking-tight text-gray-900">
-											{category.title}
-										</h2>
-									</div>
 
-									<div class="mt-6 grid gap-4 md:grid-cols-2">
-										{
-											category.links.map((link) => {
-												const isExternal = link.url.startsWith('http');
+										<div class="mt-6 grid gap-4 md:grid-cols-2">
+											{
+												section.links.map((link) => {
+													const isExternal = link.url.startsWith('http');
 
-												return (
-													<a
-														href={link.url}
-														target={isExternal ? '_blank' : undefined}
-														rel={isExternal ? 'noopener noreferrer' : undefined}
-														class="group flex items-start gap-3 rounded-3xl bg-gray-50 p-4 transition hover:bg-green-50"
-													>
-														<ExternalLink class="mt-0.5 h-5 w-5 shrink-0 text-green-800 transition group-hover:scale-110" />
-														<div class="min-w-0 flex-1">
-															<h3 class="font-semibold text-gray-900 transition group-hover:text-green-800">
-																{link.name}
-															</h3>
-															<p class="mt-1 text-sm leading-6 text-gray-600">
-																{link.description}
-															</p>
-														</div>
-													</a>
-												);
-											})
-										}
-									</div>
-								</article>
+													return (
+														<a
+															href={link.url}
+															target={isExternal ? '_blank' : undefined}
+															rel={isExternal ? 'noopener noreferrer' : undefined}
+															class="group flex items-start gap-3 rounded-3xl bg-gray-50 p-4 transition hover:bg-green-50"
+														>
+															<ExternalLink class="mt-0.5 h-5 w-5 shrink-0 text-green-800 transition group-hover:scale-110" />
+															<div class="min-w-0 flex-1">
+																<h3 class="font-semibold text-gray-900 transition group-hover:text-green-800">
+																	{link.title}
+																</h3>
+																<p class="mt-1 text-sm leading-6 text-gray-600">
+																	{link.description}
+																</p>
+															</div>
+														</a>
+													);
+												})
+											}
+										</div>
+									</article>
+								</FullBleedSection>
 							);
 						})
 					}
 				</div>
-		</FullBleedSection>
+			) : (
+				<FullBleedSection class="py-12" bleedClass="bleed-white-70">
+					<div class="rounded-4xl border border-dashed border-gray-300 bg-white/80 p-8 text-center text-gray-600">
+						Add some `Useful Link Section` documents in Sanity Studio and they will appear here.
+					</div>
+				</FullBleedSection>
+			)
+		}
 
 		<section id="suggest-resource" class="rounded-4xl bg-[#2d5016] px-6 py-8 text-center text-white shadow-2xl sm:px-8 sm:py-10">
 			<div class="mx-auto max-w-3xl">

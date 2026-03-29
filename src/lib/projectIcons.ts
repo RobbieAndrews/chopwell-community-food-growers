@@ -1,11 +1,13 @@
 import {
 	Apple,
+	Book,
 	BookOpen,
 	Calendar,
 	Carrot,
 	CookingPot,
 	Droplets,
 	Fence,
+	FileText,
 	Hammer,
 	HeartHandshake,
 	House,
@@ -18,10 +20,12 @@ import {
 	Trees,
 	Users,
 	Utensils,
+	Video,
 	Wrench,
 } from '@lucide/astro'
 
 export const projectIconMap = {
+	book: Book,
 	leaf: Leaf,
 	sprout: Sprout,
 	carrot: Carrot,
@@ -33,7 +37,9 @@ export const projectIconMap = {
 	users: Users,
 	'heart-handshake': HeartHandshake,
 	'book-open': BookOpen,
+	'file-text': FileText,
 	calendar: Calendar,
+	video: Video,
 	shovel: Shovel,
 	hammer: Hammer,
 	wrench: Wrench,

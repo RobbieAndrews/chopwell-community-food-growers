@@ -17,7 +17,7 @@ const {
 	title,
 	description,
 	pills = [],
-	sectionClass = 'px-2 py-4 sm:px-0 sm:py-6',
+	sectionClass = 'py-4 sm:py-6',
 	containerClass = 'max-w-3xl mx-auto flex flex-col items-center',
 } = Astro.props as Props;
 ---
@@ -50,4 +50,6 @@ const {
 			) : null
 		}
 	</div>
+
+    <slot />
 </section>

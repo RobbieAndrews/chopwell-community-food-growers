@@ -42,6 +42,14 @@
         clip-path: inset(0 -100vmax);
     }
 
+    @media (min-width: 40rem) {
+        .bleed-mobile-only {
+            background-color: transparent;
+            box-shadow: none;
+            clip-path: none;
+        }
+    }
+
     .bleed-white-70 {
         --bleed-color: rgb(255 255 255 / 0.7);
     }

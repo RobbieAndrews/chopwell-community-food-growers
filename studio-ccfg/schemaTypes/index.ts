@@ -3,6 +3,7 @@ import {postType} from './postType'
 import {projectType} from './projectType'
 import {volunteerOpportunityType} from './volunteerOpportunityType'
 import {calendarEventType} from './calendarEventType'
+import {usefulLinkSectionType} from './usefulLinkSectionType'
 
 export const schemaTypes = [
   newsletterIssueType,
@@ -10,4 +11,5 @@ export const schemaTypes = [
   projectType,
   volunteerOpportunityType,
   calendarEventType,
+  usefulLinkSectionType,
 ]

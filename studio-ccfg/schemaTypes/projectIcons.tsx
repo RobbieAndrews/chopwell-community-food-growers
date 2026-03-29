@@ -16,6 +16,15 @@ type ProjectIconOption = {
 
 export const projectIconOptions = [
   {
+    value: 'book',
+    title: 'Book',
+    nodes: [
+      ['path', {d: 'M12 7v14'}],
+      ['path', {d: 'M3 18a1 1 0 0 1-1-1V6a2 2 0 0 1 2-2h7a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H3z'}],
+      ['path', {d: 'M13 7h7a2 2 0 0 1 2 2v9a1 1 0 0 1-1 1h-8'}],
+    ],
+  },
+  {
     value: 'leaf',
     title: 'Leaf',
     nodes: [
@@ -113,6 +122,17 @@ export const projectIconOptions = [
     ],
   },
   {
+    value: 'file-text',
+    title: 'File Text',
+    nodes: [
+      ['path', {d: 'M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z'}],
+      ['path', {d: 'M14 2v4a2 2 0 0 0 2 2h4'}],
+      ['path', {d: 'M10 9H8'}],
+      ['path', {d: 'M16 13H8'}],
+      ['path', {d: 'M16 17H8'}],
+    ],
+  },
+  {
     value: 'calendar',
     title: 'Calendar',
     nodes: [
@@ -120,6 +140,14 @@ export const projectIconOptions = [
       ['path', {d: 'M16 2v4'}],
       ['rect', {x: 3, y: 4, width: 18, height: 18, rx: 2}],
       ['path', {d: 'M3 10h18'}],
+    ],
+  },
+  {
+    value: 'video',
+    title: 'Video',
+    nodes: [
+      ['path', {d: 'm22 8-6 4 6 4V8Z'}],
+      ['rect', {x: 2, y: 6, width: 14, height: 12, rx: 2}],
     ],
   },
   {
