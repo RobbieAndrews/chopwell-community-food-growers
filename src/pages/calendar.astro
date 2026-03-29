@@ -22,6 +22,6 @@ const CALENDAR_EVENTS_QUERY = `*[
 const calendarEvents = await sanityClient.fetch<CalendarEvent[]>(CALENDAR_EVENTS_QUERY);
 ---
 
-<SiteLayout title="Calendar">
+<SiteLayout title="Calendar" mainClass="py-6 sm:py-8 lg:py-10">
     <CalendarWidget client:load events={calendarEvents} />
 </SiteLayout>

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { CalendarDays, Clock3 } from "lucide-react";
+import { CalendarDays, ChevronLeft, ChevronRight, Clock3, Undo2 } from "lucide-react";
 
 import {
     addMonths,
@@ -10,12 +10,14 @@ import {
     getInitialVisibleMonth,
     getLongDateLabel,
     getMonthLabel,
+    getMonthName,
     getShortDateLabel,
     getTimeRangeLabel,
     groupEventsByDate,
     isSameDay,
     isSameMonth,
     isToday,
+    mobileWeekdayLabels,
     parseDateKey,
     startOfMonth,
     weekdayLabels,
@@ -92,48 +94,40 @@ function DayDetailsPanel({
             </div>
 
             <p className="mt-3 text-sm leading-6 text-gray-600">
-                {events.length > 0
-                    ? "Here are the sessions currently planned for the selected day."
-                    : "Nothing is scheduled for this day yet in the placeholder frontend data."}
+                Here are the sessions currently planned for the selected day.
             </p>
 
             <div className="mt-5 space-y-4">
-                {events.length > 0 ? (
-                    events.map((event) => (
-                        <article
-                            key={event.id}
-                            className="rounded-3xl border border-gray-200 bg-gray-50 p-4"
-                        >
-                            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                                <div className="flex flex-wrap items-center gap-2">
-                                    <span
-                                        className={[
-                                            "rounded-full px-3 py-1 text-xs font-semibold ring-1",
-                                            categoryBadgeStyles[event.category],
-                                        ].join(" ")}
-                                    >
-                                        {event.category}
-                                    </span>
-                                    <span className="text-sm font-medium text-gray-600">
-                                        {getTimeRangeLabel(event.startTime, event.endTime)}
-                                    </span>
-                                </div>
-                                <AddToCalendarButton event={event} />
+                {events.map((event) => (
+                    <article
+                        key={event.id}
+                        className="rounded-3xl border border-gray-200 bg-gray-50 p-4"
+                    >
+                        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                            <div className="flex flex-wrap items-center gap-2">
+                                <span
+                                    className={[
+                                        "rounded-full px-3 py-1 text-xs font-semibold ring-1",
+                                        categoryBadgeStyles[event.category],
+                                    ].join(" ")}
+                                >
+                                    {event.category}
+                                </span>
+                                <span className="text-sm font-medium text-gray-600">
+                                    {getTimeRangeLabel(event.startTime, event.endTime)}
+                                </span>
                             </div>
+                            <AddToCalendarButton event={event} />
+                        </div>
 
-                            <h4 className="mt-3 text-lg font-semibold tracking-tight text-gray-900">
-                                {event.title}
-                            </h4>
-                            <p className="mt-3 text-sm leading-6 text-gray-700">
-                                {event.description}
-                            </p>
-                        </article>
-                    ))
-                ) : (
-                    <div className="rounded-3xl border border-dashed border-gray-300 bg-gray-50 p-5 text-sm leading-6 text-gray-600">
-                        Select another date or move to the next month using the arrow controls to explore more example events.
-                    </div>
-                )}
+                        <h4 className="mt-3 text-lg font-semibold tracking-tight text-gray-900">
+                            {event.title}
+                        </h4>
+                        <p className="mt-3 text-sm leading-6 text-gray-700">
+                            {event.description}
+                        </p>
+                    </article>
+                ))}
             </div>
         </div>
     );
@@ -286,7 +280,9 @@ export default function Calendar({ events, initialMonth }: CalendarProps) {
     }
 
     function handleDaySelection(day: Date) {
-        setIsDetailsOpen(true);
+        const dayEvents = eventsByDate[formatDateKey(day)] ?? [];
+
+        setIsDetailsOpen(dayEvents.length > 0);
         setViewState((currentState) => ({
             selectedDate: day,
             visibleMonth: isSameMonth(day, currentState.visibleMonth)
@@ -296,60 +292,57 @@ export default function Calendar({ events, initialMonth }: CalendarProps) {
     }
 
     return (
-        <div className="space-y-8">
-            <section className="rounded-4xl bg-white p-4 shadow-2xl ring-1 ring-gray-100 sm:p-6">
-                <div className="flex flex-col gap-4 border-b border-gray-100 pb-5">
-                    <div className="flex items-center justify-center gap-4">
+        <div className="space-y-6 sm:space-y-8">
+            <section className="p-0 sm:flex sm:min-h-[clamp(36rem,calc(100dvh-11rem),52rem)] sm:max-h-[calc(100dvh-7rem)] sm:flex-col sm:rounded-4xl sm:bg-white sm:p-5 sm:shadow-2xl sm:ring-1 sm:ring-gray-100 lg:p-6">
+                <div className="flex flex-col gap-2 border-b border-gray-100 pb-3 sm:gap-4 sm:pb-5">
+                    <div className="relative flex items-center justify-center">
                         <button
                             type="button"
                             onClick={() => updateVisibleMonth(-1)}
                             aria-label={`Show ${getMonthLabel(addMonths(visibleMonth, -1))}`}
-                            className="inline-flex items-center justify-center px-1 py-1 text-gray-700 transition hover:text-green-700 focus:outline-none"
+                            className="absolute left-0 inline-flex h-9 w-9 items-center justify-center rounded-full text-gray-700 transition hover:bg-green-50 hover:text-green-700 focus:outline-none sm:h-10 sm:w-10"
                         >
-                            <span aria-hidden="true" className="text-3xl leading-none sm:text-4xl">
-                                &#8249;
-                            </span>
+                            <ChevronLeft aria-hidden="true" className="h-6 w-6" />
                         </button>
-                        <h2 className="min-w-40 text-center text-xl font-semibold tracking-tight text-gray-900 sm:min-w-44 sm:text-2xl">
+                        <h2 className="px-12 text-center text-xl font-semibold tracking-tight text-gray-900 sm:min-w-44 sm:px-24 sm:text-2xl">
                             {getMonthLabel(visibleMonth)}
                         </h2>
-                        <button
-                            type="button"
-                            onClick={() => updateVisibleMonth(1)}
-                            aria-label={`Show ${getMonthLabel(addMonths(visibleMonth, 1))}`}
-                            className="inline-flex items-center justify-center px-1 py-1 text-gray-700 transition hover:text-green-700 focus:outline-none"
-                        >
-                            <span aria-hidden="true" className="text-3xl leading-none sm:text-4xl">
-                                &#8250;
-                            </span>
-                        </button>
+                        <div className="absolute right-0 flex items-center gap-1 sm:gap-2">
+                            {showReturnToCurrentMonth ? (
+                                <button
+                                    type="button"
+                                    onClick={jumpToCurrentMonth}
+                                    aria-label="Return to current month"
+                                    className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-green-200 bg-green-50 text-green-800 transition hover:border-green-300 hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 focus:ring-offset-white sm:h-10 sm:w-10"
+                                >
+                                    <Undo2 aria-hidden="true" className="h-4 w-4 sm:h-5 sm:w-5" />
+                                </button>
+                            ) : null}
+                            <button
+                                type="button"
+                                onClick={() => updateVisibleMonth(1)}
+                                aria-label={`Show ${getMonthLabel(addMonths(visibleMonth, 1))}`}
+                                className="inline-flex h-9 w-9 items-center justify-center rounded-full text-gray-700 transition hover:bg-green-50 hover:text-green-700 focus:outline-none sm:h-10 sm:w-10"
+                            >
+                                <ChevronRight aria-hidden="true" className="h-6 w-6" />
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                {showReturnToCurrentMonth ? (
-                    <div className="mt-4 flex justify-start">
-                        <button
-                            type="button"
-                            onClick={jumpToCurrentMonth}
-                            className="inline-flex items-center gap-2 rounded-full border border-green-200 bg-green-50 px-4 py-2 text-sm font-semibold text-green-800 transition hover:border-green-300 hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 focus:ring-offset-white"
-                        >
-                            Return to current month
-                        </button>
-                    </div>
-                ) : null}
-
-                <div className="relative mt-5">
-                    <div className="grid grid-cols-7 gap-1 text-center text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-gray-500 sm:gap-3 sm:text-sm sm:tracking-[0.22em]">
-                        {weekdayLabels.map((weekday) => (
-                            <div key={weekday} className="py-2">
-                                {weekday}
+                <div className="relative mt-3 sm:mt-5 sm:flex sm:min-h-0 sm:flex-1 sm:flex-col">
+                    <div className="grid grid-cols-7 gap-1 text-center text-[0.6rem] font-semibold uppercase tracking-[0.16em] text-gray-500 sm:gap-2 sm:text-[0.7rem] sm:tracking-[0.2em] lg:gap-3 lg:text-sm lg:tracking-[0.22em]">
+                        {weekdayLabels.map((weekday, index) => (
+                            <div key={weekday} className="py-1.5 sm:py-1.5 lg:py-2">
+                                <span className="sm:hidden">{mobileWeekdayLabels[index]}</span>
+                                <span className="hidden sm:inline">{weekday}</span>
                             </div>
                         ))}
                     </div>
 
                     <div
                         ref={gridRef}
-                        className="mt-2 grid grid-cols-7 gap-x-1 gap-y-2 sm:gap-3"
+                        className="mt-2 grid grid-cols-7 gap-x-1 gap-y-2 sm:min-h-0 sm:flex-1 sm:auto-rows-fr sm:gap-x-2 sm:gap-y-2 lg:gap-3"
                         role="grid"
                         aria-label={getMonthLabel(visibleMonth)}
                     >
@@ -360,7 +353,7 @@ export default function Calendar({ events, initialMonth }: CalendarProps) {
                             const isSelected = isSameDay(day, selectedDate);
                             const isSelectionActive = isSelected && isDetailsOpen;
                             const buttonClasses = [
-                                "relative flex aspect-square w-full items-center justify-center rounded-full border text-left transition focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 focus:ring-offset-white sm:h-auto sm:min-h-[7.25rem] sm:w-full sm:flex-col sm:items-stretch sm:justify-between sm:rounded-[1.35rem] sm:p-3",
+                                "relative flex aspect-square w-full overflow-hidden rounded-full border text-left transition focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 focus:ring-offset-white sm:h-full sm:min-h-[4.75rem] sm:w-full sm:flex-col sm:items-stretch sm:justify-between sm:rounded-[1.2rem] sm:p-2.5 lg:rounded-[1.35rem] lg:p-3",
                                 isCurrentMonth
                                     ? "border-gray-200 bg-gray-50/60 text-gray-800 hover:border-green-300 hover:bg-green-50/60"
                                     : "border-gray-200/70 bg-gray-100/70 text-gray-400 hover:border-gray-300 hover:bg-gray-100",
@@ -391,7 +384,7 @@ export default function Calendar({ events, initialMonth }: CalendarProps) {
                                 >
                                     <span
                                         className={[
-                                            "text-sm font-semibold sm:m-0 sm:text-base",
+                                            "absolute inset-0 flex items-center justify-center text-sm font-semibold sm:static sm:flex-none sm:text-[0.95rem] lg:text-base",
                                             isCurrentMonth ? "text-gray-800" : "text-gray-400",
                                         ].join(" ")}
                                     >
@@ -409,13 +402,13 @@ export default function Calendar({ events, initialMonth }: CalendarProps) {
                                                 ].join(" ")}
                                                 aria-hidden="true"
                                             />
-                                            <div className="hidden space-y-2 sm:block">
-                                                <div className="flex flex-wrap gap-1.5">
+                                            <div className="hidden min-h-0 overflow-hidden sm:block sm:space-y-1.5 lg:space-y-2">
+                                                <div className="flex flex-wrap gap-1 sm:gap-1.5">
                                                     {dayEvents.slice(0, 3).map((event) => (
                                                         <span
                                                             key={event.id}
                                                             className={[
-                                                                "h-2.5 w-2.5 rounded-full",
+                                                                "h-2 w-2 rounded-full lg:h-2.5 lg:w-2.5",
                                                                 isSelectionActive
                                                                     ? "bg-green-700"
                                                                     : categoryDotStyles[event.category],
@@ -427,7 +420,7 @@ export default function Calendar({ events, initialMonth }: CalendarProps) {
 
                                                 <p
                                                     className={[
-                                                        "text-xs leading-5 line-clamp-2",
+                                                        "overflow-hidden text-ellipsis whitespace-nowrap text-[0.7rem] leading-4 lg:line-clamp-2 lg:whitespace-normal lg:text-xs lg:leading-5",
                                                         isSelectionActive ? "text-gray-700" : "text-gray-500",
                                                     ].join(" ")}
                                                 >
@@ -466,49 +459,49 @@ export default function Calendar({ events, initialMonth }: CalendarProps) {
                 </div>
             </section>
 
-            <section className="rounded-4xl bg-white p-6 shadow-2xl ring-1 ring-gray-100 sm:p-8">
-                <div className="flex flex-col gap-4 border-b border-gray-100 pb-5 sm:flex-row sm:items-end sm:justify-between">
-                    <div>
-                        <p className="text-sm font-semibold uppercase tracking-[0.24em] text-green-700">
-                            Community Events
-                        </p>
-                        <h3 className="mt-2 text-2xl font-semibold tracking-tight text-gray-900 sm:text-3xl">
-                            {getMonthLabel(visibleMonth)}
-                        </h3>
-                    </div>
+            <section className="bleed bleed-white-70 -mx-4 px-4 py-6 sm:mx-0 sm:px-0 sm:py-8">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                    <h3 className="mt-2 text-2xl font-semibold tracking-tight text-gray-900 sm:text-3xl">
+                        Events in {getMonthName(visibleMonth)}
+                    </h3>
                 </div>
 
-                <div className="mt-6 space-y-4">
+                <div className="mt-4 space-y-4 sm:mt-5 lg:grid lg:grid-cols-2">
                     {visibleMonthEvents.length > 0 ? (
                         visibleMonthEvents.map((event) => (
                             <article
                                 key={event.id}
-                                className="rounded-3xl border border-gray-200 bg-gray-50/70 p-5 shadow-sm shadow-gray-900/5"
+                                className="rounded-3xl border border-gray-200 bg-white/80 p-4 shadow-sm shadow-gray-900/5 sm:p-5"
                             >
-                                <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-                                    <div className="min-w-0 flex-1">
-                                        <div className="flex flex-wrap items-center gap-3">
-                                            <span
-                                                className={[
-                                                    "rounded-full px-3 py-1 text-xs font-semibold ring-1",
-                                                    categoryBadgeStyles[event.category],
-                                                ].join(" ")}
-                                            >
-                                                {event.category}
-                                            </span>
-                                            <h4 className="text-xl font-semibold tracking-tight text-gray-900">
+                                <div className="flex flex-col gap-4">
+                                    <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+                                        <div className="min-w-0 flex-1">
+                                            <div className="flex flex-wrap items-center gap-3">
+                                                <span
+                                                    className={[
+                                                        "rounded-full px-3 py-1 text-xs font-semibold ring-1",
+                                                        categoryBadgeStyles[event.category],
+                                                    ].join(" ")}
+                                                >
+                                                    {event.category}
+                                                </span>
+                                            </div>
+
+                                            <h4 className="mt-3 text-xl font-semibold tracking-tight text-gray-900">
                                                 {event.title}
                                             </h4>
                                         </div>
+                                        <AddToCalendarButton event={event} className="lg:shrink-0" />
+                                    </div>
 
-                                        <p className="mt-3 max-w-3xl text-sm leading-6 text-gray-700 sm:text-base">
+                                    <div className="min-w-0">
+                                        <p className="text-sm leading-6 text-gray-700 sm:text-base">
                                             {event.description}
                                         </p>
                                     </div>
-                                    <AddToCalendarButton event={event} className="lg:shrink-0" />
                                 </div>
 
-                                <div className="mt-5 grid gap-3 text-sm text-gray-600 sm:grid-cols-2 xl:grid-cols-[minmax(0,16rem)_minmax(0,1fr)]">
+                                <div className="mt-5 flex gap-6 text-sm text-gray-600">
                                     <p className="flex items-center gap-2">
                                         <CalendarDays className="h-4 w-4 text-green-700" aria-hidden="true" />
                                         {getShortDateLabel(parseDateKey(event.date))}

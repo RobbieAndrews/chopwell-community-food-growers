@@ -5,6 +5,10 @@ const monthFormatter = new Intl.DateTimeFormat("en-GB", {
     year: "numeric",
 });
 
+const monthNameFormatter = new Intl.DateTimeFormat("en-GB", {
+    month: "long",
+});
+
 const longDateFormatter = new Intl.DateTimeFormat("en-GB", {
     weekday: "long",
     day: "numeric",
@@ -23,6 +27,7 @@ const timeFormatter = new Intl.DateTimeFormat("en-GB", {
     minute: "2-digit",
 });
 
+export const mobileWeekdayLabels = ["M", "T", "W", "T", "F", "S", "S"];
 export const weekdayLabels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 function createDate(year: number, month: number, day: number) {
@@ -76,6 +81,10 @@ export function getMonthLabel(date: Date) {
     return monthFormatter.format(date);
 }
 
+export function getMonthName(date: Date) {
+    return monthNameFormatter.format(date);
+}
+
 export function getLongDateLabel(date: Date) {
     return longDateFormatter.format(date);
 }
@@ -94,13 +103,20 @@ export function getTimeRangeLabel(startTime: string, endTime: string) {
 export function getCalendarDays(visibleMonth: Date) {
     const monthStart = startOfMonth(visibleMonth);
     const monthStartOffset = (monthStart.getDay() + 6) % 7;
+    const monthEnd = createDate(
+        visibleMonth.getFullYear(),
+        visibleMonth.getMonth() + 1,
+        0,
+    );
+    const monthEndOffset = (7 - ((monthEnd.getDay() + 6) % 7) - 1 + 7) % 7;
     const firstGridDay = createDate(
         monthStart.getFullYear(),
         monthStart.getMonth(),
         1 - monthStartOffset,
     );
+    const totalDays = monthStartOffset + monthEnd.getDate() + monthEndOffset;
 
-    return Array.from({ length: 42 }, (_, index) =>
+    return Array.from({ length: totalDays }, (_, index) =>
         createDate(
             firstGridDay.getFullYear(),
             firstGridDay.getMonth(),
