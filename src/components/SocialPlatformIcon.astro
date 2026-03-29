@@ -1,0 +1,110 @@
+---
+import { Globe } from '@lucide/astro';
+
+interface Props {
+	platform: string;
+	class?: string;
+}
+
+const { platform, class: className = 'h-5 w-5' } = Astro.props as Props;
+---
+
+{
+	platform === 'facebook' ? (
+		<svg
+			aria-hidden="true"
+			viewBox="0 0 24 24"
+			fill="currentColor"
+			class={className}
+		>
+			<path d="M13.5 21v-7.1H16l.4-2.9h-2.9V9.1c0-.8.2-1.4 1.4-1.4h1.6V5.1c-.3 0-1.1-.1-2-.1-2 0-3.4 1.2-3.4 3.5V11H9v2.9h2.1V21h2.4Z" />
+		</svg>
+	) : platform === 'instagram' ? (
+		<svg
+			aria-hidden="true"
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			stroke-width="2"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+			class={className}
+		>
+			<rect x="3.5" y="3.5" width="17" height="17" rx="5" />
+			<circle cx="12" cy="12" r="4" />
+			<circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none" />
+		</svg>
+	) : platform === 'x' ? (
+		<svg
+			aria-hidden="true"
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			stroke-width="2.2"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+			class={className}
+		>
+			<path d="M5 4l14 16" />
+			<path d="M19 4 9.5 14.5" />
+			<path d="M10.5 9.5 5 20" />
+			<path d="M14 14.5 19 20" />
+		</svg>
+	) : platform === 'linkedin' ? (
+		<svg
+			aria-hidden="true"
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			stroke-width="2"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+			class={className}
+		>
+			<circle cx="6.5" cy="7" r="1.25" fill="currentColor" stroke="none" />
+			<path d="M6.5 10.5v7" />
+			<path d="M11 17.5v-7" />
+			<path d="M11 13.5a3 3 0 0 1 6 0v4" />
+			<path d="M17 17.5v-4" />
+		</svg>
+	) : platform === 'youtube' ? (
+		<svg
+			aria-hidden="true"
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			stroke-width="2"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+			class={className}
+		>
+			<rect x="3" y="6.5" width="18" height="11" rx="4" />
+			<path d="m10 9.5 5 2.5-5 2.5Z" fill="currentColor" stroke="none" />
+		</svg>
+	) : platform === 'tiktok' ? (
+		<svg
+			aria-hidden="true"
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			stroke-width="2"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+			class={className}
+		>
+			<path d="M14 5c.6 1.7 1.9 3 3.5 3.6V12a7.3 7.3 0 0 1-3.5-1V15a4 4 0 1 1-4-4" />
+			<path d="M14 5v10" />
+		</svg>
+	) : platform === 'bluesky' ? (
+		<svg
+			aria-hidden="true"
+			viewBox="0 0 24 24"
+			fill="currentColor"
+			class={className}
+		>
+			<path d="M6.7 6.2c1.8 1.3 3.8 4 5.3 6.1 1.5-2.1 3.5-4.8 5.3-6.1 1.3-.9 3.4-1.6 3.4.8 0 .5-.3 4.1-.5 4.7-.7 2-3 2.5-5 2.1 3.6.6 4.5 2.5 2.6 4.4-3.6 3.5-5.2-.9-5.6-2-.1-.2-.1-.2-.2 0-.4 1.1-2 5.5-5.6 2-1.9-1.9-1-3.8 2.6-4.4-2 .4-4.3-.1-5-2.1-.2-.6-.5-4.2-.5-4.7 0-2.4 2.1-1.7 3.4-.8Z" />
+		</svg>
+	) : (
+		<Globe class={className} />
+	)
+}
