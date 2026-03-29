@@ -1,82 +1,102 @@
 @import "tailwindcss";
 
-:root {
-	color-scheme: light;
+@layer base {
+    :root {
+        color-scheme: light;
+    }
+
+    html {
+        /* Reserves the scrollbar gutter space to prevent layout shift */
+        scrollbar-gutter: stable;
+        background: #f5f8f2;
+    }
+
+    body {
+        margin: 0;
+        min-height: 100vh;
+        /* Safety: prevents horizontal scrollbars from the bleed shadow */
+        overflow-x: hidden; 
+        width: 100%;
+        
+        background:
+            radial-gradient(circle at top, rgba(154, 196, 108, 0.16), transparent 36%),
+            radial-gradient(circle at bottom right, rgba(251, 191, 36, 0.12), transparent 22%),
+            linear-gradient(180deg, #f8fbf5 0%, #eef5e8 100%);
+        color: #1f2937;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
 }
 
-html {
-	background: #f5f8f2;
-}
+@layer components {
+    /**
+     * THE BLEED UTILITY
+     * Use this on any section to make its background span the full screen width
+     * without using 'w-screen' (which causes flickering).
+     */
+    .bleed {
+        --bleed-color: transparent;
+        background-color: var(--bleed-color);
+        /* Creates a massive shadow that acts as the background */
+        box-shadow: 0 0 0 100vmax var(--bleed-color);
+        /* Crops the shadow so it doesn't cause horizontal scrolling */
+        clip-path: inset(0 -100vmax);
+    }
 
-body {
-	margin: 0;
-	min-height: 100vh;
-	background:
-		radial-gradient(circle at top, rgba(154, 196, 108, 0.16), transparent 36%),
-		radial-gradient(circle at bottom right, rgba(251, 191, 36, 0.12), transparent 22%),
-		linear-gradient(180deg, #f8fbf5 0%, #eef5e8 100%);
-	color: #1f2937;
-	font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-}
+    .bleed-white-70 {
+        --bleed-color: rgb(255 255 255 / 0.7);
+    }
 
-.portable-content {
-	color: #4b5563;
-	font-size: 1rem;
-	line-height: 1.75;
-}
+    .bleed-gray-50 {
+        --bleed-color: rgb(249 250 251);
+    }
 
-.portable-content > * {
-	margin: 0;
-}
+    /* TYPOGRAPHY: Portable Content Styles */
+    .portable-content {
+        color: #4b5563;
+        font-size: 1rem;
+        line-height: 1.75;
+    }
 
-.portable-content > * + * {
-	margin-top: 1rem;
-}
+    .portable-content > * {
+        margin: 0;
+    }
 
-.portable-content p:empty {
-	display: none;
-}
+    .portable-content > * + * {
+        margin-top: 1rem;
+    }
 
-.portable-content h1,
-.portable-content h2,
-.portable-content h3,
-.portable-content h4 {
-	color: #111827;
-	font-weight: 700;
-	line-height: 1.25;
-}
+    .portable-content p:empty {
+        display: none;
+    }
 
-.portable-content h1 {
-	font-size: 1.875rem;
-}
+    .portable-content h1,
+    .portable-content h2,
+    .portable-content h3,
+    .portable-content h4 {
+        color: #111827;
+        font-weight: 700;
+        line-height: 1.25;
+    }
 
-.portable-content h2 {
-	font-size: 1.5rem;
-}
+    .portable-content h1 { font-size: 1.875rem; }
+    .portable-content h2 { font-size: 1.5rem; }
+    .portable-content h3 { font-size: 1.25rem; }
 
-.portable-content h3 {
-	font-size: 1.25rem;
-}
+    .portable-content ul,
+    .portable-content ol {
+        padding-left: 1.5rem;
+    }
 
-.portable-content ul,
-.portable-content ol {
-	padding-left: 1.5rem;
-}
+    .portable-content ul { list-style: disc; }
+    .portable-content ol { list-style: decimal; }
 
-.portable-content ul {
-	list-style: disc;
-}
+    .portable-content li + li {
+        margin-top: 0.35rem;
+    }
 
-.portable-content ol {
-	list-style: decimal;
-}
-
-.portable-content li + li {
-	margin-top: 0.35rem;
-}
-
-.portable-content a {
-	color: #166534;
-	text-decoration: underline;
-	text-underline-offset: 0.18em;
+    .portable-content a {
+        color: #166534;
+        text-decoration: underline;
+        text-underline-offset: 0.18em;
+    }
 }

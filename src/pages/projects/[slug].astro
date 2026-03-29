@@ -9,7 +9,11 @@ import {
 	type ArticlePortableTextBlock,
 } from '../../lib/articlePortableText';
 import { projectIconMap, type ProjectIcon } from '../../lib/projectIcons';
-import { urlForImage, type SanityImageWithAlt } from '../../lib/sanity';
+import {
+	getSanityImageSrcSet,
+	getSanityImageUrl,
+	type SanityImageWithAlt,
+} from '../../lib/sanity';
 
 interface ProjectPage {
 	_id: string;
@@ -54,9 +58,21 @@ if (!project) {
 }
 
 const Icon = projectIconMap[project.icon] ?? projectIconMap.leaf;
+const projectHeroWidths = [640, 960, 1280, 1600];
+const projectHeroAspectRatio = 1280 / 822;
 const projectImageUrl = project.mainImage
-	? urlForImage(project.mainImage)?.width(1400).height(900).fit('crop').url()
+	? getSanityImageUrl(project.mainImage, {
+			width: 1280,
+			aspectRatio: projectHeroAspectRatio,
+			fit: 'crop',
+		})
 	: null;
+const projectImageSrcSet = project.mainImage
+	? getSanityImageSrcSet(project.mainImage, projectHeroWidths, {
+			aspectRatio: projectHeroAspectRatio,
+			fit: 'crop',
+		})
+	: '';
 const projectImageAlt = project.mainImage?.alt || project.title;
 ---
 
@@ -89,9 +105,15 @@ const projectImageAlt = project.mainImage?.alt || project.title;
 					projectImageUrl ? (
 						<img
 							src={projectImageUrl}
+							srcset={projectImageSrcSet || undefined}
+							sizes="(min-width: 1024px) 45vw, 100vw"
 							alt={projectImageAlt}
-							loading="lazy"
-							class="h-full min-h-72 w-full object-cover"
+							loading="eager"
+							fetchpriority="high"
+							decoding="async"
+							width="1280"
+							height="822"
+							class="aspect-[1280/822] h-full min-h-72 w-full object-cover"
 						/>
 					) : (
 						<div class="flex h-full min-h-72 items-center justify-center bg-linear-to-br from-lime-100 via-stone-50 to-emerald-100 text-green-900">
@@ -102,15 +124,10 @@ const projectImageAlt = project.mainImage?.alt || project.title;
 			</Fragment>
 
 			{
-				Array.isArray(project.body) && project.body.length ? (
-					<div class="mt-5 max-w-4xl">
+				Array.isArray(project.body) && project.body.length && (
+					<div class="mt-5">
 						<PortableText value={project.body} components={articlePortableTextComponents} />
 					</div>
-				) : (
-					<p class="mt-5 text-base leading-8 text-gray-600">
-						Project content can be added in Sanity whenever you are ready. For now this page is
-						using the project name, short description, icon, slug, and main image.
-					</p>
 				)
 			}
 		</ContentFeatureCard>

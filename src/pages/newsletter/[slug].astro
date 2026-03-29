@@ -8,7 +8,11 @@ import {
 	articlePortableTextComponents,
 	type ArticlePortableTextBlock,
 } from '../../lib/articlePortableText';
-import { urlForImage, type SanityImageWithAlt } from '../../lib/sanity';
+import {
+	getSanityImageSrcSet,
+	getSanityImageUrl,
+	type SanityImageWithAlt,
+} from '../../lib/sanity';
 
 export function getStaticPaths() {
 	const NEWSLETTER_SLUGS_QUERY = `*[
@@ -60,9 +64,21 @@ if (!newsletter) {
 	return Astro.redirect('/newsletter');
 }
 
+const newsletterHeroWidths = [640, 960, 1280, 1600];
+const newsletterHeroAspectRatio = 1280 / 822;
 const newsletterImageUrl = newsletter.heroImage
-	? urlForImage(newsletter.heroImage)?.width(1400).height(900).fit('crop').url()
+	? getSanityImageUrl(newsletter.heroImage, {
+			width: 1280,
+			aspectRatio: newsletterHeroAspectRatio,
+			fit: 'crop',
+		})
 	: null;
+const newsletterImageSrcSet = newsletter.heroImage
+	? getSanityImageSrcSet(newsletter.heroImage, newsletterHeroWidths, {
+			aspectRatio: newsletterHeroAspectRatio,
+			fit: 'crop',
+		})
+	: '';
 const newsletterImageAlt = newsletter.heroImage?.alt || newsletter.title;
 const publishedDate = new Intl.DateTimeFormat('en-GB', {
 	day: 'numeric',
@@ -112,9 +128,15 @@ const publishedDate = new Intl.DateTimeFormat('en-GB', {
 					newsletterImageUrl ? (
 						<img
 							src={newsletterImageUrl}
+							srcset={newsletterImageSrcSet || undefined}
+							sizes="(min-width: 1024px) 45vw, 100vw"
 							alt={newsletterImageAlt}
-							loading="lazy"
-							class="h-full min-h-72 w-full object-cover"
+							loading="eager"
+							fetchpriority="high"
+							decoding="async"
+							width="1280"
+							height="822"
+							class="aspect-[1280/822] h-full min-h-72 w-full object-cover"
 						/>
 					) : (
 						<div class="flex h-full min-h-72 items-center justify-center bg-linear-to-br from-lime-100 via-stone-50 to-emerald-100 text-green-900">
@@ -127,15 +149,10 @@ const publishedDate = new Intl.DateTimeFormat('en-GB', {
 			<p class="mt-3 text-lg leading-8 text-gray-600">{newsletter.leadStoryIntro}</p>
 
 			{
-				Array.isArray(newsletter.content) && newsletter.content.length ? (
-					<div class="mt-8 max-w-4xl">
+				Array.isArray(newsletter.content) && newsletter.content.length && (
+					<div class="mt-8">
 						<PortableText value={newsletter.content} components={articlePortableTextComponents} />
 					</div>
-				) : (
-					<p class="mt-8 text-base leading-8 text-gray-600">
-						Story content can be added in Sanity whenever you are ready. This issue is currently
-						showing its hero details and lead story introduction.
-					</p>
 				)
 			}
 		</ContentFeatureCard>

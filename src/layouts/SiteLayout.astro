@@ -1,15 +1,18 @@
 ---
 import "../styles/global.css";
 import { Sprout } from "@lucide/astro";
+import Container from "../components/Container.astro";
 
 interface Props {
     title: string;
     mainClass?: string;
+    wrapContent?: boolean;
 }
 
 const {
     title,
-    mainClass = "mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8",
+    mainClass = "py-10 sm:py-14",
+    wrapContent = true,
 } = Astro.props;
 const siteTitle = "Chopwell Community Food Growers";
 const pathname = Astro.url.pathname;
@@ -39,7 +42,7 @@ const desktopNavLinks = navLinks.filter(({ href }) => href !== "/");
             <header
                 class="sticky top-0 z-40 border-b border-green-900/10 bg-white"
             >
-                <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 sm:py-5 lg:px-8">
+                <Container class="py-4 sm:py-5">
                     <div class="md:hidden">
                         <details data-mobile-menu class="group mobile-menu">
                             <summary
@@ -153,11 +156,19 @@ const desktopNavLinks = navLinks.filter(({ href }) => href !== "/");
                             </ul>
                         </nav>
                     </div>
-                </div>
+                </Container>
             </header>
 
             <main class={mainClass}>
-                <slot />
+                {
+                    wrapContent ? (
+                        <Container>
+                            <slot />
+                        </Container>
+                    ) : (
+                        <slot />
+                    )
+                }
             </main>
         </div>
     </body>

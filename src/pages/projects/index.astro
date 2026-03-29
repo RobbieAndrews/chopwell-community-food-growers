@@ -1,5 +1,6 @@
 ---
 import SiteLayout from '../../layouts/SiteLayout.astro';
+import FullBleedSection from '../../components/FullBleedSection.astro';
 import PageIntro from '../../components/PageIntro.astro';
 import { ArrowRight, Leaf, Users } from '@lucide/astro';
 import { sanityClient } from 'sanity:client';
@@ -53,11 +54,10 @@ const projects = projectDocuments.map((project) => ({
 		]}
 	/>
 
-	<section class="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] mt-8 w-screen bg-white/70 py-12">
-		<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+	<FullBleedSection class="mt-8 py-12" bleedClass="bleed-white-70">
 			{
 				projects.length ? (
-					<div class="grid gap-5 md:grid-cols-3">
+					<div class="grid gap-5 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
 						{
 							projects.map((project) => {
 								const Icon = projectIconMap[project.icon] ?? projectIconMap.leaf;
@@ -115,6 +115,5 @@ const projects = projectDocuments.map((project) => ({
 					</div>
 				)
 			}
-		</div>
-	</section>
+	</FullBleedSection>
 </SiteLayout>

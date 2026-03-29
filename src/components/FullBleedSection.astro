@@ -1,0 +1,29 @@
+---
+import Container from './Container.astro';
+
+interface Props {
+    class?: string;
+    bleedClass?: string; // e.g. "bg-white" or "bg-slate-100"
+    containerClass?: string;
+    containerSize?: 'narrow' | 'default' | 'wide' | 'full';
+}
+
+const {
+    class: className = '',
+    bleedClass = '',
+    containerClass = '',
+    containerSize = 'default',
+} = Astro.props as Props;
+---
+
+<section 
+    class:list={[
+        'bleed relative isolate', 
+        className, 
+        bleedClass
+    ]}
+>
+    <Container size={containerSize} class={containerClass}>
+        <slot />
+    </Container>
+</section>
