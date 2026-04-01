@@ -1,6 +1,6 @@
 ---
 import "../styles/global.css";
-import { Sprout } from "@lucide/astro";
+import { ChevronDown, Sprout } from "@lucide/astro";
 import Container from "../components/Container.astro";
 
 interface Props {
@@ -18,16 +18,41 @@ const {
 } = Astro.props;
 const siteTitle = "Chopwell Community Food Growers";
 const pathname = Astro.url.pathname;
-const navLinks = [
+
+interface NavLink {
+    href: string;
+    label: string;
+}
+
+interface NavGroup {
+    label: string;
+    href?: string;
+    children?: NavLink[];
+}
+
+const navGroups: NavGroup[] = [
     { href: "/", label: "Home" },
     { href: "/projects", label: "Projects" },
-    { href: "/calendar", label: "Calendar" },
-    { href: "/newsletter", label: "Newsletter" },
-    { href: "/get-involved", label: "Get Involved" },
+    {
+        label: "What's On",
+        children: [
+            { href: "/get-involved", label: "Get Involved" },
+            { href: "/calendar", label: "Calendar" },
+        ],
+    },
+    {
+        label: "Resources",
+        children: [
+            { href: "/newsletter", label: "Newsletter" },
+            { href: "/useful-links", label: "Useful Links" },
+        ],
+    },
     { href: "/contact", label: "Contact" },
-    { href: "/useful-links", label: "Useful Links" },
 ];
-const desktopNavLinks = navLinks.filter(({ href }) => href !== "/");
+const desktopNavGroups = navGroups.filter(({ href }) => href !== "/");
+const isGroupActive = (group: NavGroup) =>
+    group.href === pathname ||
+    group.children?.some(({ href }) => href === pathname) === true;
 ---
 
 <html lang="en">
@@ -82,28 +107,86 @@ const desktopNavLinks = navLinks.filter(({ href }) => href !== "/");
                                 >
                                     <ul class="mobile-menu__list flex flex-1 flex-col gap-2 bg-white px-4 pb-5 pt-24">
                                         {
-                                            navLinks.map(({ href, label }) => {
-                                                const isActive = pathname === href;
+                                            navGroups.map((group) => {
+                                                const groupActive = isGroupActive(group);
+
+                                                if (!group.children?.length) {
+                                                    const isActive = pathname === group.href;
+
+                                                    return (
+                                                        <li class="rounded-lg">
+                                                            <a
+                                                                href={group.href}
+                                                                aria-current={
+                                                                    isActive
+                                                                        ? "page"
+                                                                        : undefined
+                                                                }
+                                                                class:list={[
+                                                                    "block rounded-xl px-4 py-3 text-sm font-medium text-gray-700 transition hover:bg-green-50 hover:text-[#2d5016]",
+                                                                    isActive
+                                                                        ? "bg-[#2d5016] text-white"
+                                                                        : "",
+                                                                ]}
+                                                                data-close-menu
+                                                            >
+                                                                {group.label}
+                                                            </a>
+                                                        </li>
+                                                    );
+                                                }
 
                                                 return (
-                                                    <li class="rounded-lg">
-                                                        <a
-                                                            href={href}
-                                                            aria-current={
-                                                                isActive
-                                                                    ? "page"
-                                                                    : undefined
-                                                            }
-                                                            class:list={[
-                                                                "block rounded-xl px-4 py-3 text-sm font-medium text-gray-700 transition hover:bg-green-50 hover:text-[#2d5016]",
-                                                                isActive
-                                                                    ? "bg-[#2d5016] text-white"
-                                                                    : "",
-                                                            ]}
-                                                            data-close-menu
+                                                    <li class="rounded-[1.25rem] border border-green-900/10 bg-[var(--ccfg-cream)]/65">
+                                                        <details
+                                                            class="mobile-submenu group/submenu"
+                                                            data-mobile-submenu
                                                         >
-                                                            {label}
-                                                        </a>
+                                                            <summary
+                                                                class:list={[
+                                                                    "mobile-submenu__summary flex cursor-pointer list-none items-center justify-between gap-4 rounded-[1.25rem] px-4 py-3 text-sm font-semibold text-[#244329] transition",
+                                                                    groupActive
+                                                                        ? "text-[#1d351e]"
+                                                                        : "",
+                                                                ]}
+                                                            >
+                                                                <span>{group.label}</span>
+                                                                <ChevronDown class="h-4 w-4 shrink-0 transition group-open/submenu:rotate-180" />
+                                                            </summary>
+                                                            <ul class="mobile-submenu__panel px-2 pb-2">
+                                                                {group.children.map(
+                                                                    ({
+                                                                        href,
+                                                                        label,
+                                                                    }) => {
+                                                                        const isActive =
+                                                                            pathname === href;
+
+                                                                        return (
+                                                                            <li>
+                                                                                <a
+                                                                                    href={href}
+                                                                                    aria-current={
+                                                                                        isActive
+                                                                                            ? "page"
+                                                                                            : undefined
+                                                                                    }
+                                                                                    class:list={[
+                                                                                        "block rounded-xl px-4 py-3 text-sm font-medium text-gray-700 transition hover:bg-white hover:text-[#2d5016]",
+                                                                                        isActive
+                                                                                            ? "bg-[#2d5016] text-white"
+                                                                                            : "",
+                                                                                    ]}
+                                                                                    data-close-menu
+                                                                                >
+                                                                                    {label}
+                                                                                </a>
+                                                                            </li>
+                                                                        );
+                                                                    }
+                                                                )}
+                                                            </ul>
+                                                        </details>
                                                     </li>
                                                 );
                                             })
@@ -130,27 +213,85 @@ const desktopNavLinks = navLinks.filter(({ href }) => href !== "/");
                         <nav aria-label="Primary navigation">
                             <ul class="flex flex-wrap gap-x-2 gap-y-2">
                                 {
-                                    desktopNavLinks.map(({ href, label }) => {
-                                        const isActive = pathname === href;
+                                    desktopNavGroups.map((group) => {
+                                        const groupActive = isGroupActive(group);
+
+                                        if (!group.children?.length) {
+                                            const isActive = pathname === group.href;
+
+                                            return (
+                                                <li class="rounded-lg">
+                                                    <a
+                                                        href={group.href}
+                                                        aria-current={
+                                                            isActive
+                                                                ? "page"
+                                                                : undefined
+                                                        }
+                                                        class:list={[
+                                                            "block rounded-full px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-green-50 hover:text-[#2d5016]",
+                                                            isActive
+                                                                ? "font-semibold text-[#2d5016]"
+                                                                : "",
+                                                        ]}
+                                                    >
+                                                        {group.label}
+                                                    </a>
+                                                </li>
+                                            );
+                                        }
 
                                         return (
-                                            <li class="rounded-lg">
-                                                <a
-                                                    href={href}
-                                                    aria-current={
-                                                        isActive
-                                                            ? "page"
-                                                            : undefined
-                                                    }
+                                            <li class="desktop-nav__item relative">
+                                                <button
+                                                    type="button"
                                                     class:list={[
-                                                        "block rounded-full px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-green-50 hover:text-[#2d5016]",
-                                                        isActive
+                                                        "flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-green-50 hover:text-[#2d5016] focus-visible:bg-green-50 focus-visible:text-[#2d5016] focus-visible:outline-none",
+                                                        groupActive
                                                             ? "font-semibold text-[#2d5016]"
                                                             : "",
                                                     ]}
                                                 >
-                                                    {label}
-                                                </a>
+                                                    <span>{group.label}</span>
+                                                    <ChevronDown class="desktop-nav__chevron h-4 w-4 transition" />
+                                                </button>
+
+                                                <div class="desktop-nav__submenu absolute left-0 top-full z-50 w-64 pt-3">
+                                                    <div class="overflow-hidden rounded-[1.5rem] border border-green-900/10 bg-white p-2 shadow-[0_22px_70px_rgba(36,67,41,0.16)]">
+                                                        <ul class="space-y-1">
+                                                            {group.children.map(
+                                                                ({
+                                                                    href,
+                                                                    label,
+                                                                }) => {
+                                                                    const isActive =
+                                                                        pathname === href;
+
+                                                                    return (
+                                                                        <li>
+                                                                            <a
+                                                                                href={href}
+                                                                                aria-current={
+                                                                                    isActive
+                                                                                        ? "page"
+                                                                                        : undefined
+                                                                                }
+                                                                                class:list={[
+                                                                                    "block rounded-2xl px-4 py-3 text-sm font-medium text-gray-700 transition hover:bg-green-50 hover:text-[#2d5016]",
+                                                                                    isActive
+                                                                                        ? "bg-[#2d5016] text-white hover:bg-[#2d5016] hover:text-white"
+                                                                                        : "",
+                                                                                ]}
+                                                                            >
+                                                                                {label}
+                                                                            </a>
+                                                                        </li>
+                                                                    );
+                                                                }
+                                                            )}
+                                                        </ul>
+                                                    </div>
+                                                </div>
                                             </li>
                                         );
                                     })
@@ -188,10 +329,21 @@ const desktopNavLinks = navLinks.filter(({ href }) => href !== "/");
     };
 
     mobileMenus.forEach((menu) => {
-        menu.addEventListener("toggle", syncMobileMenuState);
+        menu.addEventListener("toggle", () => {
+            if (!menu.hasAttribute("open")) {
+                menu
+                    .querySelectorAll("[data-mobile-submenu]")
+                    .forEach((submenu) => submenu.removeAttribute("open"));
+            }
+
+            syncMobileMenuState();
+        });
 
         menu.querySelectorAll("[data-close-menu]").forEach((element) => {
             element.addEventListener("click", () => {
+                menu
+                    .querySelectorAll("[data-mobile-submenu]")
+                    .forEach((submenu) => submenu.removeAttribute("open"));
                 menu.removeAttribute("open");
                 syncMobileMenuState();
             });
@@ -203,6 +355,10 @@ const desktopNavLinks = navLinks.filter(({ href }) => href !== "/");
 
 <style>
     .mobile-menu__summary::-webkit-details-marker {
+        display: none;
+    }
+
+    .mobile-submenu__summary::-webkit-details-marker {
         display: none;
     }
 
@@ -226,6 +382,11 @@ const desktopNavLinks = navLinks.filter(({ href }) => href !== "/");
         min-height: 100%;
     }
 
+    .mobile-submenu__panel {
+        display: grid;
+        gap: 0.25rem;
+    }
+
     .mobile-menu[open] > .mobile-menu__overlay {
         pointer-events: auto;
         opacity: 1;
@@ -233,6 +394,27 @@ const desktopNavLinks = navLinks.filter(({ href }) => href !== "/");
 
     .mobile-menu[open] .mobile-menu__panel {
         transform: translateX(0);
+    }
+
+    .desktop-nav__submenu {
+        pointer-events: none;
+        opacity: 0;
+        transform: translateY(0.75rem);
+        transition:
+            opacity 180ms ease,
+            transform 180ms ease;
+    }
+
+    .desktop-nav__item:hover .desktop-nav__submenu,
+    .desktop-nav__item:focus-within .desktop-nav__submenu {
+        pointer-events: auto;
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .desktop-nav__item:hover .desktop-nav__chevron,
+    .desktop-nav__item:focus-within .desktop-nav__chevron {
+        transform: rotate(180deg);
     }
 
     :global(body.mobile-menu-open) {
