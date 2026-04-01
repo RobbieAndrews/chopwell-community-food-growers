@@ -1,8 +1,14 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap");
 @import "tailwindcss";
 
 @layer base {
     :root {
         color-scheme: light;
+        --ccfg-ink: #162315;
+        --ccfg-forest: #244329;
+        --ccfg-moss: #678b4c;
+        --ccfg-cream: #f6f4eb;
+        --ccfg-sand: #ded4c0;
     }
 
     html {
@@ -22,8 +28,18 @@
             radial-gradient(circle at top, rgba(154, 196, 108, 0.16), transparent 36%),
             radial-gradient(circle at bottom right, rgba(251, 191, 36, 0.12), transparent 22%),
             linear-gradient(180deg, #f8fbf5 0%, #eef5e8 100%);
-        color: #1f2937;
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        color: var(--ccfg-ink);
+        font-family: "Manrope", "Aptos", "Segoe UI", sans-serif;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-family: "Fraunces", Georgia, serif;
+        letter-spacing: -0.03em;
     }
 }
 
