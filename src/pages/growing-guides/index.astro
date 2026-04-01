@@ -1,0 +1,84 @@
+---
+import {BookOpenText, Leaf, Search} from '@lucide/astro';
+import {sanityClient} from 'sanity:client';
+
+import GrowingGuideBrowser from '../../components/growing-guides/GrowingGuideBrowser';
+import PageIntro from '../../components/PageIntro.astro';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import {
+  getGrowingGuideCategoryTitle,
+  getGrowingGuideDifficultyTitle,
+  getGrowingGuideSeasonTitle,
+  type GrowingGuideBrowserCard,
+  type GrowingGuideSummary,
+} from '../../lib/growingGuides';
+import {urlForImage} from '../../lib/sanity';
+
+const GROWING_GUIDES_QUERY = `*[
+  _type == "growingGuide"
+  && defined(slug.current)
+]|order(title asc){
+  _id,
+  title,
+  slug,
+  excerpt,
+  category,
+  seasons,
+  difficulty,
+  keywords,
+  heroImage
+}`;
+
+const guideDocuments = await sanityClient.fetch<GrowingGuideSummary[]>(GROWING_GUIDES_QUERY);
+
+const guides: GrowingGuideBrowserCard[] = guideDocuments.map((guide) => ({
+  ...guide,
+  categoryLabel: getGrowingGuideCategoryTitle(guide.category),
+  difficultyLabel: guide.difficulty ? getGrowingGuideDifficultyTitle(guide.difficulty) : undefined,
+  seasonLabels: guide.seasons.map((season) => getGrowingGuideSeasonTitle(season)),
+  imageUrl: guide.heroImage
+    ? urlForImage(guide.heroImage)?.width(900).height(680).fit('crop').url() ?? null
+    : null,
+  imageAlt: guide.heroImage?.alt || guide.title,
+}));
+---
+
+<SiteLayout title="Growing Guides" contentSize="wide">
+  <div class="space-y-8">
+    <PageIntro
+      title="Growing Guides"
+      description="Practical vegetable-growing advice for community gardeners, beginners, and anyone wanting a clearer idea of what to sow, plant, and harvest through the year."
+      pills={[
+        {
+          label: `${guides.length} guide${guides.length !== 1 ? 's' : ''}`,
+          icon: Leaf,
+          iconClass: 'text-green-700',
+        },
+        {
+          label: 'Structured advice and seasonal tips',
+          icon: BookOpenText,
+          iconClass: 'text-amber-700',
+        },
+        {
+          label: 'Search by crop, category, or season',
+          icon: Search,
+          iconClass: 'text-sky-700',
+        },
+      ]}
+      containerClass="max-w-4xl mx-auto flex flex-col items-center"
+    />
+
+    {
+      guides.length ? (
+        <GrowingGuideBrowser client:load guides={guides} />
+      ) : (
+        <section class="rounded-[2rem] border border-dashed border-gray-300 bg-white/85 p-8 text-center shadow-sm">
+          <h2 class="text-2xl font-semibold text-gray-900">No growing guides yet</h2>
+          <p class="mt-3 text-base leading-7 text-gray-600">
+            Add a growing guide in Sanity and it will appear here automatically.
+          </p>
+        </section>
+      )
+    }
+  </div>
+</SiteLayout>

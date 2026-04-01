@@ -1,0 +1,252 @@
+---
+import {ArrowLeft, Bug, CalendarRange, Clock3, Droplets, Leaf, SunMedium, TextSearch} from '@lucide/astro';
+import {PortableText} from 'astro-portabletext';
+import {sanityClient} from 'sanity:client';
+
+import ContentFeatureCard from '../../components/ContentFeatureCard.astro';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import {
+  articlePortableTextComponents,
+} from '../../lib/articlePortableText';
+import {
+  getGrowingGuideCategoryTitle,
+  getGrowingGuideDifficultyTitle,
+  getGrowingGuideSeasonTitle,
+  growingGuideFactLabels,
+  type GrowingGuidePage,
+} from '../../lib/growingGuides';
+import {
+  getSanityImageSrcSet,
+  getSanityImageUrl,
+} from '../../lib/sanity';
+
+export async function getStaticPaths(): Promise<{params: {slug: string}}[]> {
+  const GROWING_GUIDE_SLUGS_QUERY = `*[
+    _type == "growingGuide"
+    && defined(slug.current)
+  ]{
+    "params": { "slug": slug.current }
+  }`;
+
+  return await sanityClient.fetch(GROWING_GUIDE_SLUGS_QUERY);
+}
+
+const GROWING_GUIDE_QUERY = `*[
+  _type == "growingGuide"
+  && slug.current == $slug
+][0]{
+  _id,
+  title,
+  slug,
+  excerpt,
+  category,
+  seasons,
+  difficulty,
+  keywords,
+  heroImage,
+  quickFacts,
+  steps,
+  commonProblems,
+  body
+}`;
+
+const guide = await sanityClient.fetch<GrowingGuidePage | null>(GROWING_GUIDE_QUERY, {
+  slug: Astro.params.slug,
+});
+
+if (!guide) {
+  return Astro.redirect('/growing-guides');
+}
+
+const guideHeroWidths = [640, 960, 1280, 1600];
+const guideHeroAspectRatio = 1280 / 822;
+const guideImageUrl = guide.heroImage
+  ? getSanityImageUrl(guide.heroImage, {
+      width: 1280,
+      aspectRatio: guideHeroAspectRatio,
+      fit: 'crop',
+    })
+  : null;
+const guideImageSrcSet = guide.heroImage
+  ? getSanityImageSrcSet(guide.heroImage, guideHeroWidths, {
+      aspectRatio: guideHeroAspectRatio,
+      fit: 'crop',
+    })
+  : '';
+const guideImageAlt = guide.heroImage?.alt || guide.title;
+
+const quickFactsEntries = Object.entries(guide.quickFacts ?? {}).filter(([, value]) => Boolean(value));
+const categoryLabel = getGrowingGuideCategoryTitle(guide.category);
+const difficultyLabel = guide.difficulty ? getGrowingGuideDifficultyTitle(guide.difficulty) : null;
+const seasonLabels = guide.seasons.map((season) => getGrowingGuideSeasonTitle(season));
+---
+
+<SiteLayout title={guide.title} contentSize="narrow">
+  <div class="space-y-8">
+    <a
+      href="/growing-guides"
+      class="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-md ring-1 ring-gray-100 transition hover:bg-green-50 hover:text-[#2d5016]"
+    >
+      <ArrowLeft class="h-4 w-4" />
+      <span>Back to growing guides</span>
+    </a>
+
+    <ContentFeatureCard>
+      <Fragment slot="intro">
+        <div class="flex flex-wrap gap-2">
+          <span class="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold tracking-[0.12em] uppercase text-green-800">
+            {categoryLabel}
+          </span>
+          {
+            difficultyLabel ? (
+              <span class="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold tracking-[0.12em] uppercase text-amber-900">
+                {difficultyLabel}
+              </span>
+            ) : null
+          }
+          {
+            seasonLabels.map((season) => (
+              <span class="rounded-full bg-[var(--ccfg-cream)] px-3 py-1 text-xs font-semibold tracking-[0.12em] uppercase text-[var(--ccfg-forest)]">
+                {season}
+              </span>
+            ))
+          }
+        </div>
+
+        <h1 class="mt-4 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
+          {guide.title}
+        </h1>
+        <p class="mt-4 max-w-2xl text-lg leading-8 text-gray-600">{guide.excerpt}</p>
+      </Fragment>
+
+      <Fragment slot="media">
+        {
+          guideImageUrl ? (
+            <img
+              src={guideImageUrl}
+              srcset={guideImageSrcSet || undefined}
+              sizes="100vw"
+              alt={guideImageAlt}
+              loading="eager"
+              fetchpriority="high"
+              decoding="async"
+              width="1280"
+              height="822"
+              class="aspect-1280/822 h-full min-h-72 w-full object-cover max-h-96"
+            />
+          ) : (
+            <div class="flex h-full min-h-72 items-center justify-center bg-linear-to-br from-lime-100 via-stone-50 to-emerald-100 text-green-900">
+              <Leaf class="h-16 w-16" />
+            </div>
+          )
+        }
+      </Fragment>
+
+      {
+        quickFactsEntries.length ? (
+          <section class="mt-2 rounded-[1.75rem] bg-[var(--ccfg-cream)]/85 p-5 sm:p-6">
+            <div class="flex items-center gap-3 text-[var(--ccfg-forest)]">
+              <CalendarRange class="h-6 w-6" />
+              <h2 class="text-2xl font-semibold text-gray-900">At a glance</h2>
+            </div>
+
+            <div class="mt-5 grid gap-3 sm:grid-cols-2">
+              {
+                quickFactsEntries.map(([key, value]) => {
+                  const factKey = key as keyof typeof growingGuideFactLabels;
+                  const label = growingGuideFactLabels[factKey];
+                  const Icon =
+                    key === 'sun'
+                      ? SunMedium
+                      : key === 'watering'
+                        ? Droplets
+                        : key === 'harvest'
+                          ? Clock3
+                          : TextSearch;
+
+                  return (
+                    <div class="rounded-3xl bg-white px-4 py-4 shadow-sm ring-1 ring-black/5">
+                      <div class="flex items-start gap-3">
+                        <div class="mt-0.5 flex h-10 w-10 items-center justify-center rounded-2xl bg-green-100 text-green-900">
+                          <Icon class="h-5 w-5" />
+                        </div>
+                        <div>
+                          <p class="text-sm font-semibold tracking-[0.12em] uppercase text-[var(--ccfg-moss)]">
+                            {label}
+                          </p>
+                          <p class="mt-2 text-base leading-7 text-gray-700">{value}</p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })
+              }
+            </div>
+          </section>
+        ) : null
+      }
+
+      {
+        guide.steps?.length ? (
+          <section class="mt-8">
+            <div class="flex items-center gap-3 text-[var(--ccfg-forest)]">
+              <Leaf class="h-6 w-6" />
+              <h2 class="text-2xl font-semibold text-gray-900">How to grow it</h2>
+            </div>
+
+            <div class="mt-5 space-y-4">
+              {
+                guide.steps.map((step, index) => (
+                  <div class="rounded-[1.75rem] border border-gray-200 bg-white p-5 shadow-sm">
+                    <div class="grid gap-3 sm:grid-cols-[auto_1fr]">
+                      <div class="flex h-11 w-11 items-center justify-center rounded-full bg-green-100 text-sm font-bold text-green-900">
+                        {index + 1}
+                      </div>
+                      <div>
+                        <h3 class="text-xl font-semibold text-gray-900">{step.title}</h3>
+                        <p class="mt-2 text-base leading-7 text-gray-600">{step.description}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              }
+            </div>
+          </section>
+        ) : null
+      }
+
+      {
+        guide.commonProblems?.length ? (
+          <section class="mt-8">
+            <div class="flex items-center gap-3 text-[var(--ccfg-forest)]">
+              <Bug class="h-6 w-6" />
+              <h2 class="text-2xl font-semibold text-gray-900">Common problems</h2>
+            </div>
+
+            <div class="mt-5 grid gap-4">
+              {
+                guide.commonProblems.map((item) => (
+                  <div class="rounded-[1.75rem] border border-amber-200 bg-amber-50/60 p-5">
+                    <h3 class="text-xl font-semibold text-gray-900">{item.problem}</h3>
+                    <p class="mt-2 text-base leading-7 text-gray-700">{item.solution}</p>
+                  </div>
+                ))
+              }
+            </div>
+          </section>
+        ) : null
+      }
+
+      {
+        Array.isArray(guide.body) && guide.body.length ? (
+          <section class="mt-8">
+            <h2 class="text-2xl font-semibold text-gray-900">More growing advice</h2>
+            <div class="mt-5">
+              <PortableText value={guide.body} components={articlePortableTextComponents} />
+            </div>
+          </section>
+        ) : null
+      }
+    </ContentFeatureCard>
+  </div>
+</SiteLayout>
