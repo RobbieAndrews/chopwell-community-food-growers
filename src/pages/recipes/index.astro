@@ -1,0 +1,113 @@
+---
+import {PortableText} from 'astro-portabletext';
+import {BookOpenText, Search, UtensilsCrossed} from '@lucide/astro';
+import {sanityClient} from 'sanity:client';
+
+import PageIntro from '../../components/PageIntro.astro';
+import RecipeBrowser from '../../components/recipes/RecipeBrowser';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import {
+  articlePortableTextComponents,
+} from '../../lib/articlePortableText';
+import {
+  getRecipeCategoryTitle,
+  getRecipeDifficultyTitle,
+  type RecipeBrowserCard,
+  type RecipesPageDocument,
+  type RecipeSummary,
+} from '../../lib/recipes';
+import {urlForImage} from '../../lib/sanity';
+
+const RECIPES_PAGE_QUERY = `*[
+  _type == "recipesPage"
+]|order(_updatedAt desc)[0]{
+  title,
+  description,
+  introContent
+}`;
+
+const RECIPES_QUERY = `*[
+  _type == "recipe"
+  && defined(slug.current)
+]|order(title asc){
+  _id,
+  title,
+  slug,
+  excerpt,
+  heroImage,
+  category,
+  difficulty,
+  servings,
+  prepTime,
+  cookTime,
+  keywords
+}`;
+
+const recipesPage = await sanityClient.fetch<RecipesPageDocument | null>(RECIPES_PAGE_QUERY);
+const recipeDocuments = await sanityClient.fetch<RecipeSummary[]>(RECIPES_QUERY);
+
+const pageTitle = recipesPage?.title || 'Recipes';
+const pageDescription =
+  recipesPage?.description ||
+  'A collection of community recipes for preserves, seasonal cooking, and making the most of what comes out of the garden.';
+
+const recipes: RecipeBrowserCard[] = recipeDocuments.map((recipe) => ({
+  ...recipe,
+  categoryLabel: getRecipeCategoryTitle(recipe.category),
+  difficultyLabel: recipe.difficulty ? getRecipeDifficultyTitle(recipe.difficulty) : undefined,
+  imageUrl: recipe.heroImage
+    ? urlForImage(recipe.heroImage)?.width(900).height(680).fit('crop').url() ?? null
+    : null,
+  imageAlt: recipe.heroImage?.alt || recipe.title,
+}));
+---
+
+<SiteLayout title={pageTitle} contentSize="wide">
+  <div class="space-y-8">
+    <PageIntro
+      title={pageTitle}
+      description={pageDescription}
+      pills={[
+        {
+          label: `${recipes.length} recipe${recipes.length !== 1 ? 's' : ''}`,
+          icon: UtensilsCrossed,
+          iconClass: 'text-rose-600',
+        },
+        {
+          label: 'Preserves now, more to come',
+          icon: BookOpenText,
+          iconClass: 'text-green-700',
+        },
+        {
+          label: 'Search and browse by recipe type',
+          icon: Search,
+          iconClass: 'text-sky-700',
+        },
+      ]}
+      containerClass="max-w-4xl mx-auto flex flex-col items-center"
+    />
+
+    {
+      Array.isArray(recipesPage?.introContent) && recipesPage.introContent.length ? (
+        <section class="rounded-[2rem] bg-white p-6 shadow-xl ring-1 ring-gray-100 sm:p-8">
+          <div class="portable-content">
+            <PortableText value={recipesPage.introContent} components={articlePortableTextComponents} />
+          </div>
+        </section>
+      ) : null
+    }
+
+    {
+      recipes.length ? (
+        <RecipeBrowser client:load recipes={recipes} />
+      ) : (
+        <section class="rounded-[2rem] border border-dashed border-gray-300 bg-white/85 p-8 text-center shadow-sm">
+          <h2 class="text-2xl font-semibold text-gray-900">No recipes yet</h2>
+          <p class="mt-3 text-base leading-7 text-gray-600">
+            Add a recipe in Sanity and it will appear here automatically.
+          </p>
+        </section>
+      )
+    }
+  </div>
+</SiteLayout>

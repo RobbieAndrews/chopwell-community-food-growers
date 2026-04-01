@@ -1,0 +1,180 @@
+---
+import {ArrowLeft, BookOpenText, ChefHat} from '@lucide/astro';
+import {PortableText} from 'astro-portabletext';
+import {sanityClient} from 'sanity:client';
+
+import RecipeDetailPanel from '../../components/recipes/RecipeDetailPanel';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import {
+  articlePortableTextComponents,
+} from '../../lib/articlePortableText';
+import {
+  getRecipeCategoryTitle,
+  getRecipeDifficultyTitle,
+  type RecipePage,
+} from '../../lib/recipes';
+import {getSanityImageSrcSet, getSanityImageUrl} from '../../lib/sanity';
+
+export async function getStaticPaths(): Promise<{params: {slug: string}}[]> {
+  const RECIPE_SLUGS_QUERY = `*[
+    _type == "recipe"
+    && defined(slug.current)
+  ]{
+    "params": { "slug": slug.current }
+  }`;
+
+  return await sanityClient.fetch(RECIPE_SLUGS_QUERY);
+}
+
+const RECIPE_QUERY = `*[
+  _type == "recipe"
+  && slug.current == $slug
+][0]{
+  _id,
+  title,
+  slug,
+  excerpt,
+  heroImage,
+  category,
+  difficulty,
+  servings,
+  prepTime,
+  cookTime,
+  keywords,
+  introContent,
+  ingredientSections,
+  instructionSections,
+  recipeNotes
+}`;
+
+const recipe = await sanityClient.fetch<RecipePage | null>(RECIPE_QUERY, {
+  slug: Astro.params.slug,
+});
+
+if (!recipe) {
+  return Astro.redirect('/recipes');
+}
+
+const recipeHeroWidths = [640, 960, 1280, 1600];
+const recipeHeroAspectRatio = 1280 / 760;
+const recipeImageUrl = recipe.heroImage
+  ? getSanityImageUrl(recipe.heroImage, {
+      width: 1280,
+      aspectRatio: recipeHeroAspectRatio,
+      fit: 'crop',
+    })
+  : null;
+const recipeImageSrcSet = recipe.heroImage
+  ? getSanityImageSrcSet(recipe.heroImage, recipeHeroWidths, {
+      aspectRatio: recipeHeroAspectRatio,
+      fit: 'crop',
+    })
+  : '';
+const recipeImageAlt = recipe.heroImage?.alt || recipe.title;
+const categoryLabel = getRecipeCategoryTitle(recipe.category);
+const difficultyLabel = recipe.difficulty ? getRecipeDifficultyTitle(recipe.difficulty) : null;
+---
+
+<SiteLayout title={recipe.title} contentSize="wide">
+  <div class="space-y-8">
+    <a
+      href="/recipes"
+      class="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-md ring-1 ring-gray-100 transition hover:bg-green-50 hover:text-[#2d5016]"
+    >
+      <ArrowLeft class="h-4 w-4" />
+      <span>Back to recipes</span>
+    </a>
+
+    <section class="grid gap-8 xl:grid-cols-[minmax(0,1.08fr)_minmax(24rem,0.92fr)]">
+      <div class="space-y-6">
+        <div class="flex flex-wrap gap-2">
+          <span class="rounded-full bg-rose-100 px-3 py-1 text-xs font-semibold tracking-[0.12em] uppercase text-rose-700">
+            {categoryLabel}
+          </span>
+          {
+            difficultyLabel ? (
+              <span class="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold tracking-[0.12em] uppercase text-amber-900">
+                {difficultyLabel}
+              </span>
+            ) : null
+          }
+        </div>
+
+        <div>
+          <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
+            {recipe.title}
+          </h1>
+          <p class="mt-5 max-w-3xl text-lg leading-8 text-gray-600">{recipe.excerpt}</p>
+        </div>
+
+        <div class="flex flex-wrap gap-3 text-sm font-semibold text-[#17324c]">
+          <span class="rounded-full bg-[#dfecef] px-4 py-2">Yield: {recipe.servings}</span>
+          {
+            recipe.prepTime ? <span class="rounded-full bg-[#dfecef] px-4 py-2">Prep: {recipe.prepTime}</span> : null
+          }
+          {
+            recipe.cookTime ? <span class="rounded-full bg-[#dfecef] px-4 py-2">Cook: {recipe.cookTime}</span> : null
+          }
+        </div>
+      </div>
+
+      <div class="overflow-hidden rounded-[2.25rem] bg-white shadow-2xl ring-1 ring-gray-100">
+        {
+          recipeImageUrl ? (
+            <img
+              src={recipeImageUrl}
+              srcset={recipeImageSrcSet || undefined}
+              sizes="(min-width: 1280px) 34rem, 100vw"
+              alt={recipeImageAlt}
+              loading="eager"
+              fetchpriority="high"
+              decoding="async"
+              width="1280"
+              height="760"
+              class="aspect-1280/760 h-full w-full object-cover"
+            />
+          ) : (
+            <div class="flex h-full min-h-72 items-center justify-center bg-[linear-gradient(135deg,#f4ebe0_0%,#f8f5ee_48%,#dceccb_100%)] text-[#17324c]">
+              <ChefHat class="h-16 w-16" />
+            </div>
+          )
+        }
+      </div>
+    </section>
+
+    {
+      Array.isArray(recipe.introContent) && recipe.introContent.length ? (
+        <section class="rounded-[2rem] bg-white p-6 shadow-xl ring-1 ring-gray-100 sm:p-8">
+          <div class="flex items-center gap-3 text-[#17324c]">
+            <BookOpenText class="h-6 w-6" />
+            <h2 class="text-2xl font-semibold text-gray-900">Before you start</h2>
+          </div>
+
+          <div class="portable-content mt-5">
+            <PortableText value={recipe.introContent} components={articlePortableTextComponents} />
+          </div>
+        </section>
+      ) : null
+    }
+
+    <RecipeDetailPanel
+      client:load
+      servings={recipe.servings}
+      prepTime={recipe.prepTime}
+      cookTime={recipe.cookTime}
+      ingredientSections={recipe.ingredientSections ?? []}
+      instructionSections={recipe.instructionSections ?? []}
+    />
+
+    {
+      Array.isArray(recipe.recipeNotes) && recipe.recipeNotes.length ? (
+        <section class="rounded-[2rem] bg-white p-6 shadow-xl ring-1 ring-gray-100 sm:p-8">
+          <h2 class="text-3xl font-semibold text-[#f77663]">Recipe Notes</h2>
+          <div class="portable-content mt-5">
+            <PortableText value={recipe.recipeNotes} components={articlePortableTextComponents} />
+          </div>
+        </section>
+      ) : null
+    }
+  </div>
+</SiteLayout>
