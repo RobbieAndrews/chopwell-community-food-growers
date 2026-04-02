@@ -9,14 +9,16 @@ const CALENDAR_EVENTS_QUERY = `*[
 	&& defined(date)
 	&& defined(startTime)
 	&& defined(endTime)
+	&& defined(slug.current)
 ]|order(date asc, startTime asc){
 	"title": title,
 	"id": _id,
+	"slug": slug.current,
 	date,
 	startTime,
 	endTime,
 	category,
-	description
+	"summary": coalesce(summary, description)
 }`;
 
 const calendarEvents = await sanityClient.fetch<CalendarEvent[]>(CALENDAR_EVENTS_QUERY);

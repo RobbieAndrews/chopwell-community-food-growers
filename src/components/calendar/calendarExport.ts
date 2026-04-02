@@ -65,7 +65,7 @@ export function buildGoogleCalendarUrl(event: CalendarEvent) {
 
     url.searchParams.set("action", "TEMPLATE");
     url.searchParams.set("text", event.title);
-    url.searchParams.set("details", event.description);
+    url.searchParams.set("details", event.summary);
     url.searchParams.set(
         "dates",
         `${formatCalendarStamp(startDateTime)}/${formatCalendarStamp(endDateTime)}`,
@@ -91,7 +91,7 @@ export function buildIcsContent(event: CalendarEvent) {
         `DTSTART;TZID=${UK_TIMEZONE}:${formatCalendarStamp(startDateTime)}`,
         `DTEND;TZID=${UK_TIMEZONE}:${formatCalendarStamp(endDateTime)}`,
         `SUMMARY:${escapeIcsText(event.title)}`,
-        `DESCRIPTION:${escapeIcsText(event.description)}`,
+        `DESCRIPTION:${escapeIcsText(event.summary)}`,
         "END:VEVENT",
         "END:VCALENDAR",
     ].join("\r\n");

@@ -1,0 +1,299 @@
+---
+import {ArrowLeft, CalendarDays, Clock3, Trophy} from '@lucide/astro';
+import {PortableText} from 'astro-portabletext';
+import {sanityClient} from 'sanity:client';
+
+import ContentFeatureCard from '../../components/ContentFeatureCard.astro';
+import {getTimeRangeLabel} from '../../components/calendar/calendarUtils';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import {
+  articlePortableTextComponents,
+  type ArticlePortableTextBlock,
+} from '../../lib/articlePortableText';
+import {
+  getSanityImageSrcSet,
+  getSanityImageUrl,
+  type SanityImageWithAlt,
+  type SanitySlug,
+} from '../../lib/sanity';
+
+interface EventWinner {
+  _key?: string;
+  name: string;
+  details?: string;
+}
+
+interface EventWinnerCategory {
+  _key?: string;
+  title: string;
+  winners: EventWinner[];
+}
+
+interface EventPage {
+  _id: string;
+  title: string;
+  slug: SanitySlug;
+  eventType: 'standard' | 'competition';
+  date: string;
+  startTime: string;
+  endTime: string;
+  category: 'Workshop' | 'Volunteer' | 'Community' | 'Maintenance';
+  summary: string;
+  body?: ArticlePortableTextBlock[];
+  heroImage?: SanityImageWithAlt;
+  winnerCategories?: EventWinnerCategory[];
+  gallery?: Array<SanityImageWithAlt & {caption?: string}>;
+}
+
+const categoryBadgeStyles: Record<EventPage['category'], string> = {
+  Workshop: 'bg-amber-100 text-amber-900 ring-amber-200',
+  Volunteer: 'bg-emerald-100 text-emerald-900 ring-emerald-200',
+  Community: 'bg-sky-100 text-sky-900 ring-sky-200',
+  Maintenance: 'bg-gray-200 text-gray-900 ring-gray-300',
+};
+
+const eventTypeBadgeStyles: Record<EventPage['eventType'], string> = {
+  standard: 'bg-[var(--ccfg-cream)] text-[var(--ccfg-forest)] ring-[var(--ccfg-moss)]/20',
+  competition: 'bg-rose-100 text-rose-900 ring-rose-200',
+};
+
+const eventTypeLabels: Record<EventPage['eventType'], string> = {
+  standard: 'Event',
+  competition: 'Competition',
+};
+
+export async function getStaticPaths(): Promise<{params: {slug: string}}[]> {
+  const EVENT_SLUGS_QUERY = `*[
+    _type == "calendarEvent"
+    && defined(slug.current)
+  ]{
+    "params": { "slug": slug.current }
+  }`;
+
+  return await sanityClient.fetch(EVENT_SLUGS_QUERY);
+}
+
+const EVENT_QUERY = `*[
+  _type == "calendarEvent"
+  && slug.current == $slug
+][0]{
+  _id,
+  title,
+  slug,
+  eventType,
+  date,
+  startTime,
+  endTime,
+  category,
+  summary,
+  body,
+  heroImage,
+  winnerCategories,
+  gallery
+}`;
+
+const event = await sanityClient.fetch<EventPage | null>(EVENT_QUERY, {
+  slug: Astro.params.slug,
+});
+
+if (!event) {
+  return Astro.redirect('/calendar');
+}
+
+const eventHeroWidths = [640, 960, 1280, 1600];
+const eventHeroAspectRatio = 1280 / 822;
+const eventImageUrl = event.heroImage
+  ? getSanityImageUrl(event.heroImage, {
+      width: 1280,
+      aspectRatio: eventHeroAspectRatio,
+      fit: 'crop',
+    })
+  : null;
+const eventImageSrcSet = event.heroImage
+  ? getSanityImageSrcSet(event.heroImage, eventHeroWidths, {
+      aspectRatio: eventHeroAspectRatio,
+      fit: 'crop',
+    })
+  : '';
+const eventImageAlt = event.heroImage?.alt || event.title;
+const eventDateLabel = new Intl.DateTimeFormat('en-GB', {
+  weekday: 'long',
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+}).format(new Date(`${event.date}T00:00:00`));
+const timeRangeLabel = getTimeRangeLabel(event.startTime, event.endTime);
+const winnerCategories = Array.isArray(event.winnerCategories) ? event.winnerCategories : [];
+const galleryImages = Array.isArray(event.gallery) ? event.gallery : [];
+---
+
+<SiteLayout title={event.title} contentSize="narrow">
+  <div class="space-y-8">
+    <a
+      href="/calendar"
+      class="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-md ring-1 ring-gray-100 transition hover:bg-green-50 hover:text-[#2d5016]"
+    >
+      <ArrowLeft class="h-4 w-4" />
+      <span>Back to calendar</span>
+    </a>
+
+    <ContentFeatureCard>
+      <Fragment slot="intro">
+        <div class="flex flex-wrap gap-2">
+          <span
+            class:list={[
+              'rounded-full px-3 py-1 text-xs font-semibold tracking-[0.12em] uppercase ring-1',
+              categoryBadgeStyles[event.category],
+            ]}
+          >
+            {event.category}
+          </span>
+          <span
+            class:list={[
+              'rounded-full px-3 py-1 text-xs font-semibold tracking-[0.12em] uppercase ring-1',
+              eventTypeBadgeStyles[event.eventType],
+            ]}
+          >
+            {eventTypeLabels[event.eventType]}
+          </span>
+        </div>
+
+        <h1 class="mt-4 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
+          {event.title}
+        </h1>
+        <p class="mt-4 max-w-3xl text-lg leading-8 text-gray-600">{event.summary}</p>
+
+        <div class="mt-6 flex flex-wrap gap-3 text-sm font-semibold text-[#17324c]">
+          <span class="inline-flex items-center gap-2 rounded-full bg-[#dfecef] px-4 py-2">
+            <CalendarDays class="h-4 w-4 text-green-700" />
+            {eventDateLabel}
+          </span>
+          <span class="inline-flex items-center gap-2 rounded-full bg-[#dfecef] px-4 py-2">
+            <Clock3 class="h-4 w-4 text-green-700" />
+            {timeRangeLabel}
+          </span>
+        </div>
+      </Fragment>
+
+      <Fragment slot="media">
+        {
+          eventImageUrl ? (
+            <img
+              src={eventImageUrl}
+              srcset={eventImageSrcSet || undefined}
+              sizes="100vw"
+              alt={eventImageAlt}
+              loading="eager"
+              fetchpriority="high"
+              decoding="async"
+              width="1280"
+              height="822"
+              class="aspect-1280/822 h-auto w-full object-cover object-center max-h-96"
+            />
+          ) : (
+            <div class="flex h-full min-h-72 items-center justify-center bg-linear-to-br from-lime-100 via-stone-50 to-emerald-100 text-green-900">
+              <CalendarDays class="h-16 w-16" />
+            </div>
+          )
+        }
+      </Fragment>
+
+      {
+        Array.isArray(event.body) && event.body.length ? (
+          <section class="mt-3">
+            <h2 class="text-2xl font-semibold text-gray-900">Event details</h2>
+            <div class="mt-5">
+              <PortableText value={event.body} components={articlePortableTextComponents} />
+            </div>
+          </section>
+        ) : null
+      }
+
+      {
+        event.eventType === 'competition' && winnerCategories.length ? (
+          <section class="mt-8">
+            <div class="flex items-center gap-3 text-[var(--ccfg-forest)]">
+              <Trophy class="h-6 w-6" />
+              <h2 class="text-2xl font-semibold text-gray-900">Winners</h2>
+            </div>
+
+            <div class="mt-5 grid gap-4">
+              {
+                winnerCategories.map((winnerCategory) => (
+                  <article class="rounded-[1.75rem] border border-amber-200 bg-amber-50/60 p-5">
+                    <h3 class="text-xl font-semibold text-gray-900">{winnerCategory.title}</h3>
+                    <div class="mt-4 space-y-3">
+                      {
+                        winnerCategory.winners.map((winner) => (
+                          <div class="rounded-2xl bg-white/90 px-4 py-3 ring-1 ring-black/5">
+                            <p class="text-base font-semibold text-gray-900">{winner.name}</p>
+                            {
+                              winner.details ? (
+                                <p class="mt-1 text-sm leading-6 text-gray-600">{winner.details}</p>
+                              ) : null
+                            }
+                          </div>
+                        ))
+                      }
+                    </div>
+                  </article>
+                ))
+              }
+            </div>
+          </section>
+        ) : null
+      }
+
+      {
+        galleryImages.length ? (
+          <section class="mt-8">
+            <h2 class="text-2xl font-semibold text-gray-900">Photo gallery</h2>
+
+            <div class="mt-5 grid gap-4 sm:grid-cols-2">
+              {
+                galleryImages.map((image) => {
+                  const imageUrl = getSanityImageUrl(image, {
+                    width: 960,
+                    aspectRatio: 4 / 3,
+                    fit: 'crop',
+                  });
+                  const imageSrcSet = getSanityImageSrcSet(image, [480, 720, 960, 1280], {
+                    aspectRatio: 4 / 3,
+                    fit: 'crop',
+                  });
+
+                  return (
+                    <figure class="overflow-hidden rounded-[1.75rem] bg-white shadow-md ring-1 ring-gray-100">
+                      {
+                        imageUrl ? (
+                          <img
+                            src={imageUrl}
+                            srcset={imageSrcSet || undefined}
+                            sizes="(min-width: 640px) 50vw, 100vw"
+                            alt={image.alt || event.title}
+                            loading="lazy"
+                            decoding="async"
+                            width="960"
+                            height="720"
+                            class="aspect-4/3 w-full object-cover"
+                          />
+                        ) : null
+                      }
+                      {
+                        image.caption ? (
+                          <figcaption class="px-4 py-3 text-sm leading-6 text-gray-600">
+                            {image.caption}
+                          </figcaption>
+                        ) : null
+                      }
+                    </figure>
+                  );
+                })
+              }
+            </div>
+          </section>
+        ) : null
+      }
+    </ContentFeatureCard>
+  </div>
+</SiteLayout>

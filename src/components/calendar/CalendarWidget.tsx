@@ -121,10 +121,23 @@ function DayDetailsPanel({
                         </div>
 
                         <h4 className="mt-3 text-lg font-semibold tracking-tight text-gray-900">
-                            {event.title}
+                            <a
+                                href={`/events/${event.slug}`}
+                                className="transition hover:text-green-700 focus:outline-none focus:text-green-700"
+                            >
+                                {event.title}
+                            </a>
                         </h4>
                         <p className="mt-3 text-sm leading-6 text-gray-700">
-                            {event.description}
+                            {event.summary}
+                        </p>
+                        <p className="mt-4">
+                            <a
+                                href={`/events/${event.slug}`}
+                                className="text-sm font-semibold text-green-800 transition hover:text-green-700"
+                            >
+                                View event details
+                            </a>
                         </p>
                     </article>
                 ))}
@@ -488,7 +501,12 @@ export default function Calendar({ events, initialMonth }: CalendarProps) {
                                             </div>
 
                                             <h4 className="mt-3 text-xl font-semibold tracking-tight text-gray-900">
-                                                {event.title}
+                                                <a
+                                                    href={`/events/${event.slug}`}
+                                                    className="transition hover:text-green-700 focus:outline-none focus:text-green-700"
+                                                >
+                                                    {event.title}
+                                                </a>
                                             </h4>
                                         </div>
                                         <AddToCalendarButton event={event} className="lg:shrink-0" />
@@ -496,12 +514,12 @@ export default function Calendar({ events, initialMonth }: CalendarProps) {
 
                                     <div className="min-w-0">
                                         <p className="text-sm leading-6 text-gray-700 sm:text-base">
-                                            {event.description}
+                                            {event.summary}
                                         </p>
                                     </div>
                                 </div>
 
-                                <div className="mt-5 flex gap-6 text-sm text-gray-600">
+                                <div className="mt-5 flex flex-wrap items-center gap-4 text-sm text-gray-600">
                                     <p className="flex items-center gap-2">
                                         <CalendarDays className="h-4 w-4 text-green-700" aria-hidden="true" />
                                         {getShortDateLabel(parseDateKey(event.date))}
@@ -510,6 +528,12 @@ export default function Calendar({ events, initialMonth }: CalendarProps) {
                                         <Clock3 className="h-4 w-4 text-green-700" aria-hidden="true" />
                                         {getTimeRangeLabel(event.startTime, event.endTime)}
                                     </p>
+                                    <a
+                                        href={`/events/${event.slug}`}
+                                        className="font-semibold text-green-800 transition hover:text-green-700"
+                                    >
+                                        View details
+                                    </a>
                                 </div>
                             </article>
                         ))
