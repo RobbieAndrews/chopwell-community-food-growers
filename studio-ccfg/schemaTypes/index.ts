@@ -8,6 +8,7 @@ import {volunteerOpportunityType} from './volunteerOpportunityType'
 import {calendarEventType} from './calendarEventType'
 import {usefulLinkSectionType} from './usefulLinkSectionType'
 import {contactPageType} from './contactPageType'
+import {homePageType} from './homePageType'
 
 export const schemaTypes = [
   newsletterIssueType,
@@ -20,4 +21,5 @@ export const schemaTypes = [
   calendarEventType,
   usefulLinkSectionType,
   contactPageType,
+  homePageType,
 ]
