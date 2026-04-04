@@ -28,19 +28,6 @@ export const contactPageType = defineType({
       validation: (rule) => rule.required().email(),
     }),
     defineField({
-      name: 'phoneNumber',
-      title: 'Phone number',
-      type: 'string',
-      validation: (rule) => rule.required().max(40),
-    }),
-    defineField({
-      name: 'phoneAvailability',
-      title: 'Phone availability',
-      description: 'Optional extra line shown below the phone number.',
-      type: 'string',
-      validation: (rule) => rule.max(80),
-    }),
-    defineField({
       name: 'location',
       title: 'Address / location',
       type: 'text',

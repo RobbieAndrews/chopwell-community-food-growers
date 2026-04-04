@@ -4,10 +4,10 @@ import FullBleedSection from '../components/FullBleedSection.astro';
 import PageIntro from '../components/PageIntro.astro';
 import SocialPlatformIcon from '../components/SocialPlatformIcon.astro';
 import {
+	ChevronDown,
 	Clock3,
 	Mail,
 	MapPin,
-	Phone,
 } from '@lucide/astro';
 import { sanityClient } from 'sanity:client';
 
@@ -32,8 +32,6 @@ interface ContactFaqItem {
 
 interface ContactPageDocument {
 	emailAddress?: string;
-	phoneNumber?: string;
-	phoneAvailability?: string;
 	location?: string;
 	accessHours?: ContactAccessHour[];
 	socialLinks?: ContactSocialLink[];
@@ -44,8 +42,6 @@ const CONTACT_PAGE_QUERY = `*[
 	_type == "contactPage"
 ]|order(_updatedAt desc)[0]{
 	emailAddress,
-	phoneNumber,
-	phoneAvailability,
 	location,
 	accessHours[]{
 		_key,
@@ -76,15 +72,6 @@ const contactDetails = [
 		extra: '',
 	},
 	{
-		title: 'Phone',
-		icon: 'phone',
-		content: contactPage?.phoneNumber ?? '',
-		href: contactPage?.phoneNumber
-			? `tel:${contactPage.phoneNumber.replace(/[^+\d]/g, '')}`
-			: '',
-		extra: contactPage?.phoneAvailability ?? '',
-	},
-	{
 		title: 'Location',
 		icon: 'map-pin',
 		content: contactPage?.location ?? '',
@@ -93,7 +80,7 @@ const contactDetails = [
 	},
 ].filter((item) => item.content) as Array<{
 	title: string;
-	icon: 'mail' | 'phone' | 'map-pin';
+	icon: 'mail' | 'map-pin';
 	content: string;
 	href: string;
 	extra: string;
@@ -113,7 +100,6 @@ const faqItems = (contactPage?.faqItems ?? []).filter(
 
 const iconMap = {
 	mail: Mail,
-	phone: Phone,
 	'map-pin': MapPin,
 };
 
@@ -246,9 +232,6 @@ function getSocialBadgeClass(platform: string) {
 				<div class="space-y-6">
 					<section class="rounded-4xl bg-[#2d5016] p-6 text-white shadow-xl sm:p-8">
 						<h2 class="text-xl font-bold tracking-tight">Follow Us</h2>
-						<p class="mt-3 leading-7 text-green-50">
-							Stay connected on social media for updates, photos, and seasonal tips.
-						</p>
 						{
 							socialLinks.length ? (
 								<div class="mt-5 flex flex-wrap gap-3">
@@ -310,18 +293,34 @@ function getSocialBadgeClass(platform: string) {
 		</FullBleedSection>
 
 		<section class="rounded-4xl bg-white p-6 shadow-xl ring-1 ring-gray-100 sm:p-8">
-			<h2 class="text-2xl font-bold tracking-tight text-gray-900">
-				Frequently Asked Questions
-			</h2>
+			<div class="rounded-[2rem] bg-[#16263b] px-6 py-5 text-white sm:px-8">
+				<h2 class="text-2xl font-bold tracking-tight">
+					Frequently Asked Questions
+				</h2>
+			</div>
 			{
 				faqItems.length ? (
-					<div class="mt-5 grid gap-4 md:grid-cols-2">
+					<div class="mt-4 space-y-3">
 						{
-							faqItems.map((item) => (
-								<article class="rounded-3xl bg-green-50 p-4">
-									<h3 class="font-semibold text-green-800">{item.question}</h3>
-									<p class="mt-1 text-sm leading-6 text-gray-600">{item.answer}</p>
-								</article>
+							faqItems.map((item, index) => (
+								<details
+									class="group overflow-hidden rounded-[1.75rem] border border-[#e7ecef] bg-[#f6f8f9] open:bg-white"
+									open={index === 0}
+								>
+									<summary class="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-5 marker:content-none sm:px-6">
+										<h3 class="text-lg font-semibold leading-snug text-[#17365c]">
+											{item.question}
+										</h3>
+										<span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#ff7f73] text-white transition group-open:rotate-180">
+											<ChevronDown class="h-5 w-5" />
+										</span>
+									</summary>
+									<div class="border-t border-[#edf1f3] bg-white px-5 py-5 sm:px-6">
+										<p class="max-w-4xl whitespace-pre-line text-base leading-8 text-gray-700">
+											{item.answer}
+										</p>
+									</div>
+								</details>
 							))
 						}
 					</div>
