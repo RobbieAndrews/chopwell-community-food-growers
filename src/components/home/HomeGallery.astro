@@ -1,0 +1,48 @@
+---
+import FullBleedSection from "../FullBleedSection.astro";
+import HomeSectionHeader from "./HomeSectionHeader.astro";
+import type { HomeGallerySection } from "../../lib/homePage";
+
+interface Props {
+    section: HomeGallerySection;
+}
+
+const { section } = Astro.props as Props;
+---
+
+<FullBleedSection class="py-20 lg:py-24" bleedClass="bleed-gray-50">
+    <HomeSectionHeader
+        eyebrow={section.eyebrow}
+        heading={section.heading}
+        copy={section.intro}
+    />
+
+    <div class="grid gap-5 md:auto-rows-[16rem] md:grid-cols-3">
+        {
+            section.items.map((item) => (
+                <div
+                    class:list={[
+                        "group relative min-h-[18rem] overflow-hidden rounded-[2rem] shadow-lg md:min-h-0 md:h-full",
+                        item.heightClass,
+                    ]}
+                >
+                    <img
+                        src={item.src}
+                        alt={item.alt}
+                        width="1200"
+                        height="1200"
+                        class="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                        loading="lazy"
+                        decoding="async"
+                    />
+                    <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,18,11,0.04)_0%,rgba(10,18,11,0.7)_100%)]" />
+                    <div class="absolute inset-x-0 bottom-0 p-6 text-white">
+                        <h3 class="text-2xl font-semibold">
+                            {item.title}
+                        </h3>
+                    </div>
+                </div>
+            ))
+        }
+    </div>
+</FullBleedSection>

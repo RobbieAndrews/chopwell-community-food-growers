@@ -1,0 +1,62 @@
+---
+interface Props {
+    eyebrow?: string;
+    heading?: string;
+    intro?: string;
+    copy?: string;
+    headingClass?: string;
+    copyClass?: string;
+    layout?: "split" | "stacked";
+    class?: string;
+}
+
+const {
+    eyebrow,
+    heading,
+    intro,
+    copy,
+    headingClass = "mt-3 text-4xl font-semibold text-balance text-[var(--ccfg-ink)] lg:text-5xl",
+    copyClass = "max-w-xl text-lg leading-8 text-gray-600",
+    layout = "split",
+    class: className = "",
+} = Astro.props as Props;
+
+const text = copy ?? intro;
+const layoutClasses = {
+    split: "mb-10 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between",
+    stacked: "space-y-0",
+} as const;
+---
+
+<div
+    class:list={[
+        layoutClasses[layout],
+        className,
+    ]}
+>
+    <div class="max-w-2xl">
+        {
+            eyebrow ? (
+                <p
+                    class="text-sm font-semibold tracking-[0.18em] uppercase text-[var(--ccfg-moss)]"
+                >
+                    {eyebrow}
+                </p>
+            ) : null
+        }
+        {
+            heading ? (
+                <h2 class={headingClass}>
+                    {heading}
+                </h2>
+            ) : null
+        }
+    </div>
+    {
+        text ? (
+            <p class:list={[layout === "stacked" ? "mt-5" : "", copyClass]}>
+                {text}
+            </p>
+        ) : null
+    }
+</div>

@@ -1,0 +1,80 @@
+---
+import ButtonLink from "../ButtonLink.astro";
+import Container from "../Container.astro";
+import HomeSectionHeader from "./HomeSectionHeader.astro";
+import type { HomeFinalCtaSection } from "../../lib/homePage";
+
+interface Props {
+    section: HomeFinalCtaSection;
+}
+
+const { section } = Astro.props as Props;
+---
+
+<section class="py-20 lg:py-24">
+    <Container>
+        <div
+            class="relative isolate overflow-hidden rounded-[2.5rem] bg-[#1d3520] text-white shadow-2xl"
+        >
+            {
+                section.backgroundImage ? (
+                    <img
+                        src={section.backgroundImage.src}
+                        alt={section.backgroundImage.alt}
+                        width="1600"
+                        height="900"
+                        class="absolute inset-0 h-full w-full object-cover opacity-28"
+                        loading="lazy"
+                        decoding="async"
+                    />
+                ) : null
+            }
+            <div
+                class="absolute inset-0 bg-[linear-gradient(135deg,rgba(17,32,20,0.92)_0%,rgba(36,67,41,0.82)_55%,rgba(27,50,30,0.96)_100%)]"
+            >
+            </div>
+            <div
+                class="relative grid gap-8 p-8 sm:p-10 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end lg:p-14"
+            >
+                <div class="max-w-3xl">
+                    <HomeSectionHeader
+                        eyebrow={section.eyebrow}
+                        heading={section.heading}
+                        copy={section.body}
+                        headingClass="mt-3 text-4xl font-semibold text-balance text-white lg:text-5xl"
+                        layout="stacked"
+                        class="mb-0"
+                        copyClass="text-lg leading-8 text-white/76"
+                    />
+                </div>
+                {
+                    section.primaryCta || section.secondaryCta ? (
+                        <div class="flex flex-col gap-4 sm:flex-row lg:flex-col">
+                            {
+                                section.primaryCta ? (
+                                    <ButtonLink
+                                        href={section.primaryCta.href}
+                                        variant="primary-light"
+                                    >
+                                        {section.primaryCta.label}
+                                    </ButtonLink>
+                                ) : null
+                            }
+                            {
+                                section.secondaryCta ? (
+                                    <ButtonLink
+                                        href={section.secondaryCta.href}
+                                        variant="secondary-dark"
+                                        class="border-white/25"
+                                    >
+                                        {section.secondaryCta.label}
+                                    </ButtonLink>
+                                ) : null
+                            }
+                        </div>
+                    ) : null
+                }
+            </div>
+        </div>
+    </Container>
+</section>
