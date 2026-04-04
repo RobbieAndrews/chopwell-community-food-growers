@@ -3,6 +3,7 @@ import {ArrowLeft, BookOpenText, ChefHat} from '@lucide/astro';
 import {PortableText} from 'astro-portabletext';
 import {sanityClient} from 'sanity:client';
 
+import FullBleedSection from '../../components/FullBleedSection.astro';
 import RecipeDetailPanel from '../../components/recipes/RecipeDetailPanel';
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import {
@@ -144,16 +145,22 @@ const difficultyLabel = recipe.difficulty ? getRecipeDifficultyTitle(recipe.diff
 
     {
       Array.isArray(recipe.introContent) && recipe.introContent.length ? (
-        <section class="rounded-[2rem] bg-white p-6 shadow-xl ring-1 ring-gray-100 sm:p-8">
-          <div class="flex items-center gap-3 text-[#17324c]">
-            <BookOpenText class="h-6 w-6" />
-            <h2 class="text-2xl font-semibold text-gray-900">Before you start</h2>
-          </div>
+        <FullBleedSection
+          class="bleed-mobile-only py-8 sm:py-0"
+          bleedClass="bg-[linear-gradient(180deg,rgba(255,250,244,0.98)_0%,rgba(250,241,231,0.9)_100%)]"
+          containerSize="wide"
+        >
+          <section class="sm:rounded-[2rem] sm:bg-white sm:p-8 sm:shadow-xl sm:ring-1 sm:ring-gray-100">
+            <div class="flex items-center gap-3 text-[#17324c]">
+              <BookOpenText class="h-6 w-6" />
+              <h2 class="text-2xl font-semibold text-gray-900">Before you start</h2>
+            </div>
 
-          <div class="portable-content mt-5">
-            <PortableText value={recipe.introContent} components={articlePortableTextComponents} />
-          </div>
-        </section>
+            <div class="portable-content mt-5 border-t border-[#17324c]/10 pt-5 sm:border-t-0 sm:pt-0">
+              <PortableText value={recipe.introContent} components={articlePortableTextComponents} />
+            </div>
+          </section>
+        </FullBleedSection>
       ) : null
     }
 
@@ -168,12 +175,18 @@ const difficultyLabel = recipe.difficulty ? getRecipeDifficultyTitle(recipe.diff
 
     {
       Array.isArray(recipe.recipeNotes) && recipe.recipeNotes.length ? (
-        <section class="rounded-[2rem] bg-white p-6 shadow-xl ring-1 ring-gray-100 sm:p-8">
-          <h2 class="text-3xl font-semibold text-[#f77663]">Recipe Notes</h2>
-          <div class="portable-content mt-5">
-            <PortableText value={recipe.recipeNotes} components={articlePortableTextComponents} />
-          </div>
-        </section>
+        <FullBleedSection
+          class="bleed-mobile-only py-8 sm:py-0"
+          bleedClass="bg-[linear-gradient(180deg,rgba(241,248,242,0.96)_0%,rgba(226,238,225,0.9)_100%)]"
+          containerSize="wide"
+        >
+          <section class="sm:rounded-[2rem] sm:bg-white sm:p-8 sm:shadow-xl sm:ring-1 sm:ring-gray-100">
+            <h2 class="text-3xl font-semibold text-[#f77663]">Recipe Notes</h2>
+            <div class="portable-content mt-5 border-t border-[#17324c]/10 pt-5 sm:border-t-0 sm:pt-0">
+              <PortableText value={recipe.recipeNotes} components={articlePortableTextComponents} />
+            </div>
+          </section>
+        </FullBleedSection>
       ) : null
     }
   </div>

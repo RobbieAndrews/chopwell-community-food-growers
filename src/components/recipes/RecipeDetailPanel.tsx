@@ -76,6 +76,9 @@ export default function RecipeDetailPanel({
     setCheckedIngredients({})
   }
 
+  const mobileSectionFrameClass =
+    'px-4 py-8 sm:rounded-[2rem] sm:bg-white sm:px-6 sm:py-6 sm:shadow-xl sm:ring-1 sm:ring-gray-100 sm:p-8'
+
   return (
     <div className="space-y-8">
       <section className="grid gap-4 md:grid-cols-3">
@@ -152,14 +155,19 @@ export default function RecipeDetailPanel({
         </button>
       </section>
 
-      <section className="grid gap-8 xl:grid-cols-[minmax(0,0.88fr)_minmax(0,1.12fr)]">
-        <div className="rounded-[2rem] bg-white p-6 shadow-xl ring-1 ring-gray-100 sm:p-8">
+      <section className="-mx-4 space-y-0 sm:mx-0 sm:grid sm:gap-8 xl:grid-cols-[minmax(0,0.88fr)_minmax(0,1.12fr)]">
+        <div
+          className={[
+            mobileSectionFrameClass,
+            'bg-[linear-gradient(180deg,rgba(255,250,244,0.98)_0%,rgba(250,241,231,0.9)_100%)] sm:bg-white',
+          ].join(' ')}
+        >
           <div className="flex items-center gap-3">
             <ChefHat className="h-6 w-6 text-[#f77663]" />
             <h2 className="text-3xl font-semibold text-[#f77663]">Ingredients</h2>
           </div>
 
-          <div className="mt-6 space-y-6">
+          <div className="mt-6 space-y-6 border-t border-[#17324c]/10 pt-5 sm:border-t-0 sm:pt-0">
             {ingredientSections.map((section, sectionIndex) => (
               <div key={section._key || `${section.title || 'ingredients'}-${sectionIndex}`}>
                 {section.title ? (
@@ -215,10 +223,15 @@ export default function RecipeDetailPanel({
           </div>
         </div>
 
-        <div className="rounded-[2rem] bg-white p-6 shadow-xl ring-1 ring-gray-100 sm:p-8">
+        <div
+          className={[
+            mobileSectionFrameClass,
+            'bg-[linear-gradient(180deg,rgba(241,248,242,0.96)_0%,rgba(226,238,225,0.9)_100%)] sm:bg-white',
+          ].join(' ')}
+        >
           <h2 className="text-3xl font-semibold text-[#f77663]">Instructions</h2>
 
-          <div className="mt-6 space-y-8">
+          <div className="mt-6 space-y-8 border-t border-[#17324c]/10 pt-5 sm:border-t-0 sm:pt-0">
             {instructionSections.map((section, sectionIndex) => (
               <div key={section._key || `${section.title || 'method'}-${sectionIndex}`}>
                 {section.title ? (
