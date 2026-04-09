@@ -43,8 +43,5 @@ export function getGrowingGuideSeasonTitle(value?: string | null) {
 }
 
 export function getGrowingGuideDifficultyTitle(value?: string | null) {
-  return (
-    growingGuideDifficultyOptions.find((option) => option.value === value)?.title ??
-    'Difficulty not set'
-  )
+  return growingGuideDifficultyOptions.find((option) => option.value === value)?.title
 }

@@ -7,7 +7,7 @@ interface Props {
     title: string;
     mainClass?: string;
     wrapContent?: boolean;
-    contentSize?: 'narrow' | 'default' | 'wide' | 'full';
+    contentSize?: 'narrow' | 'default';
 }
 
 const {
@@ -17,7 +17,6 @@ const {
     contentSize = "default",
 } = Astro.props;
 const siteTitle = "Chopwell Community Food Growers";
-const pathname = Astro.url.pathname;
 
 interface NavLink {
     href: string;
@@ -58,9 +57,6 @@ const navGroups: NavGroup[] = [
     { href: "/contact", label: "Contact" },
 ];
 const desktopNavGroups = navGroups.filter(({ href }) => href !== "/");
-const isGroupActive = (group: NavGroup) =>
-    group.href === pathname ||
-    group.children?.some(({ href }) => href === pathname) === true;
 ---
 
 <html lang="en">
@@ -116,26 +112,12 @@ const isGroupActive = (group: NavGroup) =>
                                     <ul class="mobile-menu__list flex flex-1 flex-col gap-2 bg-white px-4 pb-5 pt-24">
                                         {
                                             navGroups.map((group) => {
-                                                const groupActive = isGroupActive(group);
-
                                                 if (!group.children?.length) {
-                                                    const isActive = pathname === group.href;
-
                                                     return (
                                                         <li class="rounded-lg">
                                                             <a
                                                                 href={group.href}
-                                                                aria-current={
-                                                                    isActive
-                                                                        ? "page"
-                                                                        : undefined
-                                                                }
-                                                                class:list={[
-                                                                    "block rounded-xl px-4 py-3 text-sm font-medium text-gray-700 transition hover:bg-green-50 hover:text-[#2d5016]",
-                                                                    isActive
-                                                                        ? "bg-[#2d5016] text-white"
-                                                                        : "",
-                                                                ]}
+                                                                class="block rounded-xl px-4 py-3 text-sm font-medium text-gray-700 transition hover:bg-green-50 hover:text-[#2d5016]"
                                                                 data-close-menu
                                                             >
                                                                 {group.label}
@@ -150,14 +132,7 @@ const isGroupActive = (group: NavGroup) =>
                                                             class="mobile-submenu group/submenu"
                                                             data-mobile-submenu
                                                         >
-                                                            <summary
-                                                                class:list={[
-                                                                    "mobile-submenu__summary flex cursor-pointer list-none items-center justify-between gap-4 rounded-[1.25rem] px-4 py-3 text-sm font-semibold text-[#244329] transition",
-                                                                    groupActive
-                                                                        ? "text-[#1d351e]"
-                                                                        : "",
-                                                                ]}
-                                                            >
+                                                            <summary class="mobile-submenu__summary flex cursor-pointer list-none items-center justify-between gap-4 rounded-[1.25rem] px-4 py-3 text-sm font-semibold text-[#244329] transition">
                                                                 <span>{group.label}</span>
                                                                 <ChevronDown class="h-4 w-4 shrink-0 transition group-open/submenu:rotate-180" />
                                                             </summary>
@@ -167,24 +142,11 @@ const isGroupActive = (group: NavGroup) =>
                                                                         href,
                                                                         label,
                                                                     }) => {
-                                                                        const isActive =
-                                                                            pathname === href;
-
                                                                         return (
                                                                             <li>
                                                                                 <a
                                                                                     href={href}
-                                                                                    aria-current={
-                                                                                        isActive
-                                                                                            ? "page"
-                                                                                            : undefined
-                                                                                    }
-                                                                                    class:list={[
-                                                                                        "block rounded-xl px-4 py-3 text-sm font-medium text-gray-700 transition hover:bg-white hover:text-[#2d5016]",
-                                                                                        isActive
-                                                                                            ? "bg-[#2d5016] text-white"
-                                                                                            : "",
-                                                                                    ]}
+                                                                                    class="block rounded-xl px-4 py-3 text-sm font-medium text-gray-700 transition hover:bg-white hover:text-[#2d5016]"
                                                                                     data-close-menu
                                                                                 >
                                                                                     {label}
@@ -222,26 +184,12 @@ const isGroupActive = (group: NavGroup) =>
                             <ul class="flex flex-wrap gap-x-2 gap-y-2">
                                 {
                                     desktopNavGroups.map((group) => {
-                                        const groupActive = isGroupActive(group);
-
                                         if (!group.children?.length) {
-                                            const isActive = pathname === group.href;
-
                                             return (
                                                 <li class="rounded-lg">
                                                     <a
                                                         href={group.href}
-                                                        aria-current={
-                                                            isActive
-                                                                ? "page"
-                                                                : undefined
-                                                        }
-                                                        class:list={[
-                                                            "block rounded-full px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-green-50 hover:text-[#2d5016]",
-                                                            isActive
-                                                                ? "font-semibold text-[#2d5016]"
-                                                                : "",
-                                                        ]}
+                                                        class="block rounded-full px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-green-50 hover:text-[#2d5016]"
                                                     >
                                                         {group.label}
                                                     </a>
@@ -253,12 +201,7 @@ const isGroupActive = (group: NavGroup) =>
                                             <li class="desktop-nav__item relative">
                                                 <button
                                                     type="button"
-                                                    class:list={[
-                                                        "flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-green-50 hover:text-[#2d5016] focus-visible:bg-green-50 focus-visible:text-[#2d5016] focus-visible:outline-none",
-                                                        groupActive
-                                                            ? "font-semibold text-[#2d5016]"
-                                                            : "",
-                                                    ]}
+                                                    class="flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-green-50 hover:text-[#2d5016] focus-visible:bg-green-50 focus-visible:text-[#2d5016] focus-visible:outline-none"
                                                 >
                                                     <span>{group.label}</span>
                                                     <ChevronDown class="desktop-nav__chevron h-4 w-4 transition" />
@@ -272,24 +215,11 @@ const isGroupActive = (group: NavGroup) =>
                                                                     href,
                                                                     label,
                                                                 }) => {
-                                                                    const isActive =
-                                                                        pathname === href;
-
                                                                     return (
                                                                         <li>
                                                                             <a
                                                                                 href={href}
-                                                                                aria-current={
-                                                                                    isActive
-                                                                                        ? "page"
-                                                                                        : undefined
-                                                                                }
-                                                                                class:list={[
-                                                                                    "block rounded-2xl px-4 py-3 text-sm font-medium text-gray-700 transition hover:bg-green-50 hover:text-[#2d5016]",
-                                                                                    isActive
-                                                                                        ? "bg-[#2d5016] text-white hover:bg-[#2d5016] hover:text-white"
-                                                                                        : "",
-                                                                                ]}
+                                                                                class="block rounded-2xl px-4 py-3 text-sm font-medium text-gray-700 transition hover:bg-green-50 hover:text-[#2d5016]"
                                                                             >
                                                                                 {label}
                                                                             </a>

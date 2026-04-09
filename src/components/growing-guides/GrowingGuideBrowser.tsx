@@ -174,9 +174,6 @@ export default function GrowingGuideBrowser({guides}: GrowingGuideBrowserProps) 
                   ))}
                 </div>
 
-                <div className="mt-6 text-sm font-semibold tracking-[0.12em] uppercase text-[var(--ccfg-moss)]">
-                  Open growing guide
-                </div>
               </div>
             </a>
           ))}

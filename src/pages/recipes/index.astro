@@ -62,7 +62,7 @@ const recipes: RecipeBrowserCard[] = recipeDocuments.map((recipe) => ({
 }));
 ---
 
-<SiteLayout title={pageTitle} contentSize="wide">
+<SiteLayout title={pageTitle}>
   <div class="space-y-8">
     <PageIntro
       title={pageTitle}
@@ -84,7 +84,6 @@ const recipes: RecipeBrowserCard[] = recipeDocuments.map((recipe) => ({
           iconClass: 'text-sky-700',
         },
       ]}
-      containerClass="max-w-4xl mx-auto flex flex-col items-center"
     />
 
     {

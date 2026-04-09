@@ -151,9 +151,6 @@ export default function RecipeBrowser({recipes}: RecipeBrowserProps) {
                   </div>
                 </div>
 
-                <div className="mt-6 text-sm font-semibold tracking-[0.12em] uppercase text-[var(--ccfg-moss)]">
-                  Open recipe
-                </div>
               </div>
             </a>
           ))}
