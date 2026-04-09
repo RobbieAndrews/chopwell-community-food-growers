@@ -32,7 +32,13 @@ interface NavGroup {
 
 const navGroups: NavGroup[] = [
     { href: "/", label: "Home" },
-    { href: "/projects", label: "Projects" },
+    {
+        label: "Allotment",
+        children: [
+            { href: "/allotment", label: "The Allotment" },
+            { href: "/projects", label: "Projects" },
+        ],
+    },
     {
         label: "What's On",
         children: [
