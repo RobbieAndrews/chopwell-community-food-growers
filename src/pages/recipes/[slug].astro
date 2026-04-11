@@ -1,7 +1,8 @@
 ---
-import {ArrowLeft, BookOpenText, ChefHat} from '@lucide/astro';
+import {BookOpenText, ChefHat} from '@lucide/astro';
 import {PortableText} from 'astro-portabletext';
 
+import BackLink from '../../components/BackLink.astro';
 import ContentSection from '../../components/ContentSection.astro';
 import SanityImage from '../../components/SanityImage.astro';
 import RecipeDetailPanel from '../../components/recipes/RecipeDetailPanel';
@@ -31,16 +32,10 @@ const printHref = `/recipes/print/${recipe.slug.current}`;
 
 <SiteLayout title={recipe.title}>
   <ContentSection size="narrow" spacing="stack" class="bg-white/70" innerClass="section-stack">
-    <a
-      href="/recipes"
-      class="mb-4 inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-md ring-1 ring-gray-100 transition hover:bg-green-50 hover:text-[#2d5016] lg:mb-6"
-    >
-      <ArrowLeft class="h-4 w-4" />
-      <span>Back to recipes</span>
-    </a>
+    <BackLink href="/recipes" label="Back to recipes" />
 
     <section>
-      <div class="flex flex-col justify-center py-2 sm:py-4">
+      <div class="flex flex-col justify-center pb-2 sm:pb-4">
         <div class="flex flex-wrap gap-2">
           <span class="rounded-full bg-rose-100 px-3 py-1 text-xs font-semibold tracking-[0.12em] uppercase text-rose-700">
             {categoryLabel}

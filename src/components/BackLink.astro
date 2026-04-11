@@ -1,0 +1,18 @@
+---
+import { ArrowLeft } from '@lucide/astro';
+
+interface Props {
+  href: string;
+  label: string;
+}
+
+const { href, label } = Astro.props as Props;
+---
+
+<a
+  href={href}
+  class="mb-2 inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-md ring-1 ring-gray-100 transition hover:bg-green-50 hover:text-[#2d5016] sm:mb-4"
+>
+  <ArrowLeft class="h-4 w-4" />
+  <span>{label}</span>
+</a>

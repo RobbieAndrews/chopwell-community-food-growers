@@ -1,6 +1,7 @@
 import {newsletterIssueType} from './newsletterIssueType'
 import {postType} from './postType'
 import {projectType} from './projectType'
+import {projectPlanType} from './projectPlanType'
 import {growingGuideType} from './growingGuideType'
 import {recipeType} from './recipeType'
 import {recipesPageType} from './recipesPageType'
@@ -13,6 +14,7 @@ import {homePageType} from './homePageType'
 export const schemaTypes = [
   newsletterIssueType,
   postType,
+  projectPlanType,
   projectType,
   growingGuideType,
   recipeType,

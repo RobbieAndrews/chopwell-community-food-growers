@@ -1,6 +1,5 @@
 import {defineField, defineType} from 'sanity'
 import {articleContentMembers} from './articleContent'
-import {getProjectIconTitle, projectIconOptions, ProjectIconInput} from './projectIcons'
 
 export const projectType = defineType({
   name: 'project',
@@ -20,20 +19,6 @@ export const projectType = defineType({
       type: 'text',
       rows: 3,
       validation: (rule) => rule.required().max(180),
-    }),
-    defineField({
-      name: 'icon',
-      title: 'Project icon',
-      description: 'Pick an icon for the project. Hover an option to see its name.',
-      type: 'string',
-      initialValue: 'leaf',
-      options: {
-        list: projectIconOptions.map(({title, value}) => ({title, value})),
-      },
-      components: {
-        input: ProjectIconInput,
-      },
-      validation: (rule) => rule.required(),
     }),
     defineField({
       name: 'slug',
@@ -74,14 +59,11 @@ export const projectType = defineType({
       title: 'title',
       subtitle: 'headline',
       media: 'mainImage',
-      icon: 'icon',
     },
-    prepare({icon, media, subtitle, title}) {
-      const iconLabel = getProjectIconTitle(icon)
-
+    prepare({media, subtitle, title}) {
       return {
         title,
-        subtitle: subtitle ? `${iconLabel} icon - ${subtitle}` : `${iconLabel} icon`,
+        subtitle,
         media,
       }
     },

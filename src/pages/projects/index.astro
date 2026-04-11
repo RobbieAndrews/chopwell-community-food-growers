@@ -5,7 +5,6 @@ import PageIntro from '../../components/PageIntro.astro';
 import SanityImage from '../../components/SanityImage.astro';
 import { ArrowRight, Leaf, Users } from '@lucide/astro';
 import { sanityClient } from 'sanity:client';
-import { projectIconMap, type ProjectIcon } from '../../lib/projectIcons';
 import type { SanityImageWithAlt } from '../../lib/sanity';
 
 interface ProjectCard {
@@ -13,7 +12,6 @@ interface ProjectCard {
 	title: string;
 	slug: { current: string };
 	headline: string;
-	icon: ProjectIcon;
 	mainImage?: SanityImageWithAlt;
 }
 
@@ -25,7 +23,6 @@ const PROJECTS_QUERY = `*[
 	title,
 	slug,
 	headline,
-	icon,
 	mainImage
 }`;
 
@@ -57,8 +54,6 @@ const projects = projectDocuments;
 					<div class="grid gap-5 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
 						{
 							projects.map((project) => {
-								const Icon = projectIconMap[project.icon] ?? projectIconMap.leaf;
-
 								return (
 									<a
 										href={`/projects/${project.slug.current}`}
@@ -76,22 +71,17 @@ const projects = projectDocuments;
 														decoding="async"
 													/>
 												) : (
-													<div class="flex h-full w-full items-center justify-center bg-linear-to-br from-lime-100 via-stone-50 to-emerald-100 text-green-900">
-														<Icon class="h-12 w-12" />
+													<div class="flex h-full w-full items-center justify-center bg-linear-to-br from-lime-100 via-stone-50 to-emerald-100 px-6 text-center text-sm font-medium text-green-900">
+														Project image coming soon
 													</div>
 												)
 											}
 										</div>
 
 										<div class="p-5 sm:p-6">
-											<div class="flex items-start gap-4">
-												<div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-green-100 text-green-900">
-													<Icon class="h-6 w-6" />
-												</div>
-												<h2 class="text-2xl font-bold tracking-tight text-gray-900">
-													{project.title}
-												</h2>
-											</div>
+											<h2 class="text-2xl font-bold tracking-tight text-gray-900">
+												{project.title}
+											</h2>
 											<div class="min-w-0 flex-1">
 												<p class="mt-3 text-base leading-7 text-gray-600">
 													{project.headline}

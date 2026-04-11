@@ -1,8 +1,9 @@
 ---
-import {ArrowLeft, CalendarDays, Clock3, Trophy} from '@lucide/astro';
+import {CalendarDays, Clock3, Trophy} from '@lucide/astro';
 import {PortableText} from 'astro-portabletext';
 import {sanityClient} from 'sanity:client';
 
+import BackLink from '../../components/BackLink.astro';
 import ContentFeatureCard from '../../components/ContentFeatureCard.astro';
 import ContentSection from '../../components/ContentSection.astro';
 import SanityImage from '../../components/SanityImage.astro';
@@ -113,13 +114,7 @@ const galleryImages = Array.isArray(event.gallery) ? event.gallery : [];
 
 <SiteLayout title={event.title}>
   <ContentSection size="narrow" spacing="stack" innerClass="section-stack">
-    <a
-      href="/calendar"
-      class="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-md ring-1 ring-gray-100 transition hover:bg-green-50 hover:text-[#2d5016]"
-    >
-      <ArrowLeft class="h-4 w-4" />
-      <span>Back to calendar</span>
-    </a>
+    <BackLink href="/calendar" label="Back to calendar" />
 
     <ContentFeatureCard>
       <Fragment slot="intro">

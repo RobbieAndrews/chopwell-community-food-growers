@@ -1,6 +1,6 @@
 ---
 import SiteLayout from '../../layouts/SiteLayout.astro';
-import { ArrowLeft } from '@lucide/astro';
+import BackLink from '../../components/BackLink.astro';
 import ContentSection from '../../components/ContentSection.astro';
 import SanityImage from '../../components/SanityImage.astro';
 import { PortableText } from 'astro-portabletext';
@@ -10,7 +10,6 @@ import {
 	articlePortableTextComponents,
 	type ArticlePortableTextBlock,
 } from '../../lib/articlePortableText';
-import { projectIconMap, type ProjectIcon } from '../../lib/projectIcons';
 import {
 	type SanityImageWithAlt,
 } from '../../lib/sanity';
@@ -20,7 +19,6 @@ interface ProjectPage {
 	title: string;
 	slug: { current: string };
 	headline: string;
-	icon: ProjectIcon;
 	mainImage?: SanityImageWithAlt;
 	body?: ArticlePortableTextBlock[];
 }
@@ -44,7 +42,6 @@ const PROJECT_QUERY = `*[
 	title,
 	slug,
 	headline,
-	icon,
 	mainImage,
 	body
 }`;
@@ -56,30 +53,17 @@ const project = await sanityClient.fetch<ProjectPage | null>(PROJECT_QUERY, {
 if (!project) {
 	return Astro.redirect('/projects');
 }
-
-const Icon = projectIconMap[project.icon] ?? projectIconMap.leaf;
 ---
 
 <SiteLayout title={project.title}>
 	<ContentSection size="narrow" spacing="stack" innerClass="section-stack">
-		<a
-			href="/projects"
-			class="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-md ring-1 ring-gray-100 transition hover:bg-green-50 hover:text-[#2d5016]"
-		>
-			<ArrowLeft class="h-4 w-4" />
-			<span>Back to projects</span>
-		</a>
+		<BackLink href="/projects" label="Back to projects" />
 
 		<ContentFeatureCard articleTitle="About this project">
 			<Fragment slot="intro">
-				<div class="flex items-center gap-4">
-					<div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-green-100 text-green-900">
-						<Icon class="h-7 w-7" />
-					</div>
-					<h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
-						{project.title}
-					</h1>
-				</div>
+				<h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
+					{project.title}
+				</h1>
 
 				<p class="mt-6 max-w-2xl text-lg leading-8 text-gray-600">{project.headline}</p>
 			</Fragment>
@@ -97,8 +81,8 @@ const Icon = projectIconMap[project.icon] ?? projectIconMap.leaf;
 							class="aspect-1280/822 h-full min-h-72 w-full object-cover max-h-96"
 						/>
 					) : (
-						<div class="flex h-full min-h-72 items-center justify-center bg-linear-to-br from-lime-100 via-stone-50 to-emerald-100 text-green-900">
-							<Icon class="h-16 w-16" />
+						<div class="flex h-full min-h-72 items-center justify-center bg-linear-to-br from-lime-100 via-stone-50 to-emerald-100 px-6 text-center text-base font-medium text-green-900">
+							Project image coming soon
 						</div>
 					)
 				}

@@ -1,6 +1,7 @@
 ---
 import SiteLayout from '../../layouts/SiteLayout.astro';
-import { ArrowLeft, Archive } from '@lucide/astro';
+import { Archive } from '@lucide/astro';
+import BackLink from '../../components/BackLink.astro';
 import ContentSection from '../../components/ContentSection.astro';
 import SanityImage from '../../components/SanityImage.astro';
 import { PortableText } from 'astro-portabletext';
@@ -74,13 +75,7 @@ const publishedDate = new Intl.DateTimeFormat('en-GB', {
 
 <SiteLayout title={newsletter.title}>
 	<ContentSection size="narrow" spacing="stack" innerClass="section-stack">
-		<a
-			href="/newsletter"
-			class="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-md ring-1 ring-gray-100 transition hover:bg-green-50 hover:text-[#2d5016]"
-		>
-			<ArrowLeft class="h-4 w-4" />
-			<span>Back to newsletter</span>
-		</a>
+		<BackLink href="/newsletter" label="Back to newsletter" />
 
 		<ContentFeatureCard>
 			<Fragment slot="intro">

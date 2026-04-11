@@ -7,28 +7,20 @@ import { Calendar, Leaf, Users } from '@lucide/astro';
 import { sanityClient } from 'sanity:client';
 import type { CalendarEvent } from '../components/calendar/types';
 import { CALENDAR_EVENTS_QUERY, getEventsInNextDays } from '../data/calendar';
-import { projects } from '../data/projects';
 
-const project =
-	projects.find((entry) => entry.slug === 'community-allotment') ?? projects[0];
+interface AllotmentPlan {
+	_id: string;
+	title: string;
+	description: string;
+}
 
-const thisMonthPlans = [
-	{
-		title: 'Prepare and plant new beds',
-		description:
-			'We are clearing, feeding, and planting the main shared beds so they are ready for spring growth.',
-	},
-	{
-		title: 'Keep seedlings moving',
-		description:
-			'Young plants need watering, checking, and potting on so they stay healthy before going outside.',
-	},
-	{
-		title: 'Welcome more helping hands',
-		description:
-			'We are making space for new volunteers to join work sessions, learn the site, and take on small tasks.',
-	},
-] as const;
+const ALLOTMENT_PLANS_QUERY = `*[
+	_type == "projectPlan"
+]|order(_createdAt asc){
+	_id,
+	title,
+	description
+}`;
 
 const currentWork = [
 	'Refreshing paths, edges, and shared growing areas after winter.',
@@ -43,8 +35,13 @@ const waysToHelp = [
 	'Get in touch if you want to help regularly or learn more before visiting.',
 ] as const;
 
+const allotmentPlans = await sanityClient.fetch<AllotmentPlan[]>(ALLOTMENT_PLANS_QUERY);
 const calendarEvents = await sanityClient.fetch<CalendarEvent[]>(CALENDAR_EVENTS_QUERY);
 const upcomingCalendarEvents = getEventsInNextDays(calendarEvents, 30);
+const plans =
+	allotmentPlans.filter(
+		(plan): plan is AllotmentPlan => Boolean(plan?.title && plan?.description),
+	);
 ---
 
 <SiteLayout title="Community Allotment">
@@ -60,30 +57,32 @@ const upcomingCalendarEvents = getEventsInNextDays(calendarEvents, 30);
 		/>
 	</ContentSection>
 
-	<ContentSection spacing="default" class="bg-white/70">
-			<div class="space-y-6">
-				<div>
-					<p class="text-sm font-semibold uppercase tracking-[0.2em] text-amber-700">
-						Our plans
-					</p>
-					<h2 class="text-3xl font-bold tracking-tight text-gray-900">
-						What we are working on
-					</h2>
-				</div>
-
-				<ul class="space-y-4 rounded-[2rem] bg-white p-6 shadow-sm ring-1 ring-gray-100 sm:p-8">
-					{
-						thisMonthPlans.map((plan) => (
-							<li class="flex gap-4 border-b border-gray-100 pb-4 last:border-b-0 last:pb-0">
-								<span class="mt-2 h-3 w-3 shrink-0 rounded-full bg-amber-500"></span>
-								<div>
-									<h3 class="text-xl font-bold tracking-tight text-gray-900">{plan.title}</h3>
-									<p class="mt-2 text-base leading-7 text-gray-600">{plan.description}</p>
-								</div>
-							</li>
-						))
-					}
-				</ul>
+	<ContentSection spacing="default" class="bg-white/70" innerClass="space-y-8">
+			<div>
+                <p class="text-sm font-semibold uppercase tracking-[0.2em] text-amber-700">
+                    Our plan
+                </p>
+                
+				{
+					plans.length > 0 && (
+                        <h2 class="text-3xl font-bold tracking-tight text-gray-900 mb-6">
+                            What we are working on
+                        </h2>
+						<ul class="space-y-4 rounded-[2rem] bg-white p-6 shadow-sm ring-1 ring-gray-100 sm:p-8">
+							{
+								plans.map((plan) => (
+									<li class="flex gap-4 border-b border-gray-100 pb-4 last:border-b-0 last:pb-0">
+										<span class="mt-2 h-3 w-3 shrink-0 rounded-full bg-amber-500"></span>
+										<div>
+											<h3 class="text-xl font-bold tracking-tight text-gray-900">{plan.title}</h3>
+											<p class="mt-2 text-base leading-7 text-gray-600">{plan.description}</p>
+										</div>
+									</li>
+								))
+							}
+						</ul>
+					)
+				}
 			</div>
             {
                 upcomingCalendarEvents.length > 0 ? (
@@ -94,7 +93,6 @@ const upcomingCalendarEvents = getEventsInNextDays(calendarEvents, 30);
                         emptyMessage="There are no events planned in the next 30 days yet."
                         actionHref="/calendar"
                         actionLabel="See the full calendar"
-                        className="mt-6 lg:mt-10"
                     />
                 ) : null
             }
