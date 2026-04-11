@@ -1,0 +1,52 @@
+---
+import {
+	getSanityResponsiveImageData,
+	type ResponsiveSanityImageOptions,
+	type SanityImageWithAlt,
+} from '../lib/sanity';
+import {
+	sanityImagePresets,
+	type SanityImagePresetName,
+} from '../lib/sanityImagePresets';
+
+interface Props extends ResponsiveSanityImageOptions {
+	image: SanityImageWithAlt;
+	preset?: SanityImagePresetName;
+	class?: string;
+	loading?: 'eager' | 'lazy';
+	decoding?: 'async' | 'auto' | 'sync';
+	fetchpriority?: 'auto' | 'high' | 'low';
+}
+
+const {
+	image,
+	preset,
+	class: className = '',
+	loading = 'lazy',
+	decoding = 'async',
+	fetchpriority,
+	...options
+} = Astro.props as Props;
+
+const imageData = getSanityResponsiveImageData(image, {
+	...(preset ? sanityImagePresets[preset] : {}),
+	...options,
+});
+---
+
+{
+	imageData ? (
+		<img
+			src={imageData.src}
+			srcset={imageData.srcSet}
+			sizes={imageData.sizes}
+			alt={imageData.alt}
+			loading={loading}
+			decoding={decoding}
+			fetchpriority={fetchpriority}
+			width={imageData.width}
+			height={imageData.height}
+			class={className}
+		/>
+	) : null
+}

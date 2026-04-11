@@ -1,7 +1,7 @@
 ---
 import { ExternalLink, Leaf, LibraryBig, Users } from '@lucide/astro';
 import { sanityClient } from 'sanity:client';
-import FullBleedSection from '../components/FullBleedSection.astro';
+import ContentSection from '../components/ContentSection.astro';
 import PageIntro from '../components/PageIntro.astro';
 import SiteLayout from '../layouts/SiteLayout.astro';
 import { projectIconMap, type ProjectIcon } from '../lib/projectIcons';
@@ -73,7 +73,7 @@ function getSectionId(title: string) {
 ---
 
 <SiteLayout title="Useful Links">
-	<div class="space-y-8">
+	<ContentSection spacing="intro">
 		<PageIntro
 			title="Useful Links"
 			description="A curated collection of websites, guides, videos, and practical resources to support your growing journey."
@@ -95,10 +95,11 @@ function getSectionId(title: string) {
 				},
 			]}
 		/>
+	</ContentSection>
 
 		{
 			sections.length ? (
-				<div class="space-y-0">
+				<div>
 					{
 						sections.map((section, index) => {
 							const Icon = projectIconMap[section.icon] ?? projectIconMap.leaf;
@@ -106,10 +107,7 @@ function getSectionId(title: string) {
 							const cardClass = sectionColorClassMap[section.color] ?? sectionColorClassMap.green;
 
 							return (
-								<FullBleedSection
-									class="bleed-mobile-only py-8"
-									bleedClass={isSiteBackgroundSection ? '' : 'bleed-white-70'}
-								>
+								<ContentSection spacing="compact" class={isSiteBackgroundSection ? '' : 'bg-white/70'}>
 									<article
 										id={getSectionId(section.title)}
 										class="px-1 py-2 sm:rounded-4xl sm:bg-white sm:p-8 sm:shadow-xl sm:ring-1 sm:ring-gray-100"
@@ -155,20 +153,21 @@ function getSectionId(title: string) {
 											}
 										</div>
 									</article>
-								</FullBleedSection>
+								</ContentSection>
 							);
 						})
 					}
 				</div>
 			) : (
-				<FullBleedSection class="py-12" bleedClass="bleed-white-70">
+				<ContentSection spacing="default" class="bg-white/70">
 					<div class="rounded-4xl border border-dashed border-gray-300 bg-white/80 p-8 text-center text-gray-600">
 						Add some `Useful Link Section` documents in Sanity Studio and they will appear here.
 					</div>
-				</FullBleedSection>
+				</ContentSection>
 			)
 		}
 
+	<ContentSection spacing="end">
 		<section id="suggest-resource" class="rounded-4xl bg-[#2d5016] px-6 py-8 text-center text-white shadow-2xl sm:px-8 sm:py-10">
 			<div class="mx-auto max-w-3xl">
 				<h2 class="text-2xl font-bold tracking-tight">Know a Great Resource?</h2>
@@ -184,5 +183,5 @@ function getSectionId(title: string) {
 				</a>
 			</div>
 		</section>
-	</div>
+	</ContentSection>
 </SiteLayout>

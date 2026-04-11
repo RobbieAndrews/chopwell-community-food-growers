@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { CalendarDays, ChevronLeft, ChevronRight, Clock3, Undo2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, Undo2 } from "lucide-react";
 
 import {
     addMonths,
@@ -11,18 +11,17 @@ import {
     getLongDateLabel,
     getMonthLabel,
     getMonthName,
-    getShortDateLabel,
     getTimeRangeLabel,
     groupEventsByDate,
     isSameDay,
     isSameMonth,
     isToday,
     mobileWeekdayLabels,
-    parseDateKey,
     startOfMonth,
     weekdayLabels,
 } from "./calendarUtils";
 import AddToCalendarButton from "./AddToCalendarButton";
+import CalendarEventListSection from "./CalendarEventListSection";
 import type { CalendarEvent } from "./types";
 
 interface CalendarProps {
@@ -472,78 +471,11 @@ export default function Calendar({ events, initialMonth }: CalendarProps) {
                 </div>
             </section>
 
-            <section className="bleed bleed-white-70 -mx-4 px-4 py-6 sm:mx-0 sm:px-0 sm:py-8">
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-                    <h3 className="mt-2 text-2xl font-semibold tracking-tight text-gray-900 sm:text-3xl">
-                        Events in {getMonthName(visibleMonth)}
-                    </h3>
-                </div>
-
-                <div className="mt-4 space-y-4 sm:mt-5 lg:grid lg:grid-cols-2">
-                    {visibleMonthEvents.length > 0 ? (
-                        visibleMonthEvents.map((event) => (
-                            <article
-                                key={event.id}
-                                className="rounded-3xl border border-gray-200 bg-white/80 p-4 shadow-sm shadow-gray-900/5 sm:p-5"
-                            >
-                                <div className="flex flex-col gap-4">
-                                    <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-                                        <div className="min-w-0 flex-1">
-                                            <div className="flex flex-wrap items-center gap-3">
-                                                <span
-                                                    className={[
-                                                        "rounded-full px-3 py-1 text-xs font-semibold ring-1",
-                                                        categoryBadgeStyles[event.category],
-                                                    ].join(" ")}
-                                                >
-                                                    {event.category}
-                                                </span>
-                                            </div>
-
-                                            <h4 className="mt-3 text-xl font-semibold tracking-tight text-gray-900">
-                                                <a
-                                                    href={`/events/${event.slug}`}
-                                                    className="transition hover:text-green-700 focus:outline-none focus:text-green-700"
-                                                >
-                                                    {event.title}
-                                                </a>
-                                            </h4>
-                                        </div>
-                                        <AddToCalendarButton event={event} className="lg:shrink-0" />
-                                    </div>
-
-                                    <div className="min-w-0">
-                                        <p className="text-sm leading-6 text-gray-700 sm:text-base">
-                                            {event.summary}
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div className="mt-5 flex flex-wrap items-center gap-4 text-sm text-gray-600">
-                                    <p className="flex items-center gap-2">
-                                        <CalendarDays className="h-4 w-4 text-green-700" aria-hidden="true" />
-                                        {getShortDateLabel(parseDateKey(event.date))}
-                                    </p>
-                                    <p className="flex items-center gap-2">
-                                        <Clock3 className="h-4 w-4 text-green-700" aria-hidden="true" />
-                                        {getTimeRangeLabel(event.startTime, event.endTime)}
-                                    </p>
-                                    <a
-                                        href={`/events/${event.slug}`}
-                                        className="font-semibold text-green-800 transition hover:text-green-700"
-                                    >
-                                        View details
-                                    </a>
-                                </div>
-                            </article>
-                        ))
-                    ) : (
-                        <div className="rounded-3xl border border-dashed border-gray-300 bg-gray-50 p-5 text-sm leading-6 text-gray-600">
-                            There are no events in {getMonthLabel(visibleMonth)} yet.
-                        </div>
-                    )}
-                </div>
-            </section>
+            <CalendarEventListSection
+                events={visibleMonthEvents}
+                heading={`Events in ${getMonthName(visibleMonth)}`}
+                emptyMessage={`There are no events in ${getMonthLabel(visibleMonth)} yet.`}
+            />
 
             {isDetailsOpen && isMobileViewport ? (
                 <div className="md:hidden">

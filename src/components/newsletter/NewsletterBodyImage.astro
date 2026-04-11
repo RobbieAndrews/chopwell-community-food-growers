@@ -1,10 +1,6 @@
 ---
-import {
-	getSanityImageDimensions,
-	getSanityImageSrcSet,
-	getSanityImageUrl,
-	type SanityImageWithAlt,
-} from '../../lib/sanity';
+import SanityImage from '../SanityImage.astro';
+import type {SanityImageWithAlt} from '../../lib/sanity';
 
 type NewsletterBodyImageNode = SanityImageWithAlt & {
 	_type: 'newsletterBodyImage';
@@ -12,25 +8,18 @@ type NewsletterBodyImageNode = SanityImageWithAlt & {
 };
 
 const { node } = Astro.props as { node: NewsletterBodyImageNode };
-const imageDimensions = getSanityImageDimensions(node);
-const imageUrl = getSanityImageUrl(node, { width: 1200, fit: 'max' });
-const imageSrcSet = getSanityImageSrcSet(node, [480, 768, 1024, 1280], { fit: 'max' });
-const imageAlt = node.alt || '';
 ---
 
 {
-	imageUrl && (
+	node && (
 		<figure class="not-prose my-8 flex flex-col items-center">
 			<div class="w-full max-w-4xl overflow-hidden rounded-2xl bg-stone-100">
-				<img
-					src={imageUrl}
-					srcset={imageSrcSet || undefined}
-					sizes="(min-width: 1280px) 56rem, (min-width: 768px) min(84vw, 56rem), calc(100vw - 2rem)"
-					alt={imageAlt}
+				<SanityImage
+					image={node}
+					alt={node.alt || ''}
+					preset="inline"
 					loading="lazy"
 					decoding="async"
-					width={imageDimensions?.width}
-					height={imageDimensions?.height}
 					class="block h-auto w-full max-h-[56rem] object-contain"
 				/>
 			</div>

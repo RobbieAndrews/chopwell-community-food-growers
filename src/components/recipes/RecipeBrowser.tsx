@@ -107,11 +107,16 @@ export default function RecipeBrowser({recipes}: RecipeBrowserProps) {
               className="group overflow-hidden rounded-[2rem] bg-white shadow-xl ring-1 ring-gray-100 transition duration-300 hover:-translate-y-1 hover:shadow-2xl"
             >
               <div className="relative aspect-4/3 overflow-hidden bg-[linear-gradient(135deg,#f1eadb_0%,#fbf8f2_52%,#dceccb_100%)]">
-                {recipe.imageUrl ? (
+                {recipe.image ? (
                   <img
-                    src={recipe.imageUrl}
-                    alt={recipe.imageAlt}
+                    src={recipe.image.src}
+                    srcSet={recipe.image.srcSet}
+                    sizes={recipe.image.sizes}
+                    alt={recipe.image.alt}
                     loading="lazy"
+                    decoding="async"
+                    width={recipe.image.width}
+                    height={recipe.image.height}
                     className="h-full w-full object-cover"
                   />
                 ) : (

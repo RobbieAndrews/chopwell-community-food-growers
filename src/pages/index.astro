@@ -16,7 +16,7 @@ const {
 } = await getHomePageData();
 ---
 
-<SiteLayout title="Home" mainClass="px-0 py-0" wrapContent={false}>
+<SiteLayout title="Home">
     {heroSection && <HomeHero section={heroSection} />}
     {pathwaysSection && <HomePathways section={pathwaysSection} />}
     {seasonalSection && <HomeSeasonal section={seasonalSection} />}

@@ -1,0 +1,85 @@
+import type {ResponsiveSanityImageOptions} from './sanity'
+
+export const sanityImagePresets = {
+	contentHero: {
+		width: 1280,
+		widths: [640, 960, 1280, 1600],
+		aspectRatio: 1280 / 822,
+		fit: 'crop',
+		sizes: '(min-width: 1024px) 44rem, (min-width: 640px) calc(100vw - 4rem), calc(100vw - 3rem)',
+		quality: 72,
+	},
+	contentGallery: {
+		width: 960,
+		widths: [480, 720, 960, 1280],
+		aspectRatio: 4 / 3,
+		fit: 'crop',
+		sizes: '(min-width: 640px) calc(50vw - 2rem), calc(100vw - 3rem)',
+		quality: 72,
+	},
+	cardLandscape: {
+		width: 900,
+		widths: [320, 480, 640, 800, 900],
+		aspectRatio: 4 / 3,
+		fit: 'crop',
+		sizes: '(min-width: 1280px) 22rem, (min-width: 640px) calc(50vw - 2rem), calc(100vw - 1.5rem)',
+		quality: 70,
+	},
+	inline: {
+		width: 1200,
+		widths: [480, 768, 1024, 1280],
+		fit: 'max',
+		sizes: '(min-width: 1280px) 56rem, (min-width: 768px) min(84vw, 56rem), calc(100vw - 2rem)',
+		quality: 72,
+	},
+	homeHeroPrimary: {
+		width: 1400,
+		widths: [480, 640, 768, 960, 1200, 1400],
+		aspectRatio: 1400 / 1600,
+		fit: 'crop',
+		sizes: '(min-width: 1024px) 32rem, (min-width: 640px) calc(100vw - 3rem), calc(100vw - 1.5rem)',
+		quality: 72,
+	},
+	homeHeroSecondary: {
+		width: 1200,
+		widths: [320, 480, 640, 800, 1000, 1200],
+		aspectRatio: 4 / 3,
+		fit: 'crop',
+		sizes: '(min-width: 1024px) 16rem, (min-width: 640px) 40vw, calc(100vw - 1.5rem)',
+		quality: 72,
+	},
+	homePathwayCard: {
+		width: 1200,
+		widths: [400, 600, 800, 1000, 1200],
+		aspectRatio: 1200 / 1400,
+		fit: 'crop',
+		sizes: '(min-width: 1024px) 22rem, (min-width: 640px) calc(50vw - 2rem), calc(100vw - 1.5rem)',
+		quality: 72,
+	},
+	homeSeasonalFeature: {
+		width: 1600,
+		widths: [640, 960, 1280, 1600],
+		aspectRatio: 4 / 3,
+		fit: 'crop',
+		sizes: '(min-width: 1024px) 30rem, (min-width: 640px) calc(100vw - 3rem), calc(100vw - 1.5rem)',
+		quality: 72,
+	},
+	homeGalleryItem: {
+		width: 1200,
+		widths: [400, 600, 800, 1000, 1200],
+		aspectRatio: 1,
+		fit: 'crop',
+		sizes: '(min-width: 768px) 33vw, calc(100vw - 1.5rem)',
+		quality: 72,
+	},
+	homeFinalCtaBackground: {
+		width: 1600,
+		widths: [640, 960, 1280, 1600],
+		aspectRatio: 16 / 9,
+		fit: 'crop',
+		sizes: '100vw',
+		quality: 68,
+	},
+} satisfies Record<string, ResponsiveSanityImageOptions>
+
+export type SanityImagePresetName = keyof typeof sanityImagePresets

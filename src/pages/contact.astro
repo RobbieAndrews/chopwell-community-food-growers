@@ -1,6 +1,6 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
-import FullBleedSection from '../components/FullBleedSection.astro';
+import ContentSection from '../components/ContentSection.astro';
 import PageIntro from '../components/PageIntro.astro';
 import SocialPlatformIcon from '../components/SocialPlatformIcon.astro';
 import {
@@ -167,7 +167,7 @@ function getSocialBadgeClass(platform: string) {
 ---
 
 <SiteLayout title="Contact">
-	<div class="space-y-8">
+	<ContentSection spacing="intro">
 		<PageIntro
 			title="Contact Us"
 			description="Get in touch with Chopwell Community Food Growers and let us know how we can help."
@@ -177,8 +177,9 @@ function getSocialBadgeClass(platform: string) {
 				{ label: 'Visits available all week', icon: Clock3, iconClass: 'text-amber-600' },
 			]}
 		/>
+	</ContentSection>
 
-		<FullBleedSection class="py-12" bleedClass="bleed-white-70">
+	<ContentSection spacing="default" class="bg-white/70">
 			<div class="grid items-stretch gap-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(18rem,0.9fr)]">
 				<div>
 					<section class="h-full rounded-4xl bg-white p-6 shadow-xl ring-1 ring-gray-100 sm:p-8">
@@ -290,8 +291,9 @@ function getSocialBadgeClass(platform: string) {
 					</section>
 				</div>
 			</div>
-		</FullBleedSection>
+	</ContentSection>
 
+	<ContentSection spacing="end">
 		<section class="rounded-4xl bg-white p-6 shadow-xl ring-1 ring-gray-100 sm:p-8">
 			<div class="rounded-[2rem] bg-[#16263b] px-6 py-5 text-white sm:px-8">
 				<h2 class="text-2xl font-bold tracking-tight">
@@ -329,5 +331,5 @@ function getSocialBadgeClass(platform: string) {
 				)
 			}
 		</section>
-	</div>
+	</ContentSection>
 </SiteLayout>

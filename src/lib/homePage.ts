@@ -1,5 +1,5 @@
 import { sanityClient } from "sanity:client";
-import { urlForImage, type SanityImageWithAlt } from "./sanity";
+import type { SanityImageWithAlt } from "./sanity";
 
 export type GalleryLayoutVariant = "standard" | "tall" | "wide";
 
@@ -73,10 +73,7 @@ interface HomePageDocument {
     };
 }
 
-export interface HomePageImage {
-    src: string;
-    alt: string;
-}
+export type HomePageImage = SanityImageWithAlt;
 
 export interface HomePageLinkData {
     label: string;
@@ -98,7 +95,7 @@ export interface HomePathwayCard {
     description: string;
     href: string;
     linkLabel: string;
-    image: string | null;
+    image: HomePageImage | null;
 }
 
 export interface HomePathwaysSection {
@@ -127,8 +124,7 @@ export interface HomeSeasonalSection {
 
 export interface HomeGalleryItemData {
     title: string;
-    src: string;
-    alt: string;
+    image: HomePageImage;
     heightClass: string;
 }
 
@@ -235,41 +231,17 @@ function isValidLink(
 
 function getImageData(
     image: SanityImageWithAlt | undefined,
-    size: { width: number; height: number },
 ) {
-    if (!image?.alt) return null;
-
-    const src = urlForImage(image)
-        ?.width(size.width)
-        .height(size.height)
-        .fit("crop")
-        .auto("format")
-        .url();
-
-    if (!src) return null;
-
-    return {
-        src,
-        alt: image.alt,
-    };
+    return image ?? null;
 }
 
 function mapHeroSection(homePage: HomePageDocument | null) {
     const hero = homePage?.hero;
     if (!hero) return null;
 
-    const primaryImage = getImageData(hero.primaryImage, {
-        width: 1400,
-        height: 1600,
-    });
-    const secondaryImage = getImageData(hero.secondaryImage, {
-        width: 1200,
-        height: 900,
-    });
-    const tertiaryImage = getImageData(hero.tertiaryImage, {
-        width: 1200,
-        height: 900,
-    });
+    const primaryImage = getImageData(hero.primaryImage);
+    const secondaryImage = getImageData(hero.secondaryImage);
+    const tertiaryImage = getImageData(hero.tertiaryImage);
 
     const section = {
         heading: hero.heading,
@@ -314,17 +286,12 @@ function mapPathwaysSection(homePage: HomePageDocument | null) {
                     ),
             )
             .map((item) => {
-                const image = getImageData(item.image, {
-                    width: 1200,
-                    height: 1400,
-                });
-
                 return {
                     title: item.title,
                     description: item.description,
                     href: item.href,
                     linkLabel: item.linkLabel,
-                    image: image?.src ?? null,
+                    image: getImageData(item.image),
                 };
             }) ?? [];
 
@@ -347,10 +314,7 @@ function mapSeasonalSection(homePage: HomePageDocument | null) {
     const section = homePage?.seasonalSection;
     if (!section) return null;
 
-    const featureImage = getImageData(section.featureImage, {
-        width: 1600,
-        height: 1200,
-    });
+    const featureImage = getImageData(section.featureImage);
     const moments =
         section.moments
             ?.filter(
@@ -408,17 +372,13 @@ function mapGallerySection(homePage: HomePageDocument | null) {
                     ),
             )
             .map((item) => {
-                const image = getImageData(item.image, {
-                    width: 1200,
-                    height: 1200,
-                });
+                const image = getImageData(item.image);
 
                 if (!image) return null;
 
                 return {
                     title: item.title,
-                    src: image.src,
-                    alt: image.alt,
+                    image,
                     heightClass: galleryHeightClassMap[item.layoutVariant],
                 };
             })
@@ -443,10 +403,7 @@ function mapFinalSection(homePage: HomePageDocument | null) {
     const section = homePage?.finalCtaSection;
     if (!section) return null;
 
-    const backgroundImage = getImageData(section.backgroundImage, {
-        width: 1600,
-        height: 900,
-    });
+    const backgroundImage = getImageData(section.backgroundImage);
 
     const mappedSection = {
         eyebrow: section.eyebrow,

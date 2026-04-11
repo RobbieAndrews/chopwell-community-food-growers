@@ -1,6 +1,8 @@
 ---
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import { ArrowLeft, Archive } from '@lucide/astro';
+import ContentSection from '../../components/ContentSection.astro';
+import SanityImage from '../../components/SanityImage.astro';
 import { PortableText } from 'astro-portabletext';
 import { sanityClient } from 'sanity:client';
 import ContentFeatureCard from '../../components/ContentFeatureCard.astro';
@@ -9,8 +11,6 @@ import {
 	type ArticlePortableTextBlock,
 } from '../../lib/articlePortableText';
 import {
-	getSanityImageSrcSet,
-	getSanityImageUrl,
 	type SanityImageWithAlt,
 } from '../../lib/sanity';
 
@@ -64,22 +64,6 @@ if (!newsletter) {
 	return Astro.redirect('/newsletter');
 }
 
-const newsletterHeroWidths = [640, 960, 1280, 1600];
-const newsletterHeroAspectRatio = 1280 / 822;
-const newsletterImageUrl = newsletter.heroImage
-	? getSanityImageUrl(newsletter.heroImage, {
-			width: 1280,
-			aspectRatio: newsletterHeroAspectRatio,
-			fit: 'crop',
-		})
-	: null;
-const newsletterImageSrcSet = newsletter.heroImage
-	? getSanityImageSrcSet(newsletter.heroImage, newsletterHeroWidths, {
-			aspectRatio: newsletterHeroAspectRatio,
-			fit: 'crop',
-		})
-	: '';
-const newsletterImageAlt = newsletter.heroImage?.alt || newsletter.title;
 const publishedDate = new Intl.DateTimeFormat('en-GB', {
 	day: 'numeric',
 	month: 'long',
@@ -88,8 +72,8 @@ const publishedDate = new Intl.DateTimeFormat('en-GB', {
 
 ---
 
-<SiteLayout title={newsletter.title} contentSize="narrow">
-	<div class="space-y-8">
+<SiteLayout title={newsletter.title}>
+	<ContentSection size="narrow" spacing="stack" innerClass="section-stack">
 		<a
 			href="/newsletter"
 			class="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-md ring-1 ring-gray-100 transition hover:bg-green-50 hover:text-[#2d5016]"
@@ -125,17 +109,14 @@ const publishedDate = new Intl.DateTimeFormat('en-GB', {
 
 			<Fragment slot="media">
 				{
-					newsletterImageUrl ? (
-						<img
-							src={newsletterImageUrl}
-							srcset={newsletterImageSrcSet || undefined}
-							sizes="100vw"
-							alt={newsletterImageAlt}
+					newsletter.heroImage ? (
+						<SanityImage
+							image={newsletter.heroImage}
+							alt={newsletter.heroImage.alt || newsletter.title}
+							preset="contentHero"
 							loading="eager"
 							fetchpriority="high"
 							decoding="async"
-							width="1280"
-							height="822"
 							class="aspect-1280/822 h-full min-h-72 w-full object-cover max-h-96"
 						/>
 					) : (
@@ -156,5 +137,5 @@ const publishedDate = new Intl.DateTimeFormat('en-GB', {
 				)
 			}
 		</ContentFeatureCard>
-	</div>
+	</ContentSection>
 </SiteLayout>

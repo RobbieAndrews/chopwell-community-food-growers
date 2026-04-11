@@ -1,0 +1,42 @@
+---
+import Container from "./Container.astro";
+
+type SectionSpacing = "none" | "tight" | "compact" | "default" | "intro" | "stack" | "end" | "home";
+
+interface Props {
+    as?: keyof HTMLElementTagNameMap;
+    size?: "narrow" | "default";
+    spacing?: SectionSpacing;
+    class?: string;
+    innerClass?: string;
+}
+
+const {
+    as = "section",
+    size = "default",
+    spacing = "none",
+    class: className = "",
+    innerClass = "",
+} = Astro.props as Props;
+
+const As = as;
+
+const spacingClassMap: Record<SectionSpacing, string> = {
+    none: "",
+    tight: "py-6 sm:py-8 lg:py-10",
+    compact: "py-8",
+    default: "py-12",
+    home: "py-16 lg:py-20",
+    intro: "pt-10 sm:pt-14",
+    stack: "py-10 sm:py-14",
+    end: "pt-12 pb-10 sm:pb-14",
+};
+
+const sectionClassName = [spacingClassMap[spacing], className].filter(Boolean).join(" ");
+---
+
+<As class={sectionClassName}>
+    <Container size={size} class={innerClass}>
+        <slot />
+    </Container>
+</As>

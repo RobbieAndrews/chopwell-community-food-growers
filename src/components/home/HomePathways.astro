@@ -1,6 +1,7 @@
 ---
 import { ArrowRight } from "@lucide/astro";
-import FullBleedSection from "../FullBleedSection.astro";
+import ContentSection from "../ContentSection.astro";
+import SanityImage from "../SanityImage.astro";
 import HomeSectionHeader from "./HomeSectionHeader.astro";
 import { type HomePathwaysSection } from "../../lib/homePage";
 
@@ -11,7 +12,7 @@ interface Props {
 const { section } = Astro.props as Props;
 ---
 
-<FullBleedSection class="py-20 lg:py-24" bleedClass="bleed-white-70">
+<ContentSection spacing="home" class="bg-white/70">
     <HomeSectionHeader
         eyebrow={section.eyebrow}
         heading={section.heading}
@@ -28,11 +29,10 @@ const { section } = Astro.props as Props;
                     >
                         {
                             item.image ? (
-                                <img
-                                    src={item.image}
-                                    alt={item.title}
-                                    width="1200"
-                                    height="1400"
+                                <SanityImage
+                                    image={item.image}
+                                    alt={item.image.alt || item.title}
+                                    preset="homePathwayCard"
                                     class="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
                                     loading="lazy"
                                     decoding="async"
@@ -61,4 +61,4 @@ const { section } = Astro.props as Props;
             })
         }
     </div>
-</FullBleedSection>
+</ContentSection>

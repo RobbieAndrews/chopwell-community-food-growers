@@ -3,6 +3,7 @@ import {BookOpenText, Leaf, Search} from '@lucide/astro';
 import {sanityClient} from 'sanity:client';
 
 import GrowingGuideBrowser from '../../components/growing-guides/GrowingGuideBrowser';
+import ContentSection from '../../components/ContentSection.astro';
 import PageIntro from '../../components/PageIntro.astro';
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import {
@@ -12,7 +13,8 @@ import {
   type GrowingGuideBrowserCard,
   type GrowingGuideSummary,
 } from '../../lib/growingGuides';
-import {urlForImage} from '../../lib/sanity';
+import {getSanityResponsiveImageData} from '../../lib/sanity';
+import {sanityImagePresets} from '../../lib/sanityImagePresets';
 
 const GROWING_GUIDES_QUERY = `*[
   _type == "growingGuide"
@@ -36,15 +38,17 @@ const guides: GrowingGuideBrowserCard[] = guideDocuments.map((guide) => ({
   categoryLabel: getGrowingGuideCategoryTitle(guide.category),
   difficultyLabel: guide.difficulty ? getGrowingGuideDifficultyTitle(guide.difficulty) : undefined,
   seasonLabels: guide.seasons.map((season) => getGrowingGuideSeasonTitle(season)),
-  imageUrl: guide.heroImage
-    ? urlForImage(guide.heroImage)?.width(900).height(680).fit('crop').url() ?? null
+  image: guide.heroImage
+    ? getSanityResponsiveImageData(guide.heroImage, {
+        ...sanityImagePresets.cardLandscape,
+        altFallback: guide.title,
+      })
     : null,
-  imageAlt: guide.heroImage?.alt || guide.title,
 }));
 ---
 
 <SiteLayout title="Growing Guides">
-  <div class="space-y-8">
+  <ContentSection spacing="stack" innerClass="section-stack">
     <PageIntro
       title="Growing Guides"
       description="Practical vegetable-growing advice for community gardeners, beginners, and anyone wanting a clearer idea of what to sow, plant, and harvest through the year."
@@ -79,5 +83,5 @@ const guides: GrowingGuideBrowserCard[] = guideDocuments.map((guide) => ({
         </section>
       )
     }
-  </div>
+  </ContentSection>
 </SiteLayout>

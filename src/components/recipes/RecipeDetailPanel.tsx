@@ -4,6 +4,7 @@ import {ChefHat, Flame, Printer, ShieldCheck, Timer, Users} from 'lucide-react'
 import type {RecipeIngredientSection, RecipeInstructionSection} from '../../lib/recipes'
 
 interface RecipeDetailPanelProps {
+  printHref: string
   servings: string
   prepTime?: string
   cookTime?: string
@@ -18,6 +19,7 @@ export default function RecipeDetailPanel({
   cookTime,
   ingredientSections,
   instructionSections,
+  printHref,
   prepTime,
   servings,
 }: RecipeDetailPanelProps) {
@@ -108,14 +110,15 @@ export default function RecipeDetailPanel({
       </section>
 
       <section className="flex flex-wrap items-center gap-3">
-        <button
-          type="button"
-          onClick={() => window.print()}
+        <a
+          href={printHref}
+          target="_blank"
+          rel="noopener noreferrer"
           className="inline-flex items-center gap-2 rounded-full bg-[#dfecef] px-6 py-3 font-semibold text-[#17324c] transition hover:bg-[#d3e2e6]"
         >
           <Printer className="h-4 w-4" />
           <span>Print</span>
-        </button>
+        </a>
 
         <button
           type="button"
@@ -155,7 +158,7 @@ export default function RecipeDetailPanel({
         </button>
       </section>
 
-      <section className="-mx-4 space-y-0 sm:mx-0 sm:grid sm:gap-8 xl:grid-cols-[minmax(0,0.88fr)_minmax(0,1.12fr)]">
+      <section className="-mx-4 space-y-0 sm:mx-0 sm:grid sm:items-start sm:gap-8 xl:grid-cols-[minmax(0,0.88fr)_minmax(0,1.12fr)]">
         <div
           className={[
             mobileSectionFrameClass,
@@ -244,7 +247,7 @@ export default function RecipeDetailPanel({
                   {section.steps.map((step, index) => (
                     <li
                       key={step._key || `${section._key || section.title || 'method'}-${index}`}
-                      className="grid gap-3 sm:grid-cols-[auto_1fr]"
+                      className="grid grid-cols-[auto_1fr] items-start gap-3"
                     >
                       <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#17324c] text-sm font-bold text-white">
                         {index + 1}

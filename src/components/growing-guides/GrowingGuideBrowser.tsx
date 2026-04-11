@@ -130,11 +130,16 @@ export default function GrowingGuideBrowser({guides}: GrowingGuideBrowserProps) 
               className="group overflow-hidden rounded-[2rem] bg-white shadow-xl ring-1 ring-gray-100 transition duration-300 hover:-translate-y-1 hover:shadow-2xl"
             >
               <div className="relative aspect-4/3 overflow-hidden bg-[linear-gradient(135deg,#e7f3dc_0%,#f6f4eb_52%,#dceccb_100%)]">
-                {guide.imageUrl ? (
+                {guide.image ? (
                   <img
-                    src={guide.imageUrl}
-                    alt={guide.imageAlt}
+                    src={guide.image.src}
+                    srcSet={guide.image.srcSet}
+                    sizes={guide.image.sizes}
+                    alt={guide.image.alt}
                     loading="lazy"
+                    decoding="async"
+                    width={guide.image.width}
+                    height={guide.image.height}
                     className="h-full w-full object-cover"
                   />
                 ) : (

@@ -1,5 +1,5 @@
 import type {ArticlePortableTextBlock} from './articlePortableText'
-import type {SanityImageWithAlt, SanitySlug} from './sanity'
+import type {ResponsiveImageData, SanityImageWithAlt, SanitySlug} from './sanity'
 import {
   getRecipeCategoryTitle,
   getRecipeDifficultyTitle,
@@ -58,8 +58,7 @@ export interface RecipePage extends RecipeSummary {
 export interface RecipeBrowserCard extends RecipeSummary {
   categoryLabel: string
   difficultyLabel?: string
-  imageUrl: string | null
-  imageAlt: string
+  image: ResponsiveImageData | null
 }
 
 export interface RecipesPageDocument {

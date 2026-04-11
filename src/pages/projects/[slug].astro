@@ -1,6 +1,8 @@
 ---
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import { ArrowLeft } from '@lucide/astro';
+import ContentSection from '../../components/ContentSection.astro';
+import SanityImage from '../../components/SanityImage.astro';
 import { PortableText } from 'astro-portabletext';
 import { sanityClient } from 'sanity:client';
 import ContentFeatureCard from '../../components/ContentFeatureCard.astro';
@@ -10,8 +12,6 @@ import {
 } from '../../lib/articlePortableText';
 import { projectIconMap, type ProjectIcon } from '../../lib/projectIcons';
 import {
-	getSanityImageSrcSet,
-	getSanityImageUrl,
 	type SanityImageWithAlt,
 } from '../../lib/sanity';
 
@@ -58,26 +58,10 @@ if (!project) {
 }
 
 const Icon = projectIconMap[project.icon] ?? projectIconMap.leaf;
-const projectHeroWidths = [640, 960, 1280, 1600];
-const projectHeroAspectRatio = 1280 / 822;
-const projectImageUrl = project.mainImage
-	? getSanityImageUrl(project.mainImage, {
-			width: 1280,
-			aspectRatio: projectHeroAspectRatio,
-			fit: 'crop',
-		})
-	: null;
-const projectImageSrcSet = project.mainImage
-	? getSanityImageSrcSet(project.mainImage, projectHeroWidths, {
-			aspectRatio: projectHeroAspectRatio,
-			fit: 'crop',
-		})
-	: '';
-const projectImageAlt = project.mainImage?.alt || project.title;
 ---
 
-<SiteLayout title={project.title} contentSize="narrow">
-	<div class="space-y-8">
+<SiteLayout title={project.title}>
+	<ContentSection size="narrow" spacing="stack" innerClass="section-stack">
 		<a
 			href="/projects"
 			class="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-md ring-1 ring-gray-100 transition hover:bg-green-50 hover:text-[#2d5016]"
@@ -102,17 +86,14 @@ const projectImageAlt = project.mainImage?.alt || project.title;
 
 			<Fragment slot="media">
 				{
-					projectImageUrl ? (
-						<img
-							src={projectImageUrl}
-							srcset={projectImageSrcSet || undefined}
-							sizes="(min-width: 1024px) 45vw, 100vw"
-							alt={projectImageAlt}
+					project.mainImage ? (
+						<SanityImage
+							image={project.mainImage}
+							alt={project.mainImage.alt || project.title}
+							preset="contentHero"
 							loading="eager"
 							fetchpriority="high"
 							decoding="async"
-							width="1280"
-							height="822"
 							class="aspect-1280/822 h-full min-h-72 w-full object-cover max-h-96"
 						/>
 					) : (
@@ -131,5 +112,5 @@ const projectImageAlt = project.mainImage?.alt || project.title;
 				)
 			}
 		</ContentFeatureCard>
-	</div>
+	</ContentSection>
 </SiteLayout>

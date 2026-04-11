@@ -4,6 +4,8 @@ import {PortableText} from 'astro-portabletext';
 import {sanityClient} from 'sanity:client';
 
 import ContentFeatureCard from '../../components/ContentFeatureCard.astro';
+import ContentSection from '../../components/ContentSection.astro';
+import SanityImage from '../../components/SanityImage.astro';
 import {getTimeRangeLabel} from '../../components/calendar/calendarUtils';
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import {
@@ -11,8 +13,6 @@ import {
   type ArticlePortableTextBlock,
 } from '../../lib/articlePortableText';
 import {
-  getSanityImageSrcSet,
-  getSanityImageUrl,
   type SanityImageWithAlt,
   type SanitySlug,
 } from '../../lib/sanity';
@@ -100,22 +100,6 @@ if (!event) {
   return Astro.redirect('/calendar');
 }
 
-const eventHeroWidths = [640, 960, 1280, 1600];
-const eventHeroAspectRatio = 1280 / 822;
-const eventImageUrl = event.heroImage
-  ? getSanityImageUrl(event.heroImage, {
-      width: 1280,
-      aspectRatio: eventHeroAspectRatio,
-      fit: 'crop',
-    })
-  : null;
-const eventImageSrcSet = event.heroImage
-  ? getSanityImageSrcSet(event.heroImage, eventHeroWidths, {
-      aspectRatio: eventHeroAspectRatio,
-      fit: 'crop',
-    })
-  : '';
-const eventImageAlt = event.heroImage?.alt || event.title;
 const eventDateLabel = new Intl.DateTimeFormat('en-GB', {
   weekday: 'long',
   day: 'numeric',
@@ -127,8 +111,8 @@ const winnerCategories = Array.isArray(event.winnerCategories) ? event.winnerCat
 const galleryImages = Array.isArray(event.gallery) ? event.gallery : [];
 ---
 
-<SiteLayout title={event.title} contentSize="narrow">
-  <div class="space-y-8">
+<SiteLayout title={event.title}>
+  <ContentSection size="narrow" spacing="stack" innerClass="section-stack">
     <a
       href="/calendar"
       class="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-md ring-1 ring-gray-100 transition hover:bg-green-50 hover:text-[#2d5016]"
@@ -175,28 +159,21 @@ const galleryImages = Array.isArray(event.gallery) ? event.gallery : [];
         </div>
       </Fragment>
 
-      <Fragment slot="media">
-        {
-          eventImageUrl ? (
-            <img
-              src={eventImageUrl}
-              srcset={eventImageSrcSet || undefined}
-              sizes="100vw"
-              alt={eventImageAlt}
+      {
+        event.heroImage ? (
+          <Fragment slot="media">
+            <SanityImage
+              image={event.heroImage}
+              alt={event.heroImage.alt || event.title}
+              preset="contentHero"
               loading="eager"
               fetchpriority="high"
               decoding="async"
-              width="1280"
-              height="822"
               class="aspect-1280/822 h-auto w-full object-cover object-center max-h-96"
             />
-          ) : (
-            <div class="flex h-full min-h-72 items-center justify-center bg-linear-to-br from-lime-100 via-stone-50 to-emerald-100 text-green-900">
-              <CalendarDays class="h-16 w-16" />
-            </div>
-          )
-        }
-      </Fragment>
+          </Fragment>
+        ) : null
+      }
 
       {
         Array.isArray(event.body) && event.body.length ? (
@@ -252,33 +229,16 @@ const galleryImages = Array.isArray(event.gallery) ? event.gallery : [];
             <div class="mt-5 grid gap-4 sm:grid-cols-2">
               {
                 galleryImages.map((image) => {
-                  const imageUrl = getSanityImageUrl(image, {
-                    width: 960,
-                    aspectRatio: 4 / 3,
-                    fit: 'crop',
-                  });
-                  const imageSrcSet = getSanityImageSrcSet(image, [480, 720, 960, 1280], {
-                    aspectRatio: 4 / 3,
-                    fit: 'crop',
-                  });
-
                   return (
                     <figure class="overflow-hidden rounded-[1.75rem] bg-white shadow-md ring-1 ring-gray-100">
-                      {
-                        imageUrl ? (
-                          <img
-                            src={imageUrl}
-                            srcset={imageSrcSet || undefined}
-                            sizes="(min-width: 640px) 50vw, 100vw"
-                            alt={image.alt || event.title}
-                            loading="lazy"
-                            decoding="async"
-                            width="960"
-                            height="720"
-                            class="aspect-4/3 w-full object-cover"
-                          />
-                        ) : null
-                      }
+                      <SanityImage
+                        image={image}
+                        alt={image.alt || event.title}
+                        preset="contentGallery"
+                        class="aspect-4/3 w-full object-cover"
+                        loading="lazy"
+                        decoding="async"
+                      />
                       {
                         image.caption ? (
                           <figcaption class="px-4 py-3 text-sm leading-6 text-gray-600">
@@ -295,5 +255,5 @@ const galleryImages = Array.isArray(event.gallery) ? event.gallery : [];
         ) : null
       }
     </ContentFeatureCard>
-  </div>
+  </ContentSection>
 </SiteLayout>

@@ -1,4 +1,8 @@
 ---
+const mediaSlotContent = Astro.slots.has('media') ? await Astro.slots.render('media') : '';
+const defaultSlotContent = Astro.slots.has('default') ? await Astro.slots.render('default') : '';
+const hasMediaContent = mediaSlotContent.replace(/<!--[\s\S]*?-->/g, '').trim().length > 0;
+const hasDefaultContent = defaultSlotContent.replace(/<!--[\s\S]*?-->/g, '').trim().length > 0;
 ---
 
 <section class="rounded-4xl bg-white shadow-2xl ring-1 ring-gray-100 lg:p-5">
@@ -6,11 +10,19 @@
         <slot name="intro" />
     </div>
 
-    <div class="w-full px-6 sm:px-8 lg:px-10">
-        <slot name="media" />
-    </div>
+    {
+        hasMediaContent ? (
+            <div class="w-full px-6 sm:px-8 lg:px-10">
+                <slot name="media" />
+            </div>
+        ) : null
+    }
 
-    <article class="border-t border-gray-200/80 px-6 py-3 my-3 sm:px-8 sm:py-5 sm:my-5 lg:px-10">
-        <slot />
-    </article>
+    {
+        hasDefaultContent ? (
+            <article class="border-t border-gray-200/80 px-6 py-3 my-3 sm:px-8 sm:py-5 sm:my-5 lg:px-10">
+                <slot />
+            </article>
+        ) : null
+    }
 </section>

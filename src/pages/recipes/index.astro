@@ -4,6 +4,7 @@ import {BookOpenText, Search, UtensilsCrossed} from '@lucide/astro';
 import {sanityClient} from 'sanity:client';
 
 import PageIntro from '../../components/PageIntro.astro';
+import ContentSection from '../../components/ContentSection.astro';
 import RecipeBrowser from '../../components/recipes/RecipeBrowser';
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import {
@@ -16,7 +17,8 @@ import {
   type RecipesPageDocument,
   type RecipeSummary,
 } from '../../lib/recipes';
-import {urlForImage} from '../../lib/sanity';
+import {getSanityResponsiveImageData} from '../../lib/sanity';
+import {sanityImagePresets} from '../../lib/sanityImagePresets';
 
 const RECIPES_PAGE_QUERY = `*[
   _type == "recipesPage"
@@ -55,15 +57,17 @@ const recipes: RecipeBrowserCard[] = recipeDocuments.map((recipe) => ({
   ...recipe,
   categoryLabel: getRecipeCategoryTitle(recipe.category),
   difficultyLabel: recipe.difficulty ? getRecipeDifficultyTitle(recipe.difficulty) : undefined,
-  imageUrl: recipe.heroImage
-    ? urlForImage(recipe.heroImage)?.width(900).height(680).fit('crop').url() ?? null
+  image: recipe.heroImage
+    ? getSanityResponsiveImageData(recipe.heroImage, {
+        ...sanityImagePresets.cardLandscape,
+        altFallback: recipe.title,
+      })
     : null,
-  imageAlt: recipe.heroImage?.alt || recipe.title,
 }));
 ---
 
 <SiteLayout title={pageTitle}>
-  <div class="space-y-8">
+  <ContentSection spacing="stack" innerClass="section-stack">
     <PageIntro
       title={pageTitle}
       description={pageDescription}
@@ -108,5 +112,5 @@ const recipes: RecipeBrowserCard[] = recipeDocuments.map((recipe) => ({
         </section>
       )
     }
-  </div>
+  </ContentSection>
 </SiteLayout>

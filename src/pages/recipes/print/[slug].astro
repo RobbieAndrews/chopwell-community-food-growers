@@ -1,0 +1,584 @@
+---
+import '../../../styles/global.css';
+
+import {PortableText} from 'astro-portabletext';
+
+import {
+  articlePortableTextComponents,
+} from '../../../lib/articlePortableText';
+import {fetchRecipePage, fetchRecipeSlugs} from '../../../lib/recipePageData';
+
+export async function getStaticPaths(): Promise<{params: {slug: string}}[]> {
+  return await fetchRecipeSlugs();
+}
+
+const recipe = await fetchRecipePage(Astro.params.slug ?? '');
+
+if (!recipe) {
+  return Astro.redirect('/recipes');
+}
+
+const backHref = `/recipes/${recipe.slug.current}`;
+const ingredientSections = recipe.ingredientSections ?? [];
+const instructionSections = recipe.instructionSections ?? [];
+const introContent = Array.isArray(recipe.introContent) ? recipe.introContent : [];
+const recipeNotes = Array.isArray(recipe.recipeNotes) ? recipe.recipeNotes : [];
+const hasIntro = introContent.length > 0;
+const hasNotes = recipeNotes.length > 0;
+
+const metaItems = [
+  {
+    label: 'Servings',
+    value: recipe.servings,
+  },
+  ...(recipe.prepTime
+    ? [
+        {
+          label: 'Prep Time',
+          value: recipe.prepTime,
+        },
+      ]
+    : []),
+  ...(recipe.cookTime
+    ? [
+        {
+          label: 'Cook Time',
+          value: recipe.cookTime,
+        },
+      ]
+    : []),
+];
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{recipe.title} Print Recipe | Chopwell Community Food Growers</title>
+  </head>
+  <body class="recipe-print-body">
+    <main class="recipe-print-page" data-recipe-print-page data-text-size="normal">
+      <div class="recipe-print-controls" aria-label="Printable recipe controls">
+        <a href={backHref} class="recipe-print-control recipe-print-control--secondary">
+          Back to recipe
+        </a>
+        <button type="button" class="recipe-print-control recipe-print-control--primary" data-trigger-print>
+          Print
+        </button>
+        <div class="recipe-print-size-picker" role="group" aria-label="Text size">
+          <button
+            type="button"
+            class="recipe-print-size-button"
+            data-text-size-option="smaller"
+            aria-pressed="false"
+          >
+            Smaller
+          </button>
+          <button
+            type="button"
+            class="recipe-print-size-button"
+            data-text-size-option="normal"
+            aria-pressed="true"
+          >
+            Normal
+          </button>
+          <button
+            type="button"
+            class="recipe-print-size-button"
+            data-text-size-option="larger"
+            aria-pressed="false"
+          >
+            Larger
+          </button>
+        </div>
+      </div>
+
+      <article class="recipe-print-sheet">
+        <header class="recipe-print-header">
+          <h1>{recipe.title}</h1>
+        </header>
+
+        <dl class="recipe-print-meta" aria-label="Recipe details">
+          {
+            metaItems.map((item) => (
+              <div class="recipe-print-meta-item">
+                <dt>{item.label}</dt>
+                <dd>{item.value}</dd>
+              </div>
+            ))
+          }
+        </dl>
+
+        {
+          hasIntro ? (
+            <section class="recipe-print-section recipe-print-richtext">
+              <h2>Before you start</h2>
+              <div class="recipe-print-prose">
+                <PortableText value={introContent} components={articlePortableTextComponents} />
+              </div>
+            </section>
+          ) : null
+        }
+
+        <section class="recipe-print-section">
+          <h2>Ingredients</h2>
+          <div class="recipe-print-stack">
+            {
+              ingredientSections.map((section, sectionIndex) => (
+                <section class="recipe-print-subsection">
+                  {
+                    section.title ? <h3>{section.title}</h3> : sectionIndex > 0 ? <div class="recipe-print-gap" /> : null
+                  }
+                  <ul class="recipe-print-ingredients">
+                    {
+                      section.items.map((item) => (
+                        <li>
+                          <span>{item.ingredient}</span>
+                          {item.note ? <span class="recipe-print-note"> {item.note}</span> : null}
+                        </li>
+                      ))
+                    }
+                  </ul>
+                </section>
+              ))
+            }
+          </div>
+        </section>
+
+        <section class="recipe-print-section">
+          <h2>Instructions</h2>
+          <div class="recipe-print-stack">
+            {
+              instructionSections.map((section) => (
+                <section class="recipe-print-subsection">
+                  {section.title ? <h3>{section.title}</h3> : null}
+                  <ol class="recipe-print-steps">
+                    {
+                      section.steps.map((step) => (
+                        <li>{step.instruction}</li>
+                      ))
+                    }
+                  </ol>
+                </section>
+              ))
+            }
+          </div>
+        </section>
+
+        {
+          hasNotes ? (
+            <section class="recipe-print-section recipe-print-richtext">
+              <h2>Recipe notes</h2>
+              <div class="recipe-print-prose">
+                <PortableText value={recipeNotes} components={articlePortableTextComponents} />
+              </div>
+            </section>
+          ) : null
+        }
+      </article>
+    </main>
+
+    <script is:inline>
+      const printPage = document.querySelector('[data-recipe-print-page]');
+      const printButton = document.querySelector('[data-trigger-print]');
+      const textSizeButtons = Array.from(document.querySelectorAll('[data-text-size-option]'));
+      let hasAutoPrinted = false;
+
+      const applyTextSize = (size) => {
+        if (!(printPage instanceof HTMLElement)) {
+          return;
+        }
+
+        printPage.dataset.textSize = size;
+
+        textSizeButtons.forEach((button) => {
+          if (!(button instanceof HTMLButtonElement)) {
+            return;
+          }
+
+          const isActive = button.dataset.textSizeOption === size;
+          button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+        });
+      };
+
+      const triggerPrint = () => {
+        window.setTimeout(() => window.print(), 80);
+      };
+
+      textSizeButtons.forEach((button) => {
+        if (!(button instanceof HTMLButtonElement)) {
+          return;
+        }
+
+        button.addEventListener('click', () => {
+          applyTextSize(button.dataset.textSizeOption || 'normal');
+        });
+      });
+
+      if (printButton instanceof HTMLButtonElement) {
+        printButton.addEventListener('click', triggerPrint);
+      }
+
+      window.addEventListener(
+        'load',
+        () => {
+          if (hasAutoPrinted) {
+            return;
+          }
+
+          hasAutoPrinted = true;
+          triggerPrint();
+        },
+        {once: true}
+      );
+    </script>
+  </body>
+</html>
+
+<style>
+  :global(body.recipe-print-body) {
+    min-height: 100vh;
+    background: #f3f0e8;
+    color: #1f2937;
+  }
+
+  :global(.recipe-print-page) {
+    --recipe-print-font-size: 1rem;
+    --recipe-print-heading-scale: 1;
+    padding: 2rem 1rem 3rem;
+    font-size: var(--recipe-print-font-size);
+  }
+
+  :global(.recipe-print-page[data-text-size='smaller']) {
+    --recipe-print-font-size: 0.94rem;
+    --recipe-print-heading-scale: 0.95;
+  }
+
+  :global(.recipe-print-page[data-text-size='larger']) {
+    --recipe-print-font-size: 1.08rem;
+    --recipe-print-heading-scale: 1.05;
+  }
+
+  :global(.recipe-print-controls) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    margin: 0 auto 1.5rem;
+    max-width: 56rem;
+  }
+
+  :global(.recipe-print-control),
+  :global(.recipe-print-size-button) {
+    border: 1px solid #d1d5db;
+    background: #ffffff;
+    color: #17324c;
+    cursor: pointer;
+    font: inherit;
+    text-decoration: none;
+    transition:
+      background-color 180ms ease,
+      border-color 180ms ease,
+      color 180ms ease;
+  }
+
+  :global(.recipe-print-control) {
+    border-radius: 999px;
+    padding: 0.75rem 1.25rem;
+    font-weight: 700;
+  }
+
+  :global(.recipe-print-control:hover),
+  :global(.recipe-print-size-button:hover) {
+    border-color: #94a3b8;
+    background: #f8fafc;
+  }
+
+  :global(.recipe-print-control--primary) {
+    border-color: #17324c;
+    background: #17324c;
+    color: #ffffff;
+  }
+
+  :global(.recipe-print-control--primary:hover) {
+    border-color: #244864;
+    background: #244864;
+  }
+
+  :global(.recipe-print-size-picker) {
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    overflow: hidden;
+    border: 1px solid #d1d5db;
+    border-radius: 999px;
+    background: #ffffff;
+  }
+
+  :global(.recipe-print-size-button) {
+    padding: 0.75rem 1rem;
+    border: 0;
+    border-right: 1px solid #d1d5db;
+  }
+
+  :global(.recipe-print-size-button:last-child) {
+    border-right: 0;
+  }
+
+  :global(.recipe-print-size-button[aria-pressed='true']) {
+    background: #17324c;
+    color: #ffffff;
+  }
+
+  :global(.recipe-print-sheet) {
+    width: min(100%, 56rem);
+    margin: 0 auto;
+    padding: 2rem;
+    background: #ffffff;
+    border: 1px solid #d6d3d1;
+    box-shadow: 0 20px 50px rgba(15, 23, 42, 0.12);
+  }
+
+  :global(.recipe-print-header) {
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #d1d5db;
+  }
+
+  :global(.recipe-print-header h1) {
+    margin: 0;
+    color: #111827;
+    font-size: calc(2.3em * var(--recipe-print-heading-scale));
+    line-height: 1.08;
+  }
+
+  :global(.recipe-print-meta) {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+
+  :global(.recipe-print-meta-item) {
+    padding: 0.9rem 1rem;
+    border: 1px solid #d1d5db;
+    background: #fafaf9;
+    break-inside: avoid;
+  }
+
+  :global(.recipe-print-meta-item dt) {
+    margin: 0;
+    font-size: 0.82em;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #64748b;
+  }
+
+  :global(.recipe-print-meta-item dd) {
+    margin: 0.35rem 0 0;
+    font-size: 1.1em;
+    font-weight: 700;
+    color: #111827;
+  }
+
+  :global(.recipe-print-section) {
+    margin-top: 2rem;
+    break-inside: avoid-page;
+  }
+
+  :global(.recipe-print-section h2) {
+    margin: 0 0 1rem;
+    color: #111827;
+    font-size: calc(1.45em * var(--recipe-print-heading-scale));
+    line-height: 1.2;
+    break-after: avoid-page;
+  }
+
+  :global(.recipe-print-stack) {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  :global(.recipe-print-subsection) {
+    break-inside: avoid-page;
+  }
+
+  :global(.recipe-print-subsection h3) {
+    margin: 0 0 0.75rem;
+    color: #17324c;
+    font-size: calc(1.05em * var(--recipe-print-heading-scale));
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    break-after: avoid-page;
+  }
+
+  :global(.recipe-print-gap) {
+    height: 0.25rem;
+  }
+
+  :global(.recipe-print-ingredients),
+  :global(.recipe-print-steps) {
+    margin: 0;
+    padding-left: 1.35rem;
+    color: #374151;
+  }
+
+  :global(.recipe-print-ingredients) {
+    list-style: disc;
+  }
+
+  :global(.recipe-print-steps) {
+    list-style: decimal;
+  }
+
+  :global(.recipe-print-ingredients li),
+  :global(.recipe-print-steps li) {
+    margin-top: 0.5rem;
+    line-height: 1.65;
+    break-inside: avoid-page;
+  }
+
+  :global(.recipe-print-ingredients li:first-child),
+  :global(.recipe-print-steps li:first-child) {
+    margin-top: 0;
+  }
+
+  :global(.recipe-print-note) {
+    color: #6b7280;
+    font-style: italic;
+  }
+
+  :global(.recipe-print-prose) {
+    color: #374151;
+  }
+
+  :global(.recipe-print-prose p),
+  :global(.recipe-print-prose li) {
+    font-size: 1em;
+    line-height: 1.7;
+  }
+
+  :global(.recipe-print-prose p) {
+    margin: 0.75rem 0 0;
+  }
+
+  :global(.recipe-print-prose p:first-child) {
+    margin-top: 0;
+  }
+
+  :global(.recipe-print-prose h2),
+  :global(.recipe-print-prose h3) {
+    color: #111827;
+    line-height: 1.25;
+  }
+
+  :global(.recipe-print-prose h2) {
+    margin: 1.5rem 0 0.75rem;
+    font-size: calc(1.2em * var(--recipe-print-heading-scale));
+  }
+
+  :global(.recipe-print-prose h3) {
+    margin: 1.25rem 0 0.65rem;
+    font-size: calc(1.08em * var(--recipe-print-heading-scale));
+  }
+
+  :global(.recipe-print-prose ul),
+  :global(.recipe-print-prose ol) {
+    margin: 0.85rem 0 0;
+    padding-left: 1.35rem;
+  }
+
+  :global(.recipe-print-prose li + li) {
+    margin-top: 0.35rem;
+  }
+
+  :global(.recipe-print-prose blockquote) {
+    margin: 1rem 0 0;
+    padding: 0.85rem 1rem;
+    border-left: 4px solid #cbd5e1;
+    background: #f8fafc;
+    color: #475569;
+  }
+
+  @media (max-width: 640px) {
+    :global(.recipe-print-page) {
+      padding: 1rem 0.75rem 2rem;
+    }
+
+    :global(.recipe-print-sheet) {
+      padding: 1.25rem;
+    }
+
+    :global(.recipe-print-controls) {
+      justify-content: stretch;
+    }
+
+    :global(.recipe-print-control),
+    :global(.recipe-print-size-picker) {
+      width: 100%;
+      justify-content: center;
+    }
+
+    :global(.recipe-print-size-button) {
+      flex: 1 1 0;
+    }
+
+    :global(.recipe-print-header h1) {
+      font-size: calc(1.9em * var(--recipe-print-heading-scale));
+    }
+  }
+
+  @media print {
+    @page {
+      margin: 12mm;
+    }
+
+    :global(body.recipe-print-body) {
+      background: #ffffff;
+      color: #000000;
+    }
+
+    :global(.recipe-print-page) {
+      padding: 0;
+      font-size: var(--recipe-print-font-size);
+    }
+
+    :global(.recipe-print-controls) {
+      display: none !important;
+    }
+
+    :global(.recipe-print-sheet) {
+      width: 100%;
+      padding: 0;
+      border: 0;
+      box-shadow: none;
+    }
+
+    :global(.recipe-print-meta) {
+      gap: 0.5rem;
+    }
+
+    :global(.recipe-print-meta-item) {
+      background: #ffffff;
+    }
+
+    :global(.recipe-print-section),
+    :global(.recipe-print-subsection),
+    :global(.recipe-print-meta-item),
+    :global(.recipe-print-ingredients li),
+    :global(.recipe-print-steps li) {
+      break-inside: avoid-page;
+    }
+
+    :global(.recipe-print-header h1),
+    :global(.recipe-print-section h2),
+    :global(.recipe-print-subsection h3) {
+      break-after: avoid-page;
+    }
+  }
+</style>

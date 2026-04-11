@@ -109,36 +109,6 @@
 }
 
 @layer components {
-    /**
-     * THE BLEED UTILITY
-     * Use this on any section to make its background span the full screen width
-     * without using 'w-screen' (which causes flickering).
-     */
-    .bleed {
-        --bleed-color: transparent;
-        background-color: var(--bleed-color);
-        /* Creates a massive shadow that acts as the background */
-        box-shadow: 0 0 0 100vmax var(--bleed-color);
-        /* Crops the shadow so it doesn't cause horizontal scrolling */
-        clip-path: inset(0 -100vmax);
-    }
-
-    @media (min-width: 40rem) {
-        .bleed-mobile-only {
-            background-color: transparent;
-            box-shadow: none;
-            clip-path: none;
-        }
-    }
-
-    .bleed-white-70 {
-        --bleed-color: rgb(255 255 255 / 0.7);
-    }
-
-    .bleed-gray-50 {
-        --bleed-color: rgb(249 250 251);
-    }
-
     /* TYPOGRAPHY: Portable Content Styles */
     .portable-content {
         color: #4b5563;

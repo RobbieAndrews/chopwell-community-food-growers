@@ -1,6 +1,6 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
-import FullBleedSection from '../components/FullBleedSection.astro';
+import ContentSection from '../components/ContentSection.astro';
 import PageIntro from '../components/PageIntro.astro';
 import { PortableText } from 'astro-portabletext';
 import type { TypedObject } from 'astro-portabletext/types';
@@ -72,7 +72,7 @@ const stories = [
 ---
 
 <SiteLayout title="Get Involved">
-	<div class="space-y-8">
+	<ContentSection spacing="intro">
 		<PageIntro
 			title="Get Involved"
 			description="Discover the many ways you can contribute to our growing community, whether you want to volunteer regularly or just lend a hand when you can."
@@ -82,8 +82,9 @@ const stories = [
 				{ label: 'Friendly and flexible', icon: HeartHandshake, iconClass: 'text-amber-600' },
 			]}
 		/>
+	</ContentSection>
 
-		<FullBleedSection class="py-12" bleedClass="bleed-white-70">
+	<ContentSection spacing="default" class="bg-white/70">
 				<h2 class="text-3xl font-bold tracking-tight text-gray-900">Volunteer Opportunities</h2>
 				{
 					opportunities.length ? (
@@ -129,8 +130,9 @@ const stories = [
 						</div>
 					)
 				}
-		</FullBleedSection>
+	</ContentSection>
 
+	<ContentSection spacing="default">
 		<section class="rounded-4xl bg-white p-6 shadow-xl ring-1 ring-gray-100 sm:p-8">
 			<h2 class="text-2xl font-bold tracking-tight text-gray-900">How to Get Started</h2>
 			<div class="mt-6 grid gap-6 md:grid-cols-4">
@@ -147,7 +149,9 @@ const stories = [
 				}
 			</div>
 		</section>
+	</ContentSection>
 
+	<ContentSection spacing="end">
 		<section class="rounded-4xl bg-[#2d5016] px-6 py-8 text-center text-white shadow-2xl sm:px-8 sm:py-10">
 			<h2 class="text-2xl font-bold tracking-tight">Ready to Make a Difference?</h2>
 			<p class="mx-auto mt-3 max-w-2xl leading-8 text-green-50">
@@ -161,5 +165,5 @@ const stories = [
 				Contact Us
 			</a>
 		</section>
-	</div>
+	</ContentSection>
 </SiteLayout>

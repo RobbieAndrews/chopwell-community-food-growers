@@ -1,4 +1,4 @@
-import type {SanityImageWithAlt, SanitySlug} from './sanity'
+import type {ResponsiveImageData, SanityImageWithAlt, SanitySlug} from './sanity'
 import type {ArticlePortableTextBlock} from './articlePortableText'
 import {
   getGrowingGuideCategoryTitle,
@@ -66,8 +66,7 @@ export interface GrowingGuideBrowserCard extends GrowingGuideSummary {
   categoryLabel: string
   difficultyLabel?: string
   seasonLabels: string[]
-  imageUrl: string | null
-  imageAlt: string
+  image: ResponsiveImageData | null
 }
 
 export const growingGuideFactLabels: Record<keyof GrowingGuideQuickFacts, string> = {

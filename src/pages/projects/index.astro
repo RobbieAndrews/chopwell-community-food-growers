@@ -1,11 +1,12 @@
 ---
 import SiteLayout from '../../layouts/SiteLayout.astro';
-import FullBleedSection from '../../components/FullBleedSection.astro';
+import ContentSection from '../../components/ContentSection.astro';
 import PageIntro from '../../components/PageIntro.astro';
+import SanityImage from '../../components/SanityImage.astro';
 import { ArrowRight, Leaf, Users } from '@lucide/astro';
 import { sanityClient } from 'sanity:client';
 import { projectIconMap, type ProjectIcon } from '../../lib/projectIcons';
-import { urlForImage, type SanityImageWithAlt } from '../../lib/sanity';
+import type { SanityImageWithAlt } from '../../lib/sanity';
 
 interface ProjectCard {
 	_id: string;
@@ -30,31 +31,27 @@ const PROJECTS_QUERY = `*[
 
 const projectDocuments = await sanityClient.fetch<ProjectCard[]>(PROJECTS_QUERY);
 
-const projects = projectDocuments.map((project) => ({
-	...project,
-	imageUrl: project.mainImage
-		? urlForImage(project.mainImage)?.width(900).height(680).fit('crop').url()
-		: null,
-	imageAlt: project.mainImage?.alt || project.title,
-}));
+const projects = projectDocuments;
 
 ---
 
 <SiteLayout title="Projects">
-	<PageIntro
-		title="Projects"
-		description="Explore the growing spaces, shared skills, and hands-on projects helping Chopwell build a stronger local food community together."
-		pills={[
-			{
-				label: `${projects.length} project${projects.length != 1 ? 's' : ''}`,
-				icon: Leaf,
-				iconClass: 'text-green-700',
-			},
-			{ label: 'Built by local members', icon: Users, iconClass: 'text-sky-700' },
-		]}
-	/>
+	<ContentSection spacing="intro">
+		<PageIntro
+			title="Projects"
+			description="Explore the growing spaces, shared skills, and hands-on projects helping Chopwell build a stronger local food community together."
+			pills={[
+				{
+					label: `${projects.length} project${projects.length != 1 ? 's' : ''}`,
+					icon: Leaf,
+					iconClass: 'text-green-700',
+				},
+				{ label: 'Built by local members', icon: Users, iconClass: 'text-sky-700' },
+			]}
+		/>
+	</ContentSection>
 
-	<FullBleedSection class="mt-8 py-12" bleedClass="bleed-white-70">
+	<ContentSection spacing="default" class="bg-white/70">
 			{
 				projects.length ? (
 					<div class="grid gap-5 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
@@ -69,12 +66,14 @@ const projects = projectDocuments.map((project) => ({
 									>
 										<div class="relative aspect-4/3 overflow-hidden">
 											{
-												project.imageUrl ? (
-													<img
-														src={project.imageUrl}
-														alt={project.imageAlt}
-														loading="lazy"
+												project.mainImage ? (
+													<SanityImage
+														image={project.mainImage}
+														alt={project.mainImage.alt || project.title}
+														preset="cardLandscape"
 														class="h-full w-full object-cover"
+														loading="lazy"
+														decoding="async"
 													/>
 												) : (
 													<div class="flex h-full w-full items-center justify-center bg-linear-to-br from-lime-100 via-stone-50 to-emerald-100 text-green-900">
@@ -115,5 +114,5 @@ const projects = projectDocuments.map((project) => ({
 					</div>
 				)
 			}
-	</FullBleedSection>
+	</ContentSection>
 </SiteLayout>

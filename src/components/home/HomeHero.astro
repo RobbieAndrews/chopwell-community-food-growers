@@ -1,6 +1,7 @@
 ---
 import ButtonLink from "../ButtonLink.astro";
-import Container from "../Container.astro";
+import ContentSection from "../ContentSection.astro";
+import SanityImage from "../SanityImage.astro";
 import type { HomeHeroSection } from "../../lib/homePage";
 
 interface Props {
@@ -10,129 +11,124 @@ interface Props {
 const { section } = Astro.props as Props;
 ---
 
-<section
-    class="relative isolate overflow-hidden bg-[linear-gradient(135deg,#19301d_0%,#26472a_48%,#c7b89a_100%)] text-white"
+<ContentSection
+    size="default"
+    spacing="home"
+    class="overflow-hidden bg-[linear-gradient(135deg,#19301d_0%,#26472a_48%,#c7b89a_100%)] text-white"
+    innerClass="relative"
 >
     <div
-        class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.18),transparent_30%),radial-gradient(circle_at_bottom_right,rgba(244,213,141,0.22),transparent_24%)]"
+        class="grid gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:items-stretch"
     >
-    </div>
-    <Container class="relative py-16 lg:py-24">
-        <div
-            class="grid gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:items-stretch"
-        >
-            <div class="space-y-8">
-                <div class="space-y-5">
-                    {
-                        section.heading ? (
-                            <h1
-                                class="max-w-3xl text-5xl leading-[0.92] font-semibold text-balance sm:text-6xl lg:text-7xl"
-                            >
-                                {section.heading}
-                            </h1>
-                        ) : null
-                    }
-                    {
-                        section.intro ? (
-                            <p
-                                class="max-w-2xl text-lg leading-8 text-white/78 sm:text-xl"
-                            >
-                                {section.intro}
-                            </p>
-                        ) : null
-                    }
-                </div>
-
+        <div class="space-y-8">
+            <div class="space-y-5">
                 {
-                    section.primaryCta || section.secondaryCta ? (
-                        <div class="flex flex-col gap-4 sm:flex-row">
-                            {
-                                section.primaryCta ? (
-                                    <ButtonLink
-                                        href={section.primaryCta.href}
-                                        variant="primary-light"
-                                        showArrow={true}
-                                    >
-                                        <span>{section.primaryCta.label}</span>
-                                    </ButtonLink>
-                                ) : null
-                            }
-                            {
-                                section.secondaryCta ? (
-                                    <ButtonLink
-                                        href={section.secondaryCta.href}
-                                        variant="secondary-dark"
-                                    >
-                                        {section.secondaryCta.label}
-                                    </ButtonLink>
-                                ) : null
-                            }
-                        </div>
+                    section.heading ? (
+                        <h1
+                            class="max-w-3xl text-5xl leading-[0.92] font-semibold text-balance sm:text-6xl lg:text-7xl"
+                        >
+                            {section.heading}
+                        </h1>
+                    ) : null
+                }
+                {
+                    section.intro ? (
+                        <p
+                            class="max-w-2xl text-lg leading-8 text-white/78 sm:text-xl"
+                        >
+                            {section.intro}
+                        </p>
                     ) : null
                 }
             </div>
 
-            <div class="relative min-h-[32rem] lg:min-h-0 lg:h-full lg:self-stretch">
-                <div
-                    class="absolute inset-x-8 top-0 h-20 rounded-full bg-white/12 blur-3xl"
-                >
-                </div>
-                <div
-                    class="grid h-full gap-4 sm:grid-cols-[1.15fr_0.85fr] sm:grid-rows-[1.2fr_0.8fr]"
-                >
-                    {
-                        section.primaryImage ? (
-                            <div
-                                class="overflow-hidden rounded-[2rem] shadow-2xl sm:row-span-2"
-                            >
-                                <img
-                                    src={section.primaryImage.src}
-                                    alt={section.primaryImage.alt}
-                                    width="1400"
-                                    height="1600"
-                                    class="h-full w-full object-cover"
-                                    loading="eager"
-                                    decoding="async"
-                                />
-                            </div>
-                        ) : null
-                    }
-                    {
-                        section.secondaryImage ? (
-                            <div
-                                class="overflow-hidden rounded-[1.75rem] shadow-2xl"
-                            >
-                                <img
-                                    src={section.secondaryImage.src}
-                                    alt={section.secondaryImage.alt}
-                                    width="1200"
-                                    height="900"
-                                    class="h-full w-full object-cover"
-                                    loading="lazy"
-                                    decoding="async"
-                                />
-                            </div>
-                        ) : null
-                    }
-                    {
-                        section.tertiaryImage ? (
-                            <div
-                                class="overflow-hidden rounded-[1.75rem] shadow-2xl"
-                            >
-                                <img
-                                    src={section.tertiaryImage.src}
-                                    alt={section.tertiaryImage.alt}
-                                    width="1200"
-                                    height="900"
-                                    class="h-full w-full object-cover"
-                                    loading="lazy"
-                                    decoding="async"
-                                />
-                            </div>
-                        ) : null
-                    }
-                </div>
+            {
+                section.primaryCta || section.secondaryCta ? (
+                    <div class="flex flex-col gap-4 sm:flex-row">
+                        {
+                            section.primaryCta ? (
+                                <ButtonLink
+                                    href={section.primaryCta.href}
+                                    variant="primary-light"
+                                    showArrow={true}
+                                >
+                                    <span>{section.primaryCta.label}</span>
+                                </ButtonLink>
+                            ) : null
+                        }
+                        {
+                            section.secondaryCta ? (
+                                <ButtonLink
+                                    href={section.secondaryCta.href}
+                                    variant="secondary-dark"
+                                >
+                                    {section.secondaryCta.label}
+                                </ButtonLink>
+                            ) : null
+                        }
+                    </div>
+                ) : null
+            }
+        </div>
+
+        <div class="relative min-h-[32rem] lg:min-h-0 lg:h-full lg:self-stretch">
+            <div
+                class="absolute inset-x-8 top-0 h-20 rounded-full bg-white/12 blur-3xl"
+            >
+            </div>
+            <div
+                class="grid h-full gap-4 sm:grid-cols-[1.15fr_0.85fr] sm:grid-rows-[1.2fr_0.8fr]"
+            >
+                {
+                    section.primaryImage ? (
+                        <div
+                            class="overflow-hidden rounded-[2rem] shadow-2xl sm:row-span-2"
+                        >
+                            <SanityImage
+                                image={section.primaryImage}
+                                alt={section.primaryImage.alt || section.heading || ""}
+                                preset="homeHeroPrimary"
+                                class="h-full w-full object-cover"
+                                loading="eager"
+                                fetchpriority="high"
+                                decoding="async"
+                            />
+                        </div>
+                    ) : null
+                }
+                {
+                    section.secondaryImage ? (
+                        <div
+                            class="overflow-hidden rounded-[1.75rem] shadow-2xl"
+                        >
+                            <SanityImage
+                                image={section.secondaryImage}
+                                alt={section.secondaryImage.alt || section.heading || ""}
+                                preset="homeHeroSecondary"
+                                class="h-full w-full object-cover"
+                                loading="lazy"
+                                decoding="async"
+                            />
+                        </div>
+                    ) : null
+                }
+                {
+                    section.tertiaryImage ? (
+                        <div
+                            class="overflow-hidden rounded-[1.75rem] shadow-2xl"
+                        >
+                            <SanityImage
+                                image={section.tertiaryImage}
+                                alt={section.tertiaryImage.alt || section.heading || ""}
+                                preset="homeHeroSecondary"
+                                class="h-full w-full object-cover"
+                                loading="lazy"
+                                decoding="async"
+                            />
+                        </div>
+                    ) : null
+                }
             </div>
         </div>
-    </Container>
-</section>
+    </div>
+</ContentSection>
