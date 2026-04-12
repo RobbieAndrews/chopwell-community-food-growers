@@ -95,10 +95,6 @@ export default function GrowingGuideBrowser({guides}: GrowingGuideBrowserProps) 
               <Filter className="h-4 w-4" />
               <span>Find the right guide for the season</span>
             </div>
-            <p className="mt-4 text-base leading-7 text-gray-600">
-              Search by crop name or keyword, then narrow things down by vegetable group or
-              the time of year you want to grow.
-            </p>
           </div>
 
           <div className="rounded-full bg-[var(--ccfg-cream)] px-4 py-2 text-sm font-semibold text-[var(--ccfg-forest)]">

@@ -1,5 +1,4 @@
 ---
-import {PortableText} from 'astro-portabletext';
 import {BookOpenText, Search, UtensilsCrossed} from '@lucide/astro';
 import {sanityClient} from 'sanity:client';
 
@@ -8,25 +7,13 @@ import ContentSection from '../../components/ContentSection.astro';
 import RecipeBrowser from '../../components/recipes/RecipeBrowser';
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import {
-  articlePortableTextComponents,
-} from '../../lib/articlePortableText';
-import {
   getRecipeCategoryTitle,
   getRecipeDifficultyTitle,
   type RecipeBrowserCard,
-  type RecipesPageDocument,
   type RecipeSummary,
 } from '../../lib/recipes';
 import {getSanityResponsiveImageData} from '../../lib/sanity';
 import {sanityImagePresets} from '../../lib/sanityImagePresets';
-
-const RECIPES_PAGE_QUERY = `*[
-  _type == "recipesPage"
-]|order(_updatedAt desc)[0]{
-  title,
-  description,
-  introContent
-}`;
 
 const RECIPES_QUERY = `*[
   _type == "recipe"
@@ -45,12 +32,10 @@ const RECIPES_QUERY = `*[
   keywords
 }`;
 
-const recipesPage = await sanityClient.fetch<RecipesPageDocument | null>(RECIPES_PAGE_QUERY);
 const recipeDocuments = await sanityClient.fetch<RecipeSummary[]>(RECIPES_QUERY);
 
-const pageTitle = recipesPage?.title || 'Recipes';
+const pageTitle = 'Recipes';
 const pageDescription =
-  recipesPage?.description ||
   'A collection of community recipes for preserves, seasonal cooking, and making the most of what comes out of the garden.';
 
 const recipes: RecipeBrowserCard[] = recipeDocuments.map((recipe) => ({
@@ -78,27 +63,12 @@ const recipes: RecipeBrowserCard[] = recipeDocuments.map((recipe) => ({
           iconClass: 'text-rose-600',
         },
         {
-          label: 'Preserves now, more to come',
-          icon: BookOpenText,
-          iconClass: 'text-green-700',
-        },
-        {
-          label: 'Search and browse by recipe type',
+          label: 'Search and browse',
           icon: Search,
           iconClass: 'text-sky-700',
         },
       ]}
     />
-
-    {
-      Array.isArray(recipesPage?.introContent) && recipesPage.introContent.length ? (
-        <section class="rounded-[2rem] bg-white p-6 shadow-xl ring-1 ring-gray-100 sm:p-8">
-          <div class="portable-content">
-            <PortableText value={recipesPage.introContent} components={articlePortableTextComponents} />
-          </div>
-        </section>
-      ) : null
-    }
 
     {
       recipes.length ? (

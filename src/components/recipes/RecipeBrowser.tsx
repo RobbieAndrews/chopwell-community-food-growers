@@ -80,10 +80,6 @@ export default function RecipeBrowser({recipes}: RecipeBrowserProps) {
               <Filter className="h-4 w-4" />
               <span>Browse by preserve, dish, or ingredient</span>
             </div>
-            <p className="mt-4 text-base leading-7 text-gray-600">
-              Start with preserves now, then grow this into a wider community recipe library over
-              time.
-            </p>
           </div>
 
           <div className="rounded-full bg-[var(--ccfg-cream)] px-4 py-2 text-sm font-semibold text-[var(--ccfg-forest)]">

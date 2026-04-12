@@ -60,9 +60,3 @@ export interface RecipeBrowserCard extends RecipeSummary {
   difficultyLabel?: string
   image: ResponsiveImageData | null
 }
-
-export interface RecipesPageDocument {
-  title?: string
-  description?: string
-  introContent?: ArticlePortableTextBlock[]
-}

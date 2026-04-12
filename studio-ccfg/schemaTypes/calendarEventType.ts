@@ -15,7 +15,7 @@ const eventTypeOptions = [
 
 export const calendarEventType = defineType({
   name: 'calendarEvent',
-  title: 'Calendar Event',
+  title: 'Event',
   type: 'document',
   fields: [
     defineField({
